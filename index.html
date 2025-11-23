@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WECRIT Service</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* ====================
+           1. 공통 CSS
+           ==================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif;
+            background-color: #F2F2F2;
+            color: #111;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            background-color: #F2F2F2;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* 상단 네비게이션 바 */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 100;
+            background-color: #F2F2F2; 
+        }
+
+        .nav-title {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: 700;
+            font-size: 18px;
+            color: #111;
+            display: none; /* JS로 제어 */
+        }
+
+        .back-arrow {
+            font-size: 24px;
+            cursor: pointer;
+            display: none; /* JS로 제어 */
+            padding: 5px;
+        }
+
+        /* 페이지 공통 */
+        .page {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            flex: 1;
+            padding: 20px;
+            justify-content: center;
+        }
+
+        .page.active { display: flex; }
+        .page.no-padding-top { padding-top: 0; justify-content: flex-start; }
+
+        /* 버튼 공통 */
+        .btn-common {
+            background-color: #3F4145;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 0;
+            width: 100%;
+            max-width: 200px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn-common:hover { background-color: #222; }
+
+        /* ====================
+           2. 화면별 스타일
+           ==================== */
+        
+        /* [Page 1~4] */
+        .logo-circle { width: 140px; height: 140px; background-color: #D9D9D9; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-bottom: 40px; }
+        .logo-text { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+        .main-title { font-size: 32px; font-weight: 800; line-height: 1.3; margin-bottom: 20px; text-align: center; }
+        .sub-text { font-size: 16px; color: #666; line-height: 1.8; margin-bottom: 60px; text-align: center; }
+
+        .input-group { width: 100%; display: flex; align-items: center; margin-bottom: 15px; padding: 0 20px; }
+        .input-group label { width: 60px; font-weight: 600; font-size: 15px; white-space: nowrap; }
+        .input-group input, .input-group select { flex: 1; height: 40px; border: none; border-radius: 6px; padding: 0 10px; font-size: 14px; background-color: #fff; outline: none; }
+        .input-group select { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='gray' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 10px center; background-size: 16px; color: #333; cursor: pointer; }
+
+        .greeting { font-size: 22px; font-weight: 700; margin-bottom: 60px; text-align: center; }
+        .description { font-size: 18px; line-height: 1.5; margin-bottom: 80px; text-align: center; }
+        .btn-group { display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center; }
+        
+        .menu-grid { display: flex; flex-direction: column; gap: 30px; }
+        .menu-card { background: #fff; width: 160px; height: 160px; border-radius: 20px; border: 1px solid #D9D9D9; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; }
+        .card-icon { width: 48px; height: 48px; stroke: #000; stroke-width: 1.5; fill: none; }
+
+        /* [Page 5] 게시판 목록 */
+        .tab-header { width: 100%; background: #fff; display: flex; padding: 0 20px; border-bottom: 1px solid #eee; position: sticky; top: 50px; z-index: 10; }
+        .tab-item { padding: 15px 5px; margin-right: 20px; color: #888; cursor: pointer; position: relative;}
+        .tab-item.active { color: #000; font-weight: 700; }
+        .tab-item.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: #000; }
+        .post-list { width: 100%; padding: 20px 0; display: flex; flex-direction: column; gap: 40px; padding-bottom: 100px; }
+        .post-item { padding: 0 20px; cursor: pointer; }
+        .post-item.special-bg { background-color: #fff; padding-top: 30px; padding-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        .image-row { display: flex; gap: 5px; height: 180px; overflow: hidden; margin-bottom: 10px;}
+        .image-row img { height: 100%; object-fit: cover; display: block; }
+        .post-item.special-bg .image-row img { box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .w-30 { width: 30%; } .w-40 { width: 40%; } .w-50 { width: 50%; }
+        .title-box { background: #fff; border-radius: 8px; padding: 12px 0; text-align: center; font-size: 14px; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .title-box.gray-box { background: #EAEAEA; }
+        .post-item.special-bg .title-box { box-shadow: none; background-color: #f9f9f9; }
+
+        /* ✨ [FIXED] 플로팅 플러스 버튼 ✨ */
+        .fab-btn {
+            position: absolute; 
+            bottom: 30px; 
+            right: 20px; 
+            width: 60px; 
+            height: 60px;
+            background-color: #111; 
+            border-radius: 50%;
+            display: none; /* JS로 제어 */
+            justify-content: center; 
+            align-items: center;
+            color: white; 
+            font-size: 36px; 
+            font-weight: 300; 
+            line-height: 1;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            cursor: pointer; 
+            z-index: 999;
+            transition: transform 0.2s;
+        }
+        .fab-btn:active { transform: scale(0.95); }
+
+        /* [Page 6 & 7] 투표 및 결과 */
+        .subtitle { font-size: 16px; color: #555; margin-bottom: 40px; text-align: center; }
+        .layout-options { display: flex; justify-content: space-between; gap: 15px; width: 100%; }
+        .option-a, .option-b { flex: 1; display: flex; flex-direction: column; align-items: center; }
+        .option-label { font-size: 24px; font-weight: bold; margin-bottom: 15px; color: #333; }
+        .option-image { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; margin-bottom: 20px; cursor: zoom-in; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s; }
+        .select-button { width: 100%; padding: 12px 0; background-color: white; border: 2px solid #333; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .select-button:hover { background-color: #333; color: white; }
+        .progress-container { width: 100%; height: 50px; display: flex; border-radius: 25px; overflow: hidden; margin-bottom: 40px; font-size: 18px; font-weight: 700; color: #fff; }
+        .progress-a { width: 58%; background-color: #333; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
+        .progress-b { width: 42%; background-color: #ddd; display: flex; align-items: center; justify-content: flex-end; padding: 0 20px; color: #333; }
+        .comment-section { width: 100%; text-align: left; padding: 0 5px; margin-bottom: 40px; }
+        .comment-item { margin-bottom: 15px; } 
+        .comment-user { font-weight: 700; font-size: 16px; margin-bottom: 5px; }
+        .comment-text { font-size: 15px; color: #555; }
+        .comment-hr { margin-top:10px; border:0; border-top:1px solid #eee; }
+        .btn-comment { width: 100%; padding: 15px 0; background-color: #333; color: white; border: none; border-radius: 30px; font-size: 18px; font-weight: 700; cursor: pointer; }
+
+        /* ✨ [Page 8] 새 게시물 작성 ✨ */
+        .image-scroll-container {
+            width: 100%; overflow-x: auto; white-space: nowrap; margin-bottom: 20px; padding-bottom: 10px;
+        }
+        .image-wrapper img {
+            height: 150px; border-radius: 8px; margin-right: 10px; object-fit: cover;
+        }
+        .feedback-textarea {
+            width: 100%; border: none; background: transparent; font-size: 16px; padding: 10px 0; resize: none; outline: none; font-family: inherit; margin-bottom: 30px; min-height: 60px;
+        }
+        .feedback-textarea::placeholder { color: #aaa; }
+        
+        .feedback-options { display: flex; flex-direction: column; gap: 15px; width: 100%; margin-bottom: 50px; }
+        .option-button {
+            width: 100%; height: 100px; border: 2px solid #333; border-radius: 12px; background: #fff; cursor: pointer; position: relative; display: flex; justify-content: center; align-items: center;
+        }
+        .option-placeholder { display: flex; flex-direction: column; align-items: center; font-size: 24px; font-weight: 700; }
+        .plus { font-size: 20px; margin-top: 5px; font-weight: 400; }
+        
+        .image-upload-input { display: none; }
+
+        .share-button {
+            width: 100%; padding: 15px 0; background-color: #D9D9D9; color: #fff; border: none; border-radius: 30px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: auto;
+        }
+        .share-button.active { background-color: #333; color: #fff; }
+
+        /* Footer */
+        .footer { margin-top: auto; padding: 40px 20px; text-align: center; background-color: #F2F2F2; color: #888; font-size: 12px; width: 100%; }
+        .footer-logo { font-weight: 700; font-size: 14px; color: #555; margin-bottom: 5px; }
+
+        /* 모달들 */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.85); }
+        .modal-content { margin: auto; display: block; width: 90%; max-width: 600px; max-height: 80vh; object-fit: contain; position: relative; top: 50%; transform: translateY(-50%); border-radius: 8px; }
+        .modal-close { position: absolute; top: 20px; right: 30px; color: #f1f1f1; font-size: 40px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .comment-modal-bg { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .comment-box { background-color: white; width: 90%; max-width: 400px; padding: 25px 20px; border-radius: 12px; position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; }
+        .comment-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .comment-title { font-size: 20px; font-weight: 800; color: #333; margin-left: auto; margin-right: auto; transform: translateX(12px); }
+        .comment-close-btn { font-size: 28px; color: #999; cursor: pointer; font-weight: bold; line-height: 1; }
+        .comment-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; font-size: 15px; outline: none; }
+        .comment-textarea { width: 100%; height: 120px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; font-size: 15px; outline: none; resize: none; font-family: inherit; }
+        .btn-submit-comment { width: 100%; padding: 15px 0; background-color: #333; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: 700; cursor: pointer; }
+
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <nav class="top-nav">
+        <span class="back-arrow" onclick="goBack()">&#10094;</span> 
+        <span class="nav-title" id="page-title">새 게시물</span> 
+    </nav>
+
+
+    <section id="page-1" class="page active">
+        <div class="logo-circle"><span class="logo-text">WECRIT</span></div>
+        <h1 class="main-title">WELCOME<br>TO<br>WECRIT!</h1>
+        <p class="sub-text">과제 고민,<br>혼자 하고 계신가요?<br>이제는 계원인들에게 물어보세요!</p>
+        <button class="btn-common" onclick="goToPage('page-2')">참여하기</button>
+    </section>
+
+
+    <section id="page-2" class="page">
+        <div class="logo-circle" style="width:60px; height:60px; margin-bottom:20px; font-size:30px;">💬</div>
+        <h2 style="margin-bottom:50px;">당신의 정보를 입력해주세요!</h2>
+        <div class="input-group">
+            <label>닉네임</label>
+            <input type="text" id="input-nickname" placeholder="예: 주현">
+        </div>
+        <div class="input-group">
+            <label style="letter-spacing: 3px; margin-right: 5px;">학 과</label>
+            <select id="input-major">
+                <option value="" disabled selected>선택해주세요</option>
+                <option value="공간연출과">공간연출과</option>
+                <option value="사진예술과">사진예술과</option>
+                <option value="순수미술과">순수미술과</option>
+                <option value="융합예술과">융합예술과</option>
+                <option value="광고·브랜드디자인과">광고·브랜드디자인과</option>
+                <option value="시각디자인과">시각디자인과</option>
+                <option value="게임미디어과">게임미디어과</option>
+                <option value="디지털미디어디자인과">디지털미디어디자인과</option>
+                <option value="애니메이션과">애니메이션과</option>
+                <option value="영상디자인과">영상디자인과</option>
+                <option value="리빙가구디자인과">리빙가구디자인과</option>
+                <option value="스마트프로덕트디자인과">스마트프로덕트디자인과</option>
+                <option value="플라워디자인과">플라워디자인과</option>
+                <option value="건축디자인과">건축디자인과</option>
+                <option value="실내건축디자인과">실내건축디자인과</option>
+                <option value="전시콘텐츠디자인과">전시콘텐츠디자인과</option>
+                <option value="미래디자인학부">미래디자인학부</option>
+            </select>
+        </div>
+        <button class="btn-common" onclick="submitUserInfo()">등 록</button>
+    </section>
+
+
+    <section id="page-3" class="page">
+        <h2 class="greeting"><span id="display-name">000</span>님 반가워요!👋</h2>
+        <p class="description">지금부터,<br>위크릿에서 계원인들과<br>피드백을 주고 받아 보세요!</p>
+        <div class="btn-group">
+            <button class="btn-common" onclick="goToPage('page-4')">피드백 하러 가기</button>
+            <button class="btn-common" onclick="alert('준비 중입니다!')">피드백 받으러 가기</button>
+        </div>
+    </section>
+
+
+    <section id="page-4" class="page">
+        <h2 style="margin-bottom:50px;">피드백 공간</h2>
+        <div class="menu-grid">
+            <button class="menu-card" onclick="goToPage('page-5')">
+                <span style="font-weight:700; margin-bottom:15px;">자유피드백</span>
+                <svg class="card-icon" viewBox="0 0 24 24"><path d="M2 12h20L12 2 2 12zm0 0l9 5 11-5-11 9-9-9z"/><path d="M11 17l-5 4"/><path d="M11 17l2 4"/></svg>
+            </button>
+            <button class="menu-card" onclick="alert('사담 게시판은 준비중!')">
+                <span style="font-weight:700; margin-bottom:15px;">사담게시판</span>
+                <svg class="card-icon" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+            </button>
+        </div>
+    </section>
+
+
+    <section id="page-5" class="page no-padding-top">
+        <header class="tab-header">
+            <div class="tab-item active">자유게시판</div>
+            <div class="tab-item">사담게시판</div>
+        </header>
+        <div class="post-list">
+            <article class="post-item" onclick="goToPage('page-6')">
+                <div class="image-row">
+                    <img src="https://i.pinimg.com/736x/b9/6b/15/b96b15f2b8ae4e18db863fb1dbc4a4e8.jpg" class="w-30">
+                    <img src="https://i.pinimg.com/736x/f2/11/fe/f211fe46fbc9249221a55265e1ab6936.jpg" class="w-30">
+                    <img src="https://i.pinimg.com/1200x/a0/38/a7/a038a78e7f7c6ee79fe4a500c5ea9e86.jpg" class="w-40">
+                </div>
+                <div class="title-box">포트폴리오 피드백해주세요~^^</div>
+            </article>
+            <article class="post-item special-bg" onclick="goToPage('page-6')">
+                 <div class="image-row">
+                    <img src="https://i.pinimg.com/1200x/76/db/46/76db46cb650fe3f4cca87f937203830d.jpg" class="w-50">
+                    <img src="https://i.pinimg.com/736x/8b/17/6c/8b176c1b4da11e7c2d50d96c0ad3ba62.jpg" class="w-50">
+                </div>
+                <div class="title-box gray-box">로고 시안 피드백해주세요~^^</div>
+            </article>
+            <article class="post-item" onclick="goToPage('page-6')">
+                <div class="image-row">
+                    <img src="https://i.pinimg.com/1200x/fd/c5/3e/fdc53e6c395b1f7ad0a49b7f91dbc3d8.jpg" class="w-30">
+                    <img src="https://i.pinimg.com/1200x/9f/c5/f7/9fc5f735b23c44b241a97aadb88ae760.jpg" class="w-30">
+                    <img src="https://i.pinimg.com/736x/84/22/6d/84226d5d547112252e86466902fc411d.jpg" class="w-40">
+                </div>
+                <div class="title-box">졸업작품 피드백 부탁드려요!</div>
+            </article>
+        </div>
+    </section>
+
+    <div class="fab-btn" id="fab-write" onclick="goToPage('page-8')">+</div>
+
+
+    <section id="page-6" class="page">
+        <h1 class="main-title">과제 피드백 TIME!</h1>
+        <p class="subtitle">어떤 레이아웃이 더 좋아보이나요?</p>
+        <div class="layout-options">
+            <div class="option-a">
+                <span class="option-label">A</span>
+                <img src="https://i.imgur.com/UOYfPW3.jpeg" alt="레이아웃 A" class="option-image" data-full-src="https://i.imgur.com/UOYfPW3.jpeg">
+                <button class="select-button" onclick="goToPage('page-7')">A</button>
+            </div>
+            <div class="option-b">
+                <span class="option-label">B</span>
+                <img src="https://i.imgur.com/6wge0aF.jpeg" alt="레이아웃 B" class="option-image" data-full-src="https://i.imgur.com/6wge0aF.jpeg">
+                <button class="select-button" onclick="goToPage('page-7')">B</button>
+            </div>
+        </div>
+        <footer class="footer"><div class="footer-logo">WECRIT</div><p>Kaywon Univ. of Art & Design<br>Copyright © 2024 WECRIT. All rights reserved.</p></footer>
+    </section>
+
+    <section id="page-7" class="page">
+        <h1 class="main-title">투표 결과</h1>
+        <p class="subtitle">소중한 한 표 감사합니다!</p>
+        <div class="layout-options" style="margin-bottom: 20px;">
+            <div class="option-a"><span class="option-label">A</span><div class="result-img-box"><img src="https://i.imgur.com/UOYfPW3.jpeg"></div></div>
+            <div class="option-b"><span class="option-label">B</span><div class="result-img-box"><img src="https://i.imgur.com/6wge0aF.jpeg"></div></div>
+        </div>
+        <div class="progress-container">
+            <div class="progress-a"><span>A</span><span>58%</span></div>
+            <div class="progress-b"><span>B</span></div>
+        </div>
+        <div class="comment-section" id="comment-list">
+            <div class="comment-item">
+                <div class="comment-user">당근이</div><div class="comment-text">a시안이 더 있을 좋을거 같아요!</div><hr class="comment-hr">
+            </div>
+        </div>
+        <button class="btn-comment" onclick="openCommentModal()">댓글 달기</button>
+        <footer class="footer"><div class="footer-logo">WECRIT</div><p>Kaywon Univ. of Art & Design<br>Copyright © 2024 WECRIT. All rights reserved.</p></footer>
+    </section>
+
+
+    <section id="page-8" class="page" style="justify-content: flex-start; padding-top: 20px;">
+        
+        <div class="image-scroll-container">
+            <div class="image-wrapper" id="imageWrapper"></div>
+        </div>
+
+        <textarea class="feedback-textarea" id="feedbackTextarea" placeholder="받고 싶은 피드백을 적어주세요..." rows="2"></textarea>
+        
+        <div class="feedback-options">
+            <button class="option-button" data-option="A">
+                <input type="file" class="image-upload-input" accept="image/*" id="uploadA" data-option="A">
+                <div class="option-placeholder">
+                    <span>A</span><span class="plus">+</span>
+                </div>
+            </button>
+            <button class="option-button" data-option="B">
+                <input type="file" class="image-upload-input" accept="image/*" id="uploadB" data-option="B">
+                <div class="option-placeholder">
+                    <span>B</span><span class="plus">+</span>
+                </div>
+            </button>
+        </div>
+
+        <button class="share-button">공유하기</button>
+    </section>
+
+
+    <div id="comment-modal" class="comment-modal-bg">
+        <div class="comment-box">
+            <div class="comment-header"><span class="comment-title">댓글 작성</span><span class="comment-close-btn" onclick="closeCommentModal()">&times;</span></div>
+            <input type="text" id="new-comment-nickname" class="comment-input" placeholder="닉네임 (선택)">
+            <textarea id="new-comment-text" class="comment-textarea" placeholder="댓글 내용을 입력하세요..."></textarea>
+            <button class="btn-submit-comment" onclick="submitComment()">등록하기</button>
+        </div>
+    </div>
+    <div id="image-modal" class="modal"><span class="modal-close">&times;</span><img class="modal-content" id="modal-image"></div>
+
+</div>
+
+<script>
+    /* =====================
+       1. SPA 라우팅 및 UI 관리
+       ===================== */
+    let historyStack = [];
+
+    function goToPage(pageId) {
+        const activePage = document.querySelector('.page.active');
+        if (activePage && activePage.id !== 'page-1') { historyStack.push(activePage.id); }
+        
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(pageId).classList.add('active');
+        window.scrollTo(0, 0);
+        updateUI(pageId);
+    }
+
+    function goBack() {
+        if (historyStack.length > 0) {
+            const prevPage = historyStack.pop();
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(prevPage).classList.add('active');
+            window.scrollTo(0, 0);
+            updateUI(prevPage);
+        } else {
+            goToPage('page-4');
+        }
+    }
+
+    function updateUI(pageId) {
+        const arrow = document.querySelector('.back-arrow');
+        const fab = document.getElementById('fab-write');
+        const title = document.getElementById('page-title');
+
+        // 1. 뒤로가기 (3페이지 이상)
+        if (['page-3', 'page-4', 'page-5', 'page-6', 'page-7', 'page-8'].includes(pageId)) {
+            arrow.style.display = 'block';
+        } else {
+            arrow.style.display = 'none';
+        }
+
+        // 2. 플로팅 버튼 (5페이지)
+        if (pageId === 'page-5') {
+            fab.style.display = 'flex';
+        } else {
+            fab.style.display = 'none';
+        }
+
+        // 3. 타이틀 (8페이지)
+        if (pageId === 'page-8') {
+            title.style.display = 'block';
+        } else {
+            title.style.display = 'none';
+        }
+    }
+
+    updateUI('page-1');
+
+    /* =====================
+       2. 사용자 정보 및 기타 기능
+       ===================== */
+    function submitUserInfo() {
+        const nickname = document.getElementById('input-nickname').value;
+        const major = document.getElementById('input-major').value;
+        if (!nickname) { alert("닉네임을 입력해주세요!"); return; }
+        if (!major) { alert("학과를 선택해주세요!"); return; }
+        document.getElementById('display-name').innerText = nickname;
+        goToPage('page-3');
+    }
+
+    // 이미지 확대 모달
+    const modal = document.getElementById("image-modal");
+    const modalImg = document.getElementById("modal-image");
+    const closeBtn = document.querySelector(".modal-close");
+    document.querySelectorAll('.option-image').forEach(img => {
+        img.addEventListener('click', function() { modal.style.display = "block"; modalImg.src = this.getAttribute('data-full-src'); });
+    });
+    closeBtn.onclick = function() { modal.style.display = "none"; }
+    window.onclick = function(event) { if (event.target == modal) { modal.style.display = "none"; } }
+
+    // 댓글 모달
+    function openCommentModal() { document.getElementById('comment-modal').style.display = 'block'; }
+    function closeCommentModal() { document.getElementById('comment-modal').style.display = 'none'; }
+    function submitComment() {
+        const nicknameInput = document.getElementById('new-comment-nickname');
+        const textInput = document.getElementById('new-comment-text');
+        const nickname = nicknameInput.value.trim() !== "" ? nicknameInput.value : "익명";
+        const text = textInput.value.trim();
+        if (text === "") { alert("댓글 내용을 입력해주세요!"); return; }
+        const commentList = document.getElementById('comment-list');
+        const newCommentDiv = document.createElement('div');
+        newCommentDiv.classList.add('comment-item');
+        newCommentDiv.innerHTML = `<div class="comment-user">${nickname}</div><div class="comment-text">${text}</div><hr class="comment-hr">`;
+        commentList.prepend(newCommentDiv);
+        nicknameInput.value = ""; textInput.value = "";
+        closeCommentModal();
+    }
+
+    /* =====================
+       3. ✨ [Page 8] 새 게시물 로직 (통합) ✨
+       ===================== */
+    const textarea = document.getElementById('feedbackTextarea');
+    const shareButton = document.querySelector('.share-button');
+    const imageWrapper = document.getElementById('imageWrapper');
+    const optionState = { A: false, B: false };
+
+    // 텍스트 영역 확장
+    textarea.addEventListener('focus', () => { textarea.rows = 8; });
+    textarea.addEventListener('blur', () => { if (textarea.value.trim() === '') { textarea.rows = 2; } });
+
+    // A/B 버튼 클릭 시 파일 선택창 열기
+    const optionButtons = document.querySelectorAll('.option-button');
+    const uploadInputs = document.querySelectorAll('.image-upload-input');
+
+    optionButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const option = button.getAttribute('data-option');
+            document.getElementById(`upload${option}`).click();
+        });
+    });
+
+    // 파일 선택 시 미리보기 추가
+    uploadInputs.forEach(input => {
+        input.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            const option = event.target.getAttribute('data-option');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const mainImg = document.createElement('img');
+                    mainImg.src = e.target.result;
+                    mainImg.classList.add('post-image');
+                    mainImg.dataset.optionRef = option;
+                    imageWrapper.appendChild(mainImg);
+                    optionState[option] = true;
+                    checkFormValidity();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+
+    // 미리보기 이미지 삭제
+    imageWrapper.addEventListener('click', (e) => {
+        if (e.target.classList.contains('post-image')) {
+            if (confirm('사진을 삭제하시겠습니까?')) {
+                const option = e.target.dataset.optionRef;
+                imageWrapper.removeChild(e.target);
+                optionState[option] = false;
+                document.getElementById(`upload${option}`).value = '';
+                checkFormValidity();
+            }
+        }
+    });
+
+    // 유효성 검사 (글 + 사진 1개 이상)
+    function checkFormValidity() {
+        const isTextareaFilled = textarea.value.trim().length > 0;
+        const isOptionImageUploaded = optionState.A || optionState.B;
+        
+        if (isTextareaFilled && isOptionImageUploaded) {
+            shareButton.classList.add('active');
+            shareButton.disabled = false;
+        } else {
+            shareButton.classList.remove('active');
+            shareButton.disabled = true;
+        }
+    }
+
+    textarea.addEventListener('input', checkFormValidity);
+
+    // 공유하기 버튼 클릭
+    shareButton.addEventListener('click', () => {
+        if (shareButton.classList.contains('active')) {
+            alert('게시물이 성공적으로 공유되었습니다!');
+            // 초기화 후 목록으로 이동
+            imageWrapper.innerHTML = '';
+            textarea.value = '';
+            optionState.A = false; optionState.B = false;
+            checkFormValidity();
+            goToPage('page-5');
+        }
+    });
+
+</script>
+
+</body>
+</html>
