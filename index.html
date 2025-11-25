@@ -402,21 +402,23 @@
 </div>
 
 <script>
+/* ==========================================
+   🔴 중요: 아래 주소를 본인의 배포 URL로 바꾸세요! 🔴
+   ========================================== */
+const SCRIPT_URL = "https://script.google.com/macros/s/여기에_복사한_긴_주소를_붙여넣으세요/exec"; 
+
+
 /* =====================
-   0. 설정 및 전역 변수
+   1. 전역 변수 및 설정
    ===================== */
-// 🚨 중요: 여기에 배포한 Google Apps Script URL을 붙여넣으세요!
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwsRi9gQABYpyCs5Vwcb7TToha1ZoiRpD0KwjNm_bGIDJ0haW4Thdi7Onsc4nSAysVEAA/exec"; 
-
 let historyStack = [];
-// 사용자 정보 저장용 객체
-let currentUser = {
-    nickname: "",
-    major: ""
-};
+let currentUser = { nickname: "", major: "" };
+// 업로드할 파일 데이터를 담을 객체
+const fileData = { A: null, B: null };
+
 
 /* =====================
-   1. SPA 라우팅 및 UI 관리
+   2. 페이지 이동 (SPA) 관련
    ===================== */
 function goToPage(pageId) {
     const activePage = document.querySelector('.page.active');
@@ -445,32 +447,35 @@ function updateUI(pageId) {
     const fab = document.getElementById('fab-write');
     const title = document.getElementById('page-title');
 
+    // 뒤로가기 화살표 (3페이지부터)
     if (['page-3', 'page-4', 'page-5', 'page-6', 'page-7', 'page-8'].includes(pageId)) {
         arrow.style.display = 'block';
     } else {
         arrow.style.display = 'none';
     }
 
+    // 플로팅 버튼 (5페이지)
     if (pageId === 'page-5') { fab.style.display = 'flex'; } else { fab.style.display = 'none'; }
+    
+    // 타이틀 (8페이지)
     if (pageId === 'page-8') { title.style.display = 'block'; } else { title.style.display = 'none'; }
 }
 
+// 초기 실행
 updateUI('page-1');
 
+
 /* =====================
-   2. 사용자 정보 및 기타 기능
+   3. 사용자 정보 및 기본 기능
    ===================== */
 function submitUserInfo() {
     const nickname = document.getElementById('input-nickname').value;
     const major = document.getElementById('input-major').value;
-    
     if (!nickname) { alert("닉네임을 입력해주세요!"); return; }
     if (!major) { alert("학과를 선택해주세요!"); return; }
     
-    // 전역 변수에 저장 (나중에 전송하기 위해)
     currentUser.nickname = nickname;
     currentUser.major = major;
-
     document.getElementById('display-name').innerText = nickname;
     goToPage('page-3');
 }
@@ -480,7 +485,10 @@ const modal = document.getElementById("image-modal");
 const modalImg = document.getElementById("modal-image");
 const closeBtn = document.querySelector(".modal-close");
 document.querySelectorAll('.option-image').forEach(img => {
-    img.addEventListener('click', function() { modal.style.display = "block"; modalImg.src = this.getAttribute('data-full-src'); });
+    img.addEventListener('click', function() { 
+        modal.style.display = "block"; 
+        modalImg.src = this.getAttribute('data-full-src'); 
+    });
 });
 closeBtn.onclick = function() { modal.style.display = "none"; }
 window.onclick = function(event) { if (event.target == modal) { modal.style.display = "none"; } }
@@ -503,30 +511,26 @@ function submitComment() {
     closeCommentModal();
 }
 
+
 /* =====================
-   3. ✨ [Page 8] 새 게시물 로직 (구글 시트 전송 포함) ✨
+   4. ✨ [Page 8] 게시물 작성 & 구글 시트 전송 ✨
    ===================== */
 const textarea = document.getElementById('feedbackTextarea');
 const shareButton = document.querySelector('.share-button');
 const imageWrapper = document.getElementById('imageWrapper');
 
-// 파일 데이터 저장용 객체 (전송용)
-const fileData = {
-    A: null, // { data: base64String, mimeType: string }
-    B: null
-};
-
 // 텍스트 영역 확장
 textarea.addEventListener('focus', () => { textarea.rows = 8; });
 textarea.addEventListener('blur', () => { if (textarea.value.trim() === '') { textarea.rows = 2; } });
 
-// A/B 버튼 클릭 시 파일 선택창 열기
+// A/B 버튼 클릭 시
 const optionButtons = document.querySelectorAll('.option-button');
 const uploadInputs = document.querySelectorAll('.image-upload-input');
 
 optionButtons.forEach(button => {
     button.addEventListener('click', (e) => {
         const option = button.getAttribute('data-option');
+        // 이미지가 이미 있으면 업로드 막기
         if (fileData[option]) {
             alert('이미지가 이미 등록되었습니다. 삭제 후 다시 시도해주세요.');
             return;
@@ -535,7 +539,7 @@ optionButtons.forEach(button => {
     });
 });
 
-// 파일 선택 시 미리보기 & 데이터 저장
+// 파일 선택 & 미리보기 & 데이터 저장 (Base64)
 uploadInputs.forEach(input => {
     input.addEventListener('change', (event) => {
         const file = event.target.files[0];
@@ -544,41 +548,34 @@ uploadInputs.forEach(input => {
         if (file && !fileData[option]) {
             const reader = new FileReader();
             
-            // 파일을 읽어서 Base64로 변환
             reader.onload = (e) => {
-                const base64String = e.target.result.split(',')[1]; // "data:image/jpeg;base64," 부분 제거
+                // 구글로 보낼 데이터 저장 (Base64)
+                const base64String = e.target.result.split(',')[1]; 
                 const mimeType = file.type;
+                fileData[option] = { data: base64String, mimeType: mimeType };
 
-                // 전송용 데이터 저장
-                fileData[option] = {
-                    data: base64String,
-                    mimeType: mimeType
-                };
-
-                // 미리보기 UI 생성
+                // 화면에 미리보기 표시
                 const previewDiv = document.createElement('div');
                 previewDiv.className = 'preview-item';
                 previewDiv.dataset.optionRef = option;
 
                 const mainImg = document.createElement('img');
-                mainImg.src = e.target.result; // 미리보기용 전체 스트링
+                mainImg.src = e.target.result;
                 
+                // 삭제(휴지통) 버튼
                 const trashBtn = document.createElement('button');
                 trashBtn.className = 'delete-img-btn';
                 trashBtn.innerHTML = '🗑️';
                 
-                // 삭제 기능
                 trashBtn.onclick = (evt) => {
                     evt.stopPropagation();
                     if (confirm('사진을 삭제하시겠습니까?')) {
                         imageWrapper.removeChild(previewDiv);
-                        fileData[option] = null; // 데이터 초기화
+                        fileData[option] = null; // 데이터 삭제
                         document.getElementById(`upload${option}`).value = '';
                         
-                        // 버튼 스타일 복구
-                        const btn = document.getElementById(`btnOption${option}`);
-                        btn.classList.remove('disabled');
-                        
+                        // 버튼 다시 활성화
+                        document.getElementById(`btnOption${option}`).classList.remove('disabled');
                         checkFormValidity();
                     }
                 };
@@ -587,10 +584,8 @@ uploadInputs.forEach(input => {
                 previewDiv.appendChild(trashBtn);
                 imageWrapper.appendChild(previewDiv);
                 
-                // 버튼 비활성화 스타일
-                const btn = document.getElementById(`btnOption${option}`);
-                btn.classList.add('disabled');
-
+                // 버튼 비활성화 (이미지 들어갔음 표시)
+                document.getElementById(`btnOption${option}`).classList.add('disabled');
                 checkFormValidity();
             };
             reader.readAsDataURL(file);
@@ -598,10 +593,9 @@ uploadInputs.forEach(input => {
     });
 });
 
-// 유효성 검사
+// 유효성 검사 (글 + 사진 최소 1장)
 function checkFormValidity() {
     const isTextareaFilled = textarea.value.trim().length > 0;
-    // A 또는 B 중 하나라도 있으면 가능
     const isOptionImageUploaded = fileData.A !== null || fileData.B !== null;
     
     if (isTextareaFilled && isOptionImageUploaded) {
@@ -615,56 +609,54 @@ function checkFormValidity() {
 
 textarea.addEventListener('input', checkFormValidity);
 
-// ✨ 공유하기 버튼 클릭 (구글 시트로 전송) ✨
+// 🚀 [전송] 공유하기 버튼 클릭
 shareButton.addEventListener('click', () => {
     if (!shareButton.classList.contains('active')) return;
 
-    // 로딩 표시 (버튼 텍스트 변경 등)
+    // 버튼 로딩 상태로 변경
     const originalText = shareButton.innerText;
     shareButton.innerText = "업로드 중...";
     shareButton.disabled = true;
 
-    // 전송할 데이터 객체 생성
+    // 보낼 데이터 포장
     const payload = {
         nickname: currentUser.nickname || "익명",
         major: currentUser.major || "미선택",
         question: textarea.value,
-        imageA: fileData.A, // Base64 데이터
-        imageB: fileData.B  // Base64 데이터
+        imageA: fileData.A, // Base64
+        imageB: fileData.B  // Base64
     };
 
-    // fetch API로 GAS에 전송 (CORS 문제 회피를 위해 no-cors를 쓰기도 하지만, 
-    // GAS Web App 설정을 'Anyone'으로 하면 보통 json 응답을 받을 수 있습니다.
-    // 단, text/plain으로 보내야 CORS 오류가 덜 납니다.)
+    // 구글 앱스 스크립트로 전송
     fetch(SCRIPT_URL, {
         method: 'POST',
-        mode: 'no-cors', // 중요: 응답 내용을 읽을 수는 없지만 전송은 됨
-        headers: {
-            'Content-Type': 'text/plain'
-        },
+        mode: 'no-cors', // CORS 우회
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(payload)
     })
     .then(response => {
-        // no-cors 모드에서는 response가 opaque라서 내용을 볼 수 없지만, 
-        // 에러가 안 나면 성공으로 간주합니다.
+        // 성공 처리
         alert('게시물이 성공적으로 공유되었습니다!');
         
-        // 초기화 및 페이지 이동
+        // 화면 초기화
         imageWrapper.innerHTML = '';
         textarea.value = '';
         fileData.A = null; 
         fileData.B = null;
         
+        // 버튼들 원상복구
         document.getElementById('btnOptionA').classList.remove('disabled');
         document.getElementById('btnOptionB').classList.remove('disabled');
         
         shareButton.innerText = originalText;
         checkFormValidity();
+        
+        // 목록 페이지로 이동
         goToPage('page-5');
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('업로드 중 오류가 발생했습니다.');
+        alert('업로드 중 오류가 발생했습니다. 관리자에게 문의하세요.');
         shareButton.innerText = originalText;
         shareButton.disabled = false;
     });
