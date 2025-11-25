@@ -49,13 +49,13 @@
             font-weight: 700;
             font-size: 18px;
             color: #111;
-            display: none;
+            display: none; /* JS로 제어 */
         }
 
         .back-arrow {
             font-size: 24px;
             cursor: pointer;
-            display: none;
+            display: none; /* JS로 제어 */
             padding: 5px;
         }
 
@@ -129,12 +129,26 @@
         .title-box.gray-box { background: #EAEAEA; }
         .post-item.special-bg .title-box { box-shadow: none; background-color: #f9f9f9; }
 
-        /* [Page 5] 플로팅 버튼 */
+        /* ✨ [FIXED] 플로팅 플러스 버튼 ✨ */
         .fab-btn {
-            position: absolute; bottom: 30px; right: 20px; width: 60px; height: 60px;
-            background-color: #111; border-radius: 50%; display: none; justify-content: center; align-items: center;
-            color: white; font-size: 36px; font-weight: 300; line-height: 1; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            cursor: pointer; z-index: 999; transition: transform 0.2s;
+            position: absolute; 
+            bottom: 30px; 
+            right: 20px; 
+            width: 60px; 
+            height: 60px;
+            background-color: #111; 
+            border-radius: 50%;
+            display: none; /* JS로 제어 */
+            justify-content: center; 
+            align-items: center;
+            color: white; 
+            font-size: 36px; 
+            font-weight: 300; 
+            line-height: 1;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            cursor: pointer; 
+            z-index: 999;
+            transition: transform 0.2s;
         }
         .fab-btn:active { transform: scale(0.95); }
 
@@ -156,45 +170,30 @@
         .comment-hr { margin-top:10px; border:0; border-top:1px solid #eee; }
         .btn-comment { width: 100%; padding: 15px 0; background-color: #333; color: white; border: none; border-radius: 30px; font-size: 18px; font-weight: 700; cursor: pointer; }
 
-        /* ✨ [Page 8] 새 게시물 작성 (업데이트) ✨ */
-        .image-scroll-container { width: 100%; overflow-x: auto; white-space: nowrap; margin-bottom: 20px; padding-bottom: 10px; min-height: 150px; }
-        
-        /* 미리보기 아이템 (이미지 + 휴지통) */
-        .preview-item {
-            position: relative; display: inline-block; margin-right: 10px; width: 150px; height: 150px;
+        /* ✨ [Page 8] 새 게시물 작성 ✨ */
+        .image-scroll-container {
+            width: 100%; overflow-x: auto; white-space: nowrap; margin-bottom: 20px; padding-bottom: 10px;
         }
-        .preview-item img {
-            width: 100%; height: 100%; border-radius: 8px; object-fit: cover;
+        .image-wrapper img {
+            height: 150px; border-radius: 8px; margin-right: 10px; object-fit: cover;
         }
-        /* 휴지통 버튼 */
-        .delete-img-btn {
-            position: absolute; top: 8px; right: 8px;
-            width: 24px; height: 24px;
-            background-color: rgba(0,0,0,0.7);
-            border-radius: 50%;
-            border: none;
-            color: white;
-            font-size: 14px;
-            display: flex; justify-content: center; align-items: center;
-            cursor: pointer;
+        .feedback-textarea {
+            width: 100%; border: none; background: transparent; font-size: 16px; padding: 10px 0; resize: none; outline: none; font-family: inherit; margin-bottom: 30px; min-height: 60px;
         }
-        .delete-img-btn:hover { background-color: rgba(200,0,0,0.8); }
-
-        .feedback-textarea { width: 100%; border: none; background: transparent; font-size: 16px; padding: 10px 0; resize: none; outline: none; font-family: inherit; margin-bottom: 30px; min-height: 60px; }
         .feedback-textarea::placeholder { color: #aaa; }
         
         .feedback-options { display: flex; flex-direction: column; gap: 15px; width: 100%; margin-bottom: 50px; }
         .option-button {
             width: 100%; height: 100px; border: 2px solid #333; border-radius: 12px; background: #fff; cursor: pointer; position: relative; display: flex; justify-content: center; align-items: center;
         }
-        /* 비활성화 버튼 스타일 */
-        .option-button.disabled { background-color: #f0f0f0; border-color: #ddd; color: #aaa; cursor: not-allowed; }
-
         .option-placeholder { display: flex; flex-direction: column; align-items: center; font-size: 24px; font-weight: 700; }
         .plus { font-size: 20px; margin-top: 5px; font-weight: 400; }
+        
         .image-upload-input { display: none; }
 
-        .share-button { width: 100%; padding: 15px 0; background-color: #D9D9D9; color: #fff; border: none; border-radius: 30px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: auto; }
+        .share-button {
+            width: 100%; padding: 15px 0; background-color: #D9D9D9; color: #fff; border: none; border-radius: 30px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: auto;
+        }
         .share-button.active { background-color: #333; color: #fff; }
 
         /* Footer */
@@ -273,7 +272,7 @@
         <p class="description">지금부터,<br>위크릿에서 계원인들과<br>피드백을 주고 받아 보세요!</p>
         <div class="btn-group">
             <button class="btn-common" onclick="goToPage('page-4')">피드백 하러 가기</button>
-            <button class="btn-common" onclick="goToPage('page-8')">피드백 받으러 가기</button>
+            <button class="btn-common" onclick="alert('준비 중입니다!')">피드백 받으러 가기</button>
         </div>
     </section>
 
@@ -368,20 +367,25 @@
 
 
     <section id="page-8" class="page" style="justify-content: flex-start; padding-top: 20px;">
+        
         <div class="image-scroll-container">
             <div class="image-wrapper" id="imageWrapper"></div>
         </div>
-        
+
         <textarea class="feedback-textarea" id="feedbackTextarea" placeholder="받고 싶은 피드백을 적어주세요..." rows="2"></textarea>
         
         <div class="feedback-options">
-            <button class="option-button" id="btnOptionA" data-option="A">
+            <button class="option-button" data-option="A">
                 <input type="file" class="image-upload-input" accept="image/*" id="uploadA" data-option="A">
-                <div class="option-placeholder"><span>A</span><span class="plus">+</span></div>
+                <div class="option-placeholder">
+                    <span>A</span><span class="plus">+</span>
+                </div>
             </button>
-            <button class="option-button" id="btnOptionB" data-option="B">
+            <button class="option-button" data-option="B">
                 <input type="file" class="image-upload-input" accept="image/*" id="uploadB" data-option="B">
-                <div class="option-placeholder"><span>B</span><span class="plus">+</span></div>
+                <div class="option-placeholder">
+                    <span>B</span><span class="plus">+</span>
+                </div>
             </button>
         </div>
 
@@ -402,10 +406,10 @@
 </div>
 
 <script>
-/* ==========================================
-   🔴 중요: 아래 주소를 본인의 배포 URL로 바꾸세요! 🔴
+  /* ==========================================
+   🔴 [중요] 방금 "새 배포"로 받은 URL을 여기에 넣으세요! 🔴
    ========================================== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyEJWYNd2rjD7WOYtBxzgzHIxNdqYi3D3efmk5pqTfH5WZtY973H1LVW1eQmRt-ldPp/exec"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxb-kcj7MKLZZkYQJWRnzn3YIAPysecMj-8v-MrJJczR1Yls8TvpUkQuFwBV7bYQhlA6A/exec"; 
 
 
 /* =====================
@@ -413,17 +417,15 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyEJWYNd2rjD7WOYtBxz
    ===================== */
 let historyStack = [];
 let currentUser = { nickname: "", major: "" };
-// 업로드할 파일 데이터를 담을 객체
 const fileData = { A: null, B: null };
 
 
 /* =====================
-   2. 페이지 이동 (SPA) 관련
+   2. 페이지 이동 (SPA)
    ===================== */
 function goToPage(pageId) {
     const activePage = document.querySelector('.page.active');
     if (activePage && activePage.id !== 'page-1') { historyStack.push(activePage.id); }
-    
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
     window.scrollTo(0, 0);
@@ -447,21 +449,15 @@ function updateUI(pageId) {
     const fab = document.getElementById('fab-write');
     const title = document.getElementById('page-title');
 
-    // 뒤로가기 화살표 (3페이지부터)
     if (['page-3', 'page-4', 'page-5', 'page-6', 'page-7', 'page-8'].includes(pageId)) {
         arrow.style.display = 'block';
     } else {
         arrow.style.display = 'none';
     }
 
-    // 플로팅 버튼 (5페이지)
     if (pageId === 'page-5') { fab.style.display = 'flex'; } else { fab.style.display = 'none'; }
-    
-    // 타이틀 (8페이지)
     if (pageId === 'page-8') { title.style.display = 'block'; } else { title.style.display = 'none'; }
 }
-
-// 초기 실행
 updateUI('page-1');
 
 
@@ -513,24 +509,23 @@ function submitComment() {
 
 
 /* =====================
-   4. ✨ [Page 8] 게시물 작성 & 구글 시트 전송 ✨
+   4. ✨ [핵심] 게시물 작성 & 구글 전송 ✨
    ===================== */
 const textarea = document.getElementById('feedbackTextarea');
 const shareButton = document.querySelector('.share-button');
 const imageWrapper = document.getElementById('imageWrapper');
 
-// 텍스트 영역 확장
+// 텍스트 확장
 textarea.addEventListener('focus', () => { textarea.rows = 8; });
 textarea.addEventListener('blur', () => { if (textarea.value.trim() === '') { textarea.rows = 2; } });
 
-// A/B 버튼 클릭 시
+// 파일 선택 버튼 연결
 const optionButtons = document.querySelectorAll('.option-button');
 const uploadInputs = document.querySelectorAll('.image-upload-input');
 
 optionButtons.forEach(button => {
     button.addEventListener('click', (e) => {
         const option = button.getAttribute('data-option');
-        // 이미지가 이미 있으면 업로드 막기
         if (fileData[option]) {
             alert('이미지가 이미 등록되었습니다. 삭제 후 다시 시도해주세요.');
             return;
@@ -539,7 +534,7 @@ optionButtons.forEach(button => {
     });
 });
 
-// 파일 선택 & 미리보기 & 데이터 저장 (Base64)
+// 파일 처리 (Base64 변환)
 uploadInputs.forEach(input => {
     input.addEventListener('change', (event) => {
         const file = event.target.files[0];
@@ -547,14 +542,11 @@ uploadInputs.forEach(input => {
         
         if (file && !fileData[option]) {
             const reader = new FileReader();
-            
             reader.onload = (e) => {
-                // 구글로 보낼 데이터 저장 (Base64)
                 const base64String = e.target.result.split(',')[1]; 
                 const mimeType = file.type;
                 fileData[option] = { data: base64String, mimeType: mimeType };
 
-                // 화면에 미리보기 표시
                 const previewDiv = document.createElement('div');
                 previewDiv.className = 'preview-item';
                 previewDiv.dataset.optionRef = option;
@@ -562,7 +554,6 @@ uploadInputs.forEach(input => {
                 const mainImg = document.createElement('img');
                 mainImg.src = e.target.result;
                 
-                // 삭제(휴지통) 버튼
                 const trashBtn = document.createElement('button');
                 trashBtn.className = 'delete-img-btn';
                 trashBtn.innerHTML = '🗑️';
@@ -571,10 +562,8 @@ uploadInputs.forEach(input => {
                     evt.stopPropagation();
                     if (confirm('사진을 삭제하시겠습니까?')) {
                         imageWrapper.removeChild(previewDiv);
-                        fileData[option] = null; // 데이터 삭제
+                        fileData[option] = null;
                         document.getElementById(`upload${option}`).value = '';
-                        
-                        // 버튼 다시 활성화
                         document.getElementById(`btnOption${option}`).classList.remove('disabled');
                         checkFormValidity();
                     }
@@ -583,8 +572,6 @@ uploadInputs.forEach(input => {
                 previewDiv.appendChild(mainImg);
                 previewDiv.appendChild(trashBtn);
                 imageWrapper.appendChild(previewDiv);
-                
-                // 버튼 비활성화 (이미지 들어갔음 표시)
                 document.getElementById(`btnOption${option}`).classList.add('disabled');
                 checkFormValidity();
             };
@@ -593,11 +580,9 @@ uploadInputs.forEach(input => {
     });
 });
 
-// 유효성 검사 (글 + 사진 최소 1장)
 function checkFormValidity() {
     const isTextareaFilled = textarea.value.trim().length > 0;
     const isOptionImageUploaded = fileData.A !== null || fileData.B !== null;
-    
     if (isTextareaFilled && isOptionImageUploaded) {
         shareButton.classList.add('active');
         shareButton.disabled = false;
@@ -606,57 +591,50 @@ function checkFormValidity() {
         shareButton.disabled = true;
     }
 }
-
 textarea.addEventListener('input', checkFormValidity);
 
 // 🚀 [전송] 공유하기 버튼 클릭
 shareButton.addEventListener('click', () => {
     if (!shareButton.classList.contains('active')) return;
 
-    // 버튼 로딩 상태로 변경
     const originalText = shareButton.innerText;
     shareButton.innerText = "업로드 중...";
     shareButton.disabled = true;
 
-    // 보낼 데이터 포장
     const payload = {
         nickname: currentUser.nickname || "익명",
         major: currentUser.major || "미선택",
         question: textarea.value,
-        imageA: fileData.A, // Base64
-        imageB: fileData.B  // Base64
+        imageA: fileData.A,
+        imageB: fileData.B
     };
 
-    // 구글 앱스 스크립트로 전송
+    // fetch 전송 (CORS 에러 확인을 위해 no-cors 제거함)
     fetch(SCRIPT_URL, {
         method: 'POST',
-        mode: 'no-cors', // CORS 우회
-        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(payload)
     })
-    .then(response => {
-        // 성공 처리
-        alert('게시물이 성공적으로 공유되었습니다!');
-        
-        // 화면 초기화
-        imageWrapper.innerHTML = '';
-        textarea.value = '';
-        fileData.A = null; 
-        fileData.B = null;
-        
-        // 버튼들 원상복구
-        document.getElementById('btnOptionA').classList.remove('disabled');
-        document.getElementById('btnOptionB').classList.remove('disabled');
-        
+    .then(response => response.json())
+    .then(data => {
+        if (data.result === 'success') {
+            alert('게시물이 성공적으로 공유되었습니다!');
+            imageWrapper.innerHTML = '';
+            textarea.value = '';
+            fileData.A = null; 
+            fileData.B = null;
+            document.getElementById('btnOptionA').classList.remove('disabled');
+            document.getElementById('btnOptionB').classList.remove('disabled');
+            checkFormValidity();
+            goToPage('page-5');
+        } else {
+            alert('오류 발생: ' + data.message);
+        }
         shareButton.innerText = originalText;
-        checkFormValidity();
-        
-        // 목록 페이지로 이동
-        goToPage('page-5');
+        shareButton.disabled = false;
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('업로드 중 오류가 발생했습니다. 관리자에게 문의하세요.');
+        alert('전송 실패! (권한 문제일 수 있습니다. 앱스 스크립트 배포 설정을 "모든 사용자"로 확인해주세요.)');
         shareButton.innerText = originalText;
         shareButton.disabled = false;
     });
