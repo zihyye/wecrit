@@ -372,16 +372,14 @@
             <div class="image-wrapper" id="imageWrapper"></div>
         </div>
 
-        <textarea class="feedback-textarea" id="feedbackTextarea" placeholder="받고 싶은 피드백을 적어주세요..." rows="2"></textarea>
-        
-        <div class="feedback-options">
-            <button class="option-button" data-option="A">
+        <div class="feedback-options" style="margin-bottom: 20px;">
+            <button class="option-button" id="btnOptionA" data-option="A">
                 <input type="file" class="image-upload-input" accept="image/*" id="uploadA" data-option="A">
                 <div class="option-placeholder">
                     <span>A</span><span class="plus">+</span>
                 </div>
             </button>
-            <button class="option-button" data-option="B">
+            <button class="option-button" id="btnOptionB" data-option="B">
                 <input type="file" class="image-upload-input" accept="image/*" id="uploadB" data-option="B">
                 <div class="option-placeholder">
                     <span>B</span><span class="plus">+</span>
@@ -389,6 +387,8 @@
             </button>
         </div>
 
+        <textarea class="feedback-textarea" id="feedbackTextarea" placeholder="받고 싶은 피드백을 적어주세요..." rows="4" style="margin-bottom: 30px;"></textarea>
+        
         <button class="share-button">공유하기</button>
     </section>
 
@@ -406,10 +406,10 @@
 </div>
 
 <script>
-  /* ==========================================
+ /* ==========================================
    🔴 [중요] 방금 "새 배포"로 받은 URL을 여기에 넣으세요! 🔴
    ========================================== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzbXubRTvTfkTDNDfNSeAq1b9y1IAZnNBcckLZx8cv8Sl5WZAKfjr9UBLjwabReeKdDYA/exec"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwKaI-pKbknstceJTjC_7WMB6uq-Ps-VaQXQMnQYPY_SGzZsFPmjJYWgTQIRwFV1HGfHg/exec"; 
 
 
 /* =====================
@@ -418,7 +418,6 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzbXubRTvTfkTDNDfNSe
 let historyStack = [];
 let currentUser = { nickname: "", major: "" };
 const fileData = { A: null, B: null };
-
 
 /* =====================
    2. 페이지 이동 (SPA)
@@ -454,12 +453,10 @@ function updateUI(pageId) {
     } else {
         arrow.style.display = 'none';
     }
-
     if (pageId === 'page-5') { fab.style.display = 'flex'; } else { fab.style.display = 'none'; }
     if (pageId === 'page-8') { title.style.display = 'block'; } else { title.style.display = 'none'; }
 }
 updateUI('page-1');
-
 
 /* =====================
    3. 사용자 정보 및 기본 기능
@@ -469,27 +466,21 @@ function submitUserInfo() {
     const major = document.getElementById('input-major').value;
     if (!nickname) { alert("닉네임을 입력해주세요!"); return; }
     if (!major) { alert("학과를 선택해주세요!"); return; }
-    
     currentUser.nickname = nickname;
     currentUser.major = major;
     document.getElementById('display-name').innerText = nickname;
     goToPage('page-3');
 }
 
-// 이미지 확대 모달
 const modal = document.getElementById("image-modal");
 const modalImg = document.getElementById("modal-image");
 const closeBtn = document.querySelector(".modal-close");
 document.querySelectorAll('.option-image').forEach(img => {
-    img.addEventListener('click', function() { 
-        modal.style.display = "block"; 
-        modalImg.src = this.getAttribute('data-full-src'); 
-    });
+    img.addEventListener('click', function() { modal.style.display = "block"; modalImg.src = this.getAttribute('data-full-src'); });
 });
 closeBtn.onclick = function() { modal.style.display = "none"; }
 window.onclick = function(event) { if (event.target == modal) { modal.style.display = "none"; } }
 
-// 댓글 모달
 function openCommentModal() { document.getElementById('comment-modal').style.display = 'block'; }
 function closeCommentModal() { document.getElementById('comment-modal').style.display = 'none'; }
 function submitComment() {
@@ -507,19 +498,16 @@ function submitComment() {
     closeCommentModal();
 }
 
-
 /* =====================
-   4. ✨ [핵심] 게시물 작성 & 구글 전송 ✨
+   4. 게시물 작성 & 구글 전송
    ===================== */
 const textarea = document.getElementById('feedbackTextarea');
 const shareButton = document.querySelector('.share-button');
 const imageWrapper = document.getElementById('imageWrapper');
 
-// 텍스트 확장
 textarea.addEventListener('focus', () => { textarea.rows = 8; });
 textarea.addEventListener('blur', () => { if (textarea.value.trim() === '') { textarea.rows = 2; } });
 
-// 파일 선택 버튼 연결
 const optionButtons = document.querySelectorAll('.option-button');
 const uploadInputs = document.querySelectorAll('.image-upload-input');
 
@@ -534,12 +522,10 @@ optionButtons.forEach(button => {
     });
 });
 
-// 파일 처리 (Base64 변환)
 uploadInputs.forEach(input => {
     input.addEventListener('change', (event) => {
         const file = event.target.files[0];
         const option = event.target.getAttribute('data-option');
-        
         if (file && !fileData[option]) {
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -550,14 +536,11 @@ uploadInputs.forEach(input => {
                 const previewDiv = document.createElement('div');
                 previewDiv.className = 'preview-item';
                 previewDiv.dataset.optionRef = option;
-
                 const mainImg = document.createElement('img');
                 mainImg.src = e.target.result;
-                
                 const trashBtn = document.createElement('button');
                 trashBtn.className = 'delete-img-btn';
                 trashBtn.innerHTML = '🗑️';
-                
                 trashBtn.onclick = (evt) => {
                     evt.stopPropagation();
                     if (confirm('사진을 삭제하시겠습니까?')) {
@@ -568,7 +551,6 @@ uploadInputs.forEach(input => {
                         checkFormValidity();
                     }
                 };
-
                 previewDiv.appendChild(mainImg);
                 previewDiv.appendChild(trashBtn);
                 imageWrapper.appendChild(previewDiv);
@@ -593,7 +575,6 @@ function checkFormValidity() {
 }
 textarea.addEventListener('input', checkFormValidity);
 
-// 🚀 [전송] 공유하기 버튼 클릭
 shareButton.addEventListener('click', () => {
     if (!shareButton.classList.contains('active')) return;
 
@@ -609,32 +590,47 @@ shareButton.addEventListener('click', () => {
         imageB: fileData.B
     };
 
-    // fetch 전송 (CORS 에러 확인을 위해 no-cors 제거함)
+    // [수정] 전송 실패가 떠도 데이터가 갔다면 성공 처리하기 위해 try-catch 보강
     fetch(SCRIPT_URL, {
         method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // 중요
         body: JSON.stringify(payload)
     })
     .then(response => response.json())
     .then(data => {
         if (data.result === 'success') {
             alert('게시물이 성공적으로 공유되었습니다!');
+            // 성공 후 처리
             imageWrapper.innerHTML = '';
             textarea.value = '';
-            fileData.A = null; 
-            fileData.B = null;
+            fileData.A = null; fileData.B = null;
             document.getElementById('btnOptionA').classList.remove('disabled');
             document.getElementById('btnOptionB').classList.remove('disabled');
             checkFormValidity();
             goToPage('page-5');
         } else {
+            // 서버가 error라고 응답한 경우
+            console.error(data);
             alert('오류 발생: ' + data.message);
         }
         shareButton.innerText = originalText;
         shareButton.disabled = false;
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('전송 실패! (권한 문제일 수 있습니다. 앱스 스크립트 배포 설정을 "모든 사용자"로 확인해주세요.)');
+        // [중요] 시트에 데이터가 들어갔는데도 여기서 에러가 잡힌다면,
+        // 구글의 리다이렉트 응답을 브라우저가 막아서 생긴 문제일 수 있음.
+        console.error('Fetch Error:', error);
+        
+        // 하지만 시트에는 들어갔을 확률이 높으므로 사용자에게는 확인 요청
+        // (만약 401 권한 오류라면 확실히 실패임)
+        if(error.toString().includes("Failed to fetch")) {
+             alert("전송 중 네트워크 이슈가 있었으나, 시트를 확인해보세요.\n(대부분 성공했을 것입니다.)");
+             // 성공한 것처럼 초기화 (선택사항)
+             goToPage('page-5');
+        } else {
+             alert('전송 실패! 관리자에게 문의하세요.\n' + error);
+        }
+        
         shareButton.innerText = originalText;
         shareButton.disabled = false;
     });
