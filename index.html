@@ -378,10 +378,10 @@
 </div>
 
 <script>
-  /* ==========================================
-     🔴 [중요] 방금 "새 배포"로 받은 URL을 여기에 넣으세요! 🔴
-     ========================================== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxHzisYpBCZP6ubv9ob909s0YYDXyM57OVL7zYj4He7uC3ESfv53LSD_KYrCxWxMFC_4g/exec"; 
+/* ==========================================
+   🔴 [중요] 방금 "새 배포"로 받은 URL을 여기에 넣으세요! 🔴
+   ========================================== */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxmabXuawhb5zmf1Qhug-Mm3gJSkWVpIBzyPmqAeGCnt5GeTWRsj68eXKNVsahTpfP9Ng/exec"; 
 
 
 /* =====================
@@ -391,7 +391,6 @@ let historyStack = [];
 let currentUser = { nickname: "", major: "" };
 const fileData = { A: null, B: null };
 let currentPostId = null;
-// 3번 요청: 초기 게시물 데이터 삭제 (빈 객체로 시작)
 const voteCounts = {}; 
 
 
@@ -410,9 +409,8 @@ function goToPage(pageId) {
 function goBack() {
     if (historyStack.length > 0) {
         const prevPage = historyStack.pop();
-        // Page 4가 삭제되었으므로 history에 남아있다면 건너뛰기
         if (prevPage === 'page-4') {
-            goBack(); // 재귀 호출로 한번 더 뒤로 감
+            goBack();
             return;
         }
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -420,7 +418,6 @@ function goBack() {
         window.scrollTo(0, 0);
         updateUI(prevPage);
     } else {
-        // 뒤로 갈 곳이 없으면 Page 3(홈)으로 이동
         goToPage('page-3');
     }
 }
@@ -430,7 +427,6 @@ function updateUI(pageId) {
     const fab = document.getElementById('fab-write');
     const title = document.getElementById('page-title');
 
-    // Page 4 삭제로 인한 목록 수정
     if (['page-3', 'page-5', 'page-6', 'page-7', 'page-8'].includes(pageId)) {
         arrow.style.display = 'block';
     } else {
@@ -449,40 +445,43 @@ updateUI('page-1');
 function openVotePage(postId, question, imgASrc, imgBSrc) {
     currentPostId = postId;
 
-    // 질문 설정
     const questionEl = document.getElementById('vote-question');
     if (questionEl) questionEl.innerText = question;
 
-    // A/B 이미지 설정
     const imgAEl = document.getElementById('vote-img-a');
     const imgBEl = document.getElementById('vote-img-b');
     const optionA = document.querySelector('.option-a');
     const optionB = document.querySelector('.option-b');
 
-    // A 이미지
+    // A 이미지 (URL 또는 base64)
     if (imgASrc) {
-        const src = (typeof imgASrc === 'object' && imgASrc.data) ? `data:${imgASrc.mimeType};base64,${imgASrc.data}` : imgASrc;
+        const src = imgASrc.url || 
+                   (imgASrc.data ? `data:${imgASrc.mimeType};base64,${imgASrc.data}` : imgASrc);
         imgAEl.src = src;
         imgAEl.setAttribute('data-full-src', src);
         optionA.style.display = 'flex';
-    } else { optionA.style.display = 'none'; }
+    } else { 
+        optionA.style.display = 'none'; 
+    }
 
-    // B 이미지
+    // B 이미지 (URL 또는 base64)
     if (imgBSrc) {
-        const src = (typeof imgBSrc === 'object' && imgBSrc.data) ? `data:${imgBSrc.mimeType};base64,${imgBSrc.data}` : imgBSrc;
+        const src = imgBSrc.url || 
+                   (imgBSrc.data ? `data:${imgBSrc.mimeType};base64,${imgBSrc.data}` : imgBSrc);
         imgBEl.src = src;
         imgBEl.setAttribute('data-full-src', src);
         optionB.style.display = 'flex';
-    } else { optionB.style.display = 'none'; }
+    } else { 
+        optionB.style.display = 'none'; 
+    }
 
-    // 결과 페이지 이미지도 미리 설정
     const resA = document.getElementById('result-img-a');
     const resB = document.getElementById('result-img-b');
-    resA.src = imgAEl.src; resA.setAttribute('data-full-src', imgAEl.src);
-    resB.src = imgBEl.src; resB.setAttribute('data-full-src', imgBEl.src);
+    resA.src = imgAEl.src; 
+    resA.setAttribute('data-full-src', imgAEl.src);
+    resB.src = imgBEl.src; 
+    resB.setAttribute('data-full-src', imgBEl.src);
 
-
-    // 투표 여부 확인 후 페이지 분기
     const storageKey = 'voted_' + currentPostId;
     if (localStorage.getItem(storageKey)) {
         updateResultGraph(); 
@@ -498,22 +497,35 @@ function submitVote(selection) {
     const storageKey = 'voted_' + currentPostId;
     if (localStorage.getItem(storageKey)) { return; }
 
-    // 투표 처리
     localStorage.setItem(storageKey, 'true'); 
     
     if (!voteCounts[currentPostId]) voteCounts[currentPostId] = { A: 0, B: 0 };
     voteCounts[currentPostId][selection]++;
 
+    // 서버에 투표 저장
     fetch(SCRIPT_URL, {
         method: 'POST',
-        body: JSON.stringify({ action: 'vote', id: currentPostId, select: selection })
-    }).catch(err => console.log('Vote sync error (Demo mode):', err));
+        body: JSON.stringify({ 
+            action: 'vote', 
+            id: currentPostId, 
+            select: selection 
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.result === 'success') {
+            console.log('투표가 서버에 저장되었습니다.');
+        }
+    })
+    .catch(err => console.error('투표 저장 오류:', err));
 
     updateResultGraph();
     goToPage('page-7');
     
     const lastIdx = historyStack.length - 1;
-    if (historyStack[lastIdx] === 'page-6') { historyStack.splice(lastIdx, 1); }
+    if (historyStack[lastIdx] === 'page-6') { 
+        historyStack.splice(lastIdx, 1); 
+    }
 }
 
 function updateResultGraph() {
@@ -568,8 +580,6 @@ const modal = document.getElementById("image-modal");
 const modalImg = document.getElementById("modal-image");
 const closeBtn = document.querySelector(".modal-close");
 
-// 동적으로 생성된 이미지에도 이벤트 적용을 위해 위임 방식이나 생성 시점 바인딩이 필요하지만,
-// 여기서는 간단히 클릭 시점 로직을 유지합니다.
 document.addEventListener('click', function(e) {
     if(e.target.classList.contains('option-image')) {
         modal.style.display = "block"; 
@@ -685,7 +695,6 @@ textarea.addEventListener('input', checkFormValidity);
 function addNewPostToBoard(postId, question, imgA, imgB) {
     const list = document.querySelector('#page-5 .post-list');
     
-    // 빈 상태 메시지 제거
     const emptyMsg = list.querySelector('.empty-message');
     if (emptyMsg) emptyMsg.remove();
 
@@ -716,7 +725,7 @@ shareButton.addEventListener('click', () => {
     if (!shareButton.classList.contains('active')) return;
 
     const originalText = shareButton.innerText;
-    shareButton.innerText = "업로드 중...";
+    shareButton.innerText = "업로드 중…";
     shareButton.disabled = true;
 
     const newPostId = 'post_' + Date.now();
@@ -756,6 +765,76 @@ shareButton.addEventListener('click', () => {
         
         goToPage('page-5');
     });
+});
+
+
+/* =====================
+   6. 게시물 불러오기 (새로 추가!)
+   ===================== */
+async function loadPostsFromSheet() {
+    try {
+        const response = await fetch(SCRIPT_URL);
+        const posts = await response.json();
+        
+        const list = document.querySelector('#page-5 .post-list');
+        const emptyMsg = list.querySelector('.empty-message');
+        
+        if (posts.length === 0) {
+            if (!emptyMsg) {
+                list.innerHTML = '<div class="empty-message">등록된 피드백 요청이 없습니다.<br>첫 번째 게시물을 올려보세요!</div>';
+            }
+            return;
+        }
+        
+        if (emptyMsg) emptyMsg.remove();
+        list.innerHTML = '';
+        
+        posts.forEach(post => {
+            voteCounts[post.id] = {
+                A: parseInt(post.voteA) || 0,
+                B: parseInt(post.voteB) || 0
+            };
+            
+            const imgA = post.imgA ? { mimeType: 'image/jpeg', data: null, url: post.imgA } : null;
+            const imgB = post.imgB ? { mimeType: 'image/jpeg', data: null, url: post.imgB } : null;
+            
+            addExistingPostToBoard(post.id, post.question, imgA, imgB);
+        });
+        
+    } catch (error) {
+        console.error('게시물 로딩 오류:', error);
+    }
+}
+
+function addExistingPostToBoard(postId, question, imgA, imgB) {
+    const list = document.querySelector('#page-5 .post-list');
+    
+    const article = document.createElement('article');
+    article.className = 'post-item special-bg';
+    
+    article.onclick = function() { 
+        openVotePage(postId, question, imgA, imgB); 
+    };
+
+    let imagesHtml = '';
+    const srcA = imgA ? (imgA.url || `data:${imgA.mimeType};base64,${imgA.data}`) : null;
+    const srcB = imgB ? (imgB.url || `data:${imgB.mimeType};base64,${imgB.data}`) : null;
+
+    if (srcA && srcB) {
+        imagesHtml = `<img src="${srcA}" class="w-50"><img src="${srcB}" class="w-50">`;
+    } else if (srcA) {
+        imagesHtml = `<img src="${srcA}" style="width:100%; height:100%; object-fit:cover;">`;
+    } else if (srcB) {
+        imagesHtml = `<img src="${srcB}" style="width:100%; height:100%; object-fit:cover;">`;
+    }
+
+    article.innerHTML = `<div class="image-row">${imagesHtml}</div><div class="title-box gray-box">${question}</div>`;
+    list.appendChild(article);
+}
+
+// 페이지 로드 시 게시물 불러오기
+window.addEventListener('DOMContentLoaded', () => {
+    loadPostsFromSheet();
 });
 </script>
 
