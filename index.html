@@ -381,7 +381,7 @@
 /* ==========================================
    🔴 [중요] 방금 "새 배포"로 받은 URL을 여기에 넣으세요! 🔴
    ========================================== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxh_GuSmxkCOOuX8araVHaIcehaKLz_o6HGwvhB7873flef7I2JrBOLrOw7g-VySFJvIQ/exec"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby9Oly12XW-C4l7DvsYc_oaOorUVj0jiEQvA482rgYkrhMA6toPnEAjxwN4JK-CqI96vA/exec"; 
 
 
 /* =====================
@@ -453,24 +453,32 @@ function openVotePage(postId, question, imgASrc, imgBSrc) {
     const optionA = document.querySelector('.option-a');
     const optionB = document.querySelector('.option-b');
 
-    // A 이미지 (URL 또는 base64)
+    // A 이미지 (문자열 URL 또는 객체)
     if (imgASrc) {
-        const src = imgASrc.url || 
-                   (imgASrc.data ? `data:${imgASrc.mimeType};base64,${imgASrc.data}` : imgASrc);
-        imgAEl.src = src;
-        imgAEl.setAttribute('data-full-src', src);
-        optionA.style.display = 'flex';
+        const src = typeof imgASrc === 'string' ? imgASrc : 
+                   (imgASrc.url || (imgASrc.data ? `data:${imgASrc.mimeType};base64,${imgASrc.data}` : null));
+        if (src) {
+            imgAEl.src = src;
+            imgAEl.setAttribute('data-full-src', src);
+            optionA.style.display = 'flex';
+        } else {
+            optionA.style.display = 'none';
+        }
     } else { 
         optionA.style.display = 'none'; 
     }
 
-    // B 이미지 (URL 또는 base64)
+    // B 이미지 (문자열 URL 또는 객체)
     if (imgBSrc) {
-        const src = imgBSrc.url || 
-                   (imgBSrc.data ? `data:${imgBSrc.mimeType};base64,${imgBSrc.data}` : imgBSrc);
-        imgBEl.src = src;
-        imgBEl.setAttribute('data-full-src', src);
-        optionB.style.display = 'flex';
+        const src = typeof imgBSrc === 'string' ? imgBSrc : 
+                   (imgBSrc.url || (imgBSrc.data ? `data:${imgBSrc.mimeType};base64,${imgBSrc.data}` : null));
+        if (src) {
+            imgBEl.src = src;
+            imgBEl.setAttribute('data-full-src', src);
+            optionB.style.display = 'flex';
+        } else {
+            optionB.style.display = 'none';
+        }
     } else { 
         optionB.style.display = 'none'; 
     }
@@ -484,7 +492,8 @@ function openVotePage(postId, question, imgASrc, imgBSrc) {
 
     const storageKey = 'voted_' + currentPostId;
     if (localStorage.getItem(storageKey)) {
-        updateResultGraph(); 
+        updateResultGraph();
+        loadComments(postId); // 🔵 댓글 로드
         goToPage('page-7');
     } else {
         goToPage('page-6');
@@ -520,6 +529,7 @@ function submitVote(selection) {
     .catch(err => console.error('투표 저장 오류:', err));
 
     updateResultGraph();
+    loadComments(currentPostId); // 🔵 댓글 로드
     goToPage('page-7');
     
     const lastIdx = historyStack.length - 1;
@@ -591,21 +601,100 @@ closeBtn.onclick = function() { modal.style.display = "none"; }
 window.onclick = function(event) { if (event.target == modal) { modal.style.display = "none"; } }
 
 // 댓글 모달
-function openCommentModal() { document.getElementById('comment-modal').style.display = 'block'; }
-function closeCommentModal() { document.getElementById('comment-modal').style.display = 'none'; }
-function submitComment() {
+function openCommentModal() { 
+    document.getElementById('comment-modal').style.display = 'block'; 
+}
+
+function closeCommentModal() { 
+    document.getElementById('comment-modal').style.display = 'none'; 
+}
+
+// 🔵 댓글 저장 함수
+async function submitComment() {
     const nicknameInput = document.getElementById('new-comment-nickname');
     const textInput = document.getElementById('new-comment-text');
     const nickname = nicknameInput.value.trim() !== "" ? nicknameInput.value : "익명";
     const text = textInput.value.trim();
-    if (text === "") { alert("댓글 내용을 입력해주세요!"); return; }
+    
+    if (text === "") { 
+        alert("댓글 내용을 입력해주세요!"); 
+        return; 
+    }
+    
+    if (!currentPostId) {
+        alert("게시물 정보를 찾을 수 없습니다.");
+        return;
+    }
+    
+    // 로컬에 댓글 추가 (즉시 표시)
     const commentList = document.getElementById('comment-list');
     const newCommentDiv = document.createElement('div');
     newCommentDiv.classList.add('comment-item');
     newCommentDiv.innerHTML = `<div class="comment-user">${nickname}</div><div class="comment-text">${text}</div><hr class="comment-hr">`;
     commentList.prepend(newCommentDiv);
-    nicknameInput.value = ""; textInput.value = "";
+    
+    // 서버에 댓글 저장
+    try {
+        const response = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: 'comment',
+                postId: currentPostId,
+                nickname: nickname,
+                text: text
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.result === 'success') {
+            console.log('댓글이 서버에 저장되었습니다.');
+        } else {
+            console.error('댓글 저장 실패:', result.message);
+        }
+    } catch (error) {
+        console.error('댓글 저장 오류:', error);
+    }
+    
+    // 입력창 초기화 및 모달 닫기
+    nicknameInput.value = ""; 
+    textInput.value = "";
     closeCommentModal();
+}
+
+// 🔵 댓글 불러오기 함수
+async function loadComments(postId) {
+    try {
+        const response = await fetch(`${SCRIPT_URL}?action=getComments&postId=${postId}`);
+        const comments = await response.json();
+        
+        console.log(`댓글 ${comments.length}개 로드됨:`, comments);
+        
+        const commentList = document.getElementById('comment-list');
+        commentList.innerHTML = ''; // 기존 댓글 초기화
+        
+        if (comments.length === 0) {
+            commentList.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">아직 댓글이 없습니다.</div>';
+            return;
+        }
+        
+        // 최신 댓글이 위로 오도록 역순 정렬
+        comments.reverse().forEach(comment => {
+            const commentDiv = document.createElement('div');
+            commentDiv.classList.add('comment-item');
+            commentDiv.innerHTML = `
+                <div class="comment-user">${comment.nickname || '익명'}</div>
+                <div class="comment-text">${comment.text || ''}</div>
+                <hr class="comment-hr">
+            `;
+            commentList.appendChild(commentDiv);
+        });
+        
+    } catch (error) {
+        console.error('댓글 로딩 오류:', error);
+        const commentList = document.getElementById('comment-list');
+        commentList.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">댓글을 불러올 수 없습니다.</div>';
+    }
 }
 
 
@@ -648,6 +737,7 @@ uploadInputs.forEach(input => {
                 const previewDiv = document.createElement('div');
                 previewDiv.className = 'preview-item';
                 previewDiv.dataset.optionRef = option;
+                previewDiv.style.cssText = "position:relative; display:inline-block;";
 
                 const mainImg = document.createElement('img');
                 mainImg.src = e.target.result;
@@ -725,7 +815,7 @@ shareButton.addEventListener('click', () => {
     if (!shareButton.classList.contains('active')) return;
 
     const originalText = shareButton.innerText;
-    shareButton.innerText = "업로드 중…";
+    shareButton.innerText = "업로드 중...";
     shareButton.disabled = true;
 
     const newPostId = 'post_' + Date.now();
@@ -769,12 +859,14 @@ shareButton.addEventListener('click', () => {
 
 
 /* =====================
-   6. 게시물 불러오기 (새로 추가!)
+   6. 게시물 불러오기
    ===================== */
 async function loadPostsFromSheet() {
     try {
         const response = await fetch(SCRIPT_URL);
         const posts = await response.json();
+        
+        console.log('불러온 게시물:', posts);
         
         const list = document.querySelector('#page-5 .post-list');
         const emptyMsg = list.querySelector('.empty-message');
@@ -795,8 +887,10 @@ async function loadPostsFromSheet() {
                 B: parseInt(post.voteB) || 0
             };
             
-            const imgA = post.imgA ? { mimeType: 'image/jpeg', data: null, url: post.imgA } : null;
-            const imgB = post.imgB ? { mimeType: 'image/jpeg', data: null, url: post.imgB } : null;
+            const imgA = post.imgA || null;
+            const imgB = post.imgB || null;
+            
+            console.log(`게시물 ${post.id} 이미지:`, imgA, imgB);
             
             addExistingPostToBoard(post.id, post.question, imgA, imgB);
         });
@@ -817,15 +911,15 @@ function addExistingPostToBoard(postId, question, imgA, imgB) {
     };
 
     let imagesHtml = '';
-    const srcA = imgA ? (imgA.url || `data:${imgA.mimeType};base64,${imgA.data}`) : null;
-    const srcB = imgB ? (imgB.url || `data:${imgB.mimeType};base64,${imgB.data}`) : null;
+    const srcA = imgA;
+    const srcB = imgB;
 
     if (srcA && srcB) {
-        imagesHtml = `<img src="${srcA}" class="w-50"><img src="${srcB}" class="w-50">`;
+        imagesHtml = `<img src="${srcA}" class="w-50" onerror="this.style.display='none'"><img src="${srcB}" class="w-50" onerror="this.style.display='none'">`;
     } else if (srcA) {
-        imagesHtml = `<img src="${srcA}" style="width:100%; height:100%; object-fit:cover;">`;
+        imagesHtml = `<img src="${srcA}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">`;
     } else if (srcB) {
-        imagesHtml = `<img src="${srcB}" style="width:100%; height:100%; object-fit:cover;">`;
+        imagesHtml = `<img src="${srcB}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">`;
     }
 
     article.innerHTML = `<div class="image-row">${imagesHtml}</div><div class="title-box gray-box">${question}</div>`;
