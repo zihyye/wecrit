@@ -673,3 +673,301 @@ async function submitComment() {
             body: JSON.stringify({
                 action: 'comment',
                 postId: currentPostId,
+                nickname: nickname,
+                text: text
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.result === 'success') {
+            console.log('댓글이 서버에 저장되었습니다.');
+        } else {
+            console.error('댓글 저장 실패:', result.message);
+        }
+    } catch (error) {
+        console.error('댓글 저장 오류:', error);
+    }
+    
+    // 입력창 초기화 및 모달 닫기
+    textInput.value = "";
+    closeCommentModal();
+}
+
+// 🔵 댓글 불러오기 함수
+async function loadComments(postId) {
+    try {
+        const response = await fetch(`${SCRIPT_URL}?action=getComments&postId=${postId}`);
+        const comments = await response.json();
+        
+        console.log(`댓글 ${comments.length}개 로드됨:`, comments);
+        
+        const commentList = document.getElementById('comment-list');
+        commentList.innerHTML = '';
+        
+        if (comments.length === 0) {
+            commentList.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">아직 댓글이 없습니다.</div>';
+            return;
+        }
+        
+        comments.reverse().forEach(comment => {
+            const commentDiv = document.createElement('div');
+            commentDiv.classList.add('comment-item');
+            commentDiv.innerHTML = `
+                <div class="comment-user">${comment.nickname || '익명'}</div>
+                <div class="comment-text">${comment.text || ''}</div>
+                <hr class="comment-hr">
+            `;
+            commentList.appendChild(commentDiv);
+        });
+        
+    } catch (error) {
+        console.error('댓글 로딩 오류:', error);
+        const commentList = document.getElementById('comment-list');
+        commentList.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">댓글을 불러올 수 없습니다.</div>';
+    }
+}
+
+
+/* =====================
+   5. 게시물 작성 & 구글 전송
+   ===================== */
+const textarea = document.getElementById('feedbackTextarea');
+const shareButton = document.querySelector('.share-button');
+const imageWrapper = document.getElementById('imageWrapper');
+
+textarea.addEventListener('focus', () => { textarea.rows = 8; });
+textarea.addEventListener('blur', () => { if (textarea.value.trim() === '') { textarea.rows = 4; } });
+
+const optionButtons = document.querySelectorAll('.option-button');
+const uploadInputs = document.querySelectorAll('.image-upload-input');
+
+optionButtons.forEach(button => {
+    button.addEventListener('click', (e) => {
+        const option = button.getAttribute('data-option');
+        if (fileData[option]) {
+            alert('이미지가 이미 등록되었습니다. 삭제 후 다시 시도해주세요.');
+            return;
+        }
+        document.getElementById(`upload${option}`).click();
+    });
+});
+
+uploadInputs.forEach(input => {
+    input.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        const option = event.target.getAttribute('data-option');
+        
+        if (file && !fileData[option]) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const base64String = e.target.result.split(',')[1]; 
+                const mimeType = file.type;
+                fileData[option] = { data: base64String, mimeType: mimeType };
+
+                const previewDiv = document.createElement('div');
+                previewDiv.className = 'preview-item';
+                previewDiv.dataset.optionRef = option;
+                previewDiv.style.cssText = "position:relative; display:inline-block;";
+
+                const mainImg = document.createElement('img');
+                mainImg.src = e.target.result;
+                
+                const trashBtn = document.createElement('button');
+                trashBtn.className = 'delete-img-btn';
+                trashBtn.innerHTML = '🗑️';
+                trashBtn.style.cssText = "position:absolute; bottom:5px; right:5px; border:none; background:rgba(0,0,0,0.5); color:white; border-radius:50%; width:25px; height:25px; cursor:pointer;";
+                
+                trashBtn.onclick = (evt) => {
+                    evt.stopPropagation();
+                    if (confirm('사진을 삭제하시겠습니까?')) {
+                        imageWrapper.removeChild(previewDiv);
+                        fileData[option] = null;
+                        document.getElementById(`upload${option}`).value = '';
+                        document.getElementById(`btnOption${option}`).classList.remove('disabled');
+                        checkFormValidity();
+                    }
+                };
+
+                previewDiv.appendChild(mainImg);
+                previewDiv.appendChild(trashBtn);
+                imageWrapper.appendChild(previewDiv);
+                document.getElementById(`btnOption${option}`).classList.add('disabled');
+                checkFormValidity();
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+});
+
+function checkFormValidity() {
+    const isTextareaFilled = textarea.value.trim().length > 0;
+    const isOptionImageUploaded = fileData.A !== null || fileData.B !== null;
+    if (isTextareaFilled && isOptionImageUploaded) {
+        shareButton.classList.add('active');
+        shareButton.disabled = false;
+    } else {
+        shareButton.classList.remove('active');
+        shareButton.disabled = true;
+    }
+}
+textarea.addEventListener('input', checkFormValidity);
+
+function addNewPostToBoard(postId, question, imgA, imgB) {
+    const list = document.querySelector('#page-5 .post-list');
+    
+    const emptyMsg = list.querySelector('.empty-message');
+    if (emptyMsg) emptyMsg.remove();
+
+    const article = document.createElement('article');
+    article.className = 'post-item special-bg'; 
+    
+    article.onclick = function() { 
+        openVotePage(postId, question, imgA, imgB); 
+    }; 
+
+    let imagesHtml = '';
+    const srcA = imgA ? `data:${imgA.mimeType};base64,${imgA.data}` : null;
+    const srcB = imgB ? `data:${imgB.mimeType};base64,${imgB.data}` : null;
+
+    if (srcA && srcB) {
+        imagesHtml = `<img src="${srcA}" class="w-50"><img src="${srcB}" class="w-50">`;
+    } else if (srcA) {
+        imagesHtml = `<img src="${srcA}" style="width:100%; height:100%; object-fit:cover;">`;
+    } else if (srcB) {
+        imagesHtml = `<img src="${srcB}" style="width:100%; height:100%; object-fit:cover;">`;
+    }
+
+    article.innerHTML = `<div class="image-row">${imagesHtml}</div><div class="title-box gray-box">${question}</div>`;
+    list.prepend(article);
+}
+
+shareButton.addEventListener('click', () => {
+    if (!shareButton.classList.contains('active')) return;
+
+    const originalText = shareButton.innerText;
+    shareButton.innerText = "업로드 중...";
+    shareButton.disabled = true;
+
+    const newPostId = 'post_' + Date.now();
+    addNewPostToBoard(newPostId, textarea.value, fileData.A, fileData.B);
+    voteCounts[newPostId] = { A: 0, B: 0 };
+
+    const payload = {
+        id: newPostId,
+        nickname: currentUser.nickname || "익명",
+        major: currentUser.major || "미선택",
+        question: textarea.value,
+        imageA: fileData.A,
+        imageB: fileData.B
+    };
+
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.result !== 'success') { console.log('Server warning: ' + data.message); }
+    })
+    .catch(error => { console.error('Error:', error); })
+    .finally(() => {
+        alert('게시물이 성공적으로 공유되었습니다!');
+        imageWrapper.innerHTML = '';
+        textarea.value = '';
+        fileData.A = null; 
+        fileData.B = null;
+        document.getElementById('btnOptionA').classList.remove('disabled');
+        document.getElementById('btnOptionB').classList.remove('disabled');
+        checkFormValidity();
+        
+        shareButton.innerText = originalText;
+        shareButton.disabled = false;
+        
+        goToPage('page-5');
+    });
+});
+
+
+/* =====================
+   6. 게시물 불러오기
+   ===================== */
+async function loadPostsFromSheet() {
+    try {
+        const response = await fetch(SCRIPT_URL);
+        const posts = await response.json();
+        
+        console.log('불러온 게시물:', posts);
+        
+        const list = document.querySelector('#page-5 .post-list');
+        const emptyMsg = list.querySelector('.empty-message');
+        
+        if (posts.length === 0) {
+            if (!emptyMsg) {
+                list.innerHTML = '<div class="empty-message">등록된 피드백 요청이 없습니다.<br>첫 번째 게시물을 올려보세요!</div>';
+            }
+            return;
+        }
+        
+        if (emptyMsg) emptyMsg.remove();
+        list.innerHTML = '';
+        
+        posts.forEach(post => {
+            voteCounts[post.id] = {
+                A: parseInt(post.voteA) || 0,
+                B: parseInt(post.voteB) || 0
+            };
+            
+            const imgA = post.imgA || null;
+            const imgB = post.imgB || null;
+            
+            console.log(`게시물 ${post.id} 이미지:`, imgA, imgB);
+            
+            addExistingPostToBoard(post.id, post.question, imgA, imgB);
+        });
+        
+    } catch (error) {
+        console.error('게시물 로딩 오류:', error);
+    }
+}
+
+function addExistingPostToBoard(postId, question, imgA, imgB) {
+    const list = document.querySelector('#page-5 .post-list');
+    
+    const article = document.createElement('article');
+    article.className = 'post-item special-bg';
+    
+    article.onclick = function() { 
+        openVotePage(postId, question, imgA, imgB); 
+    };
+
+    let imagesHtml = '';
+    const srcA = imgA;
+    const srcB = imgB;
+
+    if (srcA && srcB) {
+        imagesHtml = `<img src="${srcA}" class="w-50" onerror="this.style.display='none'"><img src="${srcB}" class="w-50" onerror="this.style.display='none'">`;
+    } else if (srcA) {
+        imagesHtml = `<img src="${srcA}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">`;
+    } else if (srcB) {
+        imagesHtml = `<img src="${srcB}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">`;
+    }
+
+    article.innerHTML = `<div class="image-row">${imagesHtml}</div><div class="title-box gray-box">${question}</div>`;
+    list.appendChild(article);
+}
+
+// 🔵 페이지 로드 시 사용자 정보 확인 및 게시물 불러오기
+window.addEventListener('DOMContentLoaded', () => {
+    // 저장된 사용자 정보 확인
+    if (loadUserInfo()) {
+        // 정보가 있으면 바로 홈 화면으로
+        goToPage('page-3');
+    }
+    // 게시물 불러오기
+    loadPostsFromSheet();
+});
+</script>
+
+</body>
+</html>
