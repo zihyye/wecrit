@@ -94,12 +94,22 @@
            2. 화면별 스타일
            ==================== */
         
-        /* [Page 1~4] */
-        .logo-circle { width: 140px; height: 140px; background-color: #D9D9D9; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-bottom: 40px; }
-        .logo-text { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
-        .main-title { font-size: 32px; font-weight: 800; line-height: 1.3; margin-bottom: 20px; text-align: center; }
+        /* [Page 1] 메인 타이틀 수정 */
+        /* 로고 삭제로 인한 여백 조정 및 폰트 사이즈 확대 */
+        .main-title-large { 
+            font-size: 48px; /* 사이즈 키움 */
+            font-weight: 900; 
+            line-height: 1.2; 
+            margin-bottom: 30px; 
+            text-align: center; 
+            color: #111;
+        }
         .sub-text { font-size: 16px; color: #666; line-height: 1.8; margin-bottom: 60px; text-align: center; }
 
+        /* [Page 2~] */
+        .main-title { font-size: 32px; font-weight: 800; line-height: 1.3; margin-bottom: 20px; text-align: center; }
+        .logo-circle { width: 140px; height: 140px; background-color: #D9D9D9; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-bottom: 40px; }
+        
         .input-group { width: 100%; display: flex; align-items: center; margin-bottom: 15px; padding: 0 20px; }
         .input-group label { width: 60px; font-weight: 600; font-size: 15px; white-space: nowrap; }
         .input-group input, .input-group select { flex: 1; height: 40px; border: none; border-radius: 6px; padding: 0 10px; font-size: 14px; background-color: #fff; outline: none; }
@@ -109,15 +119,15 @@
         .description { font-size: 18px; line-height: 1.5; margin-bottom: 80px; text-align: center; }
         .btn-group { display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center; }
         
-        .menu-grid { display: flex; flex-direction: column; gap: 30px; }
-        .menu-card { background: #fff; width: 160px; height: 160px; border-radius: 20px; border: 1px solid #D9D9D9; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; }
-        .card-icon { width: 48px; height: 48px; stroke: #000; stroke-width: 1.5; fill: none; }
-
         /* [Page 5] 게시판 목록 */
         .tab-header { width: 100%; background: #fff; display: flex; padding: 0 20px; border-bottom: 1px solid #eee; position: sticky; top: 50px; z-index: 10; }
         .tab-item { padding: 15px 5px; margin-right: 20px; color: #888; cursor: pointer; position: relative;}
         .tab-item.active { color: #000; font-weight: 700; }
         .tab-item.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: #000; }
+        
+        /* 게시물이 없을 때 안내 메시지 */
+        .empty-message { text-align: center; color: #888; margin-top: 100px; font-size: 16px; }
+
         .post-list { width: 100%; padding: 20px 0; display: flex; flex-direction: column; gap: 40px; padding-bottom: 100px; }
         .post-item { padding: 0 20px; cursor: pointer; }
         .post-item.special-bg { background-color: #fff; padding-top: 30px; padding-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
@@ -158,15 +168,12 @@
         .option-a, .option-b { flex: 1; display: flex; flex-direction: column; align-items: center; }
         .option-label { font-size: 24px; font-weight: bold; margin-bottom: 15px; color: #333; }
         
-        /* 이미지 스타일 통일 (1:1 비율, 꽉 차게, 확대 가능) */
         .option-image { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; margin-bottom: 20px; cursor: zoom-in; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s; background-color: #eee; }
         
         .select-button { width: 100%; padding: 12px 0; background-color: white; border: 2px solid #333; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .select-button:hover { background-color: #333; color: white; }
         
-        /* 그래프 스타일 수정 (기본 배경을 연하게) */
         .progress-container { width: 100%; height: 50px; display: flex; border-radius: 25px; overflow: hidden; margin-bottom: 40px; font-size: 18px; font-weight: 700; color: #fff; background-color: #eee; }
-        /* 초기 색상은 JS에서 덮어씁니다 */
         .progress-a { width: 50%; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; transition: width 0.5s ease, background-color 0.3s; }
         .progress-b { width: 50%; display: flex; align-items: center; justify-content: flex-end; padding: 0 20px; transition: width 0.5s ease, background-color 0.3s; }
         
@@ -233,8 +240,7 @@
 
 
     <section id="page-1" class="page active">
-        <div class="logo-circle"><span class="logo-text">WECRIT</span></div>
-        <h1 class="main-title">WELCOME<br>TO<br>WECRIT!</h1>
+        <h1 class="main-title-large">WELCOME<br>TO<br>WECRIT!</h1>
         <p class="sub-text">과제 고민,<br>혼자 하고 계신가요?<br>이제는 계원인들에게 물어보세요!</p>
         <button class="btn-common" onclick="goToPage('page-2')">참여하기</button>
     </section>
@@ -278,66 +284,23 @@
         <h2 class="greeting"><span id="display-name">000</span>님 반가워요!👋</h2>
         <p class="description">지금부터,<br>위크릿에서 계원인들과<br>피드백을 주고 받아 보세요!</p>
         <div class="btn-group">
-            <button class="btn-common" onclick="goToPage('page-4')">피드백 하러 가기</button>
-           <button class="btn-common" onclick="goToPage('page-8')">피드백 받으러 가기</button>
+            <button class="btn-common" onclick="goToPage('page-5')">피드백 하러 가기</button>
+            <button class="btn-common" onclick="goToPage('page-8')">피드백 받으러 가기</button>
         </div>
     </section>
 
-
-    <section id="page-4" class="page">
-        <h2 style="margin-bottom:50px;">피드백 공간</h2>
-        <div class="menu-grid">
-            <button class="menu-card" onclick="goToPage('page-5')">
-                <span style="font-weight:700; margin-bottom:15px;">자유피드백</span>
-                <svg class="card-icon" viewBox="0 0 24 24"><path d="M2 12h20L12 2 2 12zm0 0l9 5 11-5-11 9-9-9z"/><path d="M11 17l-5 4"/><path d="M11 17l2 4"/></svg>
-            </button>
-            <button class="menu-card" onclick="alert('사담 게시판은 준비중!')">
-                <span style="font-weight:700; margin-bottom:15px;">사담게시판</span>
-                <svg class="card-icon" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
-            </button>
-        </div>
-    </section>
-
-
-    <!-- ✨ [Page 5] 게시판 목록 ✨ -->
     <section id="page-5" class="page no-padding-top">
         <header class="tab-header">
-            <div class="tab-item active">자유게시판</div>
-            <div class="tab-item">사담게시판</div>
+            <div class="tab-item active" style="width: 100%; text-align: center; border: none;">자유피드백 게시판</div>
         </header>
         <div class="post-list">
-            <article class="post-item" onclick="openVotePage('post_1', '포트폴리오 피드백해주세요~^^', 'https://i.pinimg.com/736x/b9/6b/15/b96b15f2b8ae4e18db863fb1dbc4a4e8.jpg', 'https://i.pinimg.com/736x/f2/11/fe/f211fe46fbc9249221a55265e1ab6936.jpg')">
-                <div class="image-row">
-                    <img src="https://i.pinimg.com/736x/b9/6b/15/b96b15f2b8ae4e18db863fb1dbc4a4e8.jpg" class="w-30">
-                    <img src="https://i.pinimg.com/736x/f2/11/fe/f211fe46fbc9249221a55265e1ab6936.jpg" class="w-30">
-                    <img src="https://i.pinimg.com/1200x/a0/38/a7/a038a78e7f7c6ee79fe4a500c5ea9e86.jpg" class="w-40">
-                </div>
-                <div class="title-box">포트폴리오 피드백해주세요~^^</div>
-            </article>
-
-            <article class="post-item special-bg" onclick="openVotePage('post_2', '로고 시안 피드백해주세요~^^', 'https://i.pinimg.com/1200x/76/db/46/76db46cb650fe3f4cca87f937203830d.jpg', 'https://i.pinimg.com/736x/8b/17/6c/8b176c1b4da11e7c2d50d96c0ad3ba62.jpg')">
-                 <div class="image-row">
-                    <img src="https://i.pinimg.com/1200x/76/db/46/76db46cb650fe3f4cca87f937203830d.jpg" class="w-50">
-                    <img src="https://i.pinimg.com/736x/8b/17/6c/8b176c1b4da11e7c2d50d96c0ad3ba62.jpg" class="w-50">
-                </div>
-                <div class="title-box gray-box">로고 시안 피드백해주세요~^^</div>
-            </article>
-
-            <article class="post-item" onclick="openVotePage('post_3', '졸업작품 피드백 부탁드려요!', 'https://i.pinimg.com/1200x/fd/c5/3e/fdc53e6c395b1f7ad0a49b7f91dbc3d8.jpg', 'https://i.pinimg.com/1200x/9f/c5/f7/9fc5f735b23c44b241a97aadb88ae760.jpg')">
-                <div class="image-row">
-                    <img src="https://i.pinimg.com/1200x/fd/c5/3e/fdc53e6c395b1f7ad0a49b7f91dbc3d8.jpg" class="w-30">
-                    <img src="https://i.pinimg.com/1200x/9f/c5/f7/9fc5f735b23c44b241a97aadb88ae760.jpg" class="w-30">
-                    <img src="https://i.pinimg.com/736x/84/22/6d/84226d5d547112252e86466902fc411d.jpg" class="w-40">
-                </div>
-                <div class="title-box">졸업작품 피드백 부탁드려요!</div>
-            </article>
+            <div class="empty-message">등록된 피드백 요청이 없습니다.<br>첫 번째 게시물을 올려보세요!</div>
         </div>
     </section>
 
     <div class="fab-btn" id="fab-write" onclick="goToPage('page-8')">+</div>
 
 
-    <!-- ✨ [Page 6] 투표 페이지 ✨ -->
     <section id="page-6" class="page">
         <h1 class="main-title">과제 피드백 TIME!</h1>
         <p class="subtitle" id="vote-question">어떤 레이아웃이 더 좋아보이나요?</p>
@@ -356,12 +319,10 @@
         <footer class="footer"><div class="footer-logo">WECRIT</div><p>Kaywon Univ. of Art & Design<br>Copyright © 2024 WECRIT. All rights reserved.</p></footer>
     </section>
 
-    <!-- ✨ [Page 7] 투표 결과 페이지 ✨ -->
     <section id="page-7" class="page">
         <h1 class="main-title">투표 결과</h1>
         <p class="subtitle">소중한 한 표 감사합니다!</p>
         
-        <!-- ✨ 4. 이미지 스타일 수정: Page 6과 동일하게 .option-image 클래스 사용 -->
         <div class="layout-options" style="margin-bottom: 20px;">
             <div class="option-a">
                 <span class="option-label">A</span>
@@ -373,23 +334,18 @@
             </div>
         </div>
         
-        <!-- ✨ 2, 3. 그래프 연동 및 색상 (100% 처리 포함) -->
         <div class="progress-container">
             <div class="progress-a" id="bar-a"><span>A</span><span id="percent-a">50%</span></div>
             <div class="progress-b" id="bar-b"><span>B</span><span id="percent-b">50%</span></div>
         </div>
 
         <div class="comment-section" id="comment-list">
-            <div class="comment-item">
-                <div class="comment-user">당근이</div><div class="comment-text">a시안이 더 있을 좋을거 같아요!</div><hr class="comment-hr">
             </div>
-        </div>
         <button class="btn-comment" onclick="openCommentModal()">댓글 달기</button>
         <footer class="footer"><div class="footer-logo">WECRIT</div><p>Kaywon Univ. of Art & Design<br>Copyright © 2024 WECRIT. All rights reserved.</p></footer>
     </section>
 
 
-    <!-- [Page 8] 새 게시물 작성 -->
     <section id="page-8" class="page" style="justify-content: flex-start; padding-top: 20px;">
         <div class="image-scroll-container">
             <div class="image-wrapper" id="imageWrapper"></div>
@@ -423,8 +379,8 @@
 
 <script>
   /* ==========================================
-    🔴 [중요] 방금 "새 배포"로 받은 URL을 여기에 넣으세요! 🔴
-    ========================================== */
+     🔴 [중요] 방금 "새 배포"로 받은 URL을 여기에 넣으세요! 🔴
+     ========================================== */
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzbXubRTvTfkTDNDfNSeAq1b9y1IAZnNBcckLZx8cv8Sl5WZAKfjr9UBLjwabReeKdDYA/exec"; 
 
 
@@ -435,7 +391,8 @@ let historyStack = [];
 let currentUser = { nickname: "", major: "" };
 const fileData = { A: null, B: null };
 let currentPostId = null;
-const voteCounts = { 'post_1': {A: 12, B: 8}, 'post_2': {A: 5, B: 15}, 'post_3': {A: 20, B: 20} };
+// 3번 요청: 초기 게시물 데이터 삭제 (빈 객체로 시작)
+const voteCounts = {}; 
 
 
 /* =====================
@@ -453,12 +410,18 @@ function goToPage(pageId) {
 function goBack() {
     if (historyStack.length > 0) {
         const prevPage = historyStack.pop();
+        // Page 4가 삭제되었으므로 history에 남아있다면 건너뛰기
+        if (prevPage === 'page-4') {
+            goBack(); // 재귀 호출로 한번 더 뒤로 감
+            return;
+        }
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(prevPage).classList.add('active');
         window.scrollTo(0, 0);
         updateUI(prevPage);
     } else {
-        goToPage('page-4');
+        // 뒤로 갈 곳이 없으면 Page 3(홈)으로 이동
+        goToPage('page-3');
     }
 }
 
@@ -467,7 +430,8 @@ function updateUI(pageId) {
     const fab = document.getElementById('fab-write');
     const title = document.getElementById('page-title');
 
-    if (['page-3', 'page-4', 'page-5', 'page-6', 'page-7', 'page-8'].includes(pageId)) {
+    // Page 4 삭제로 인한 목록 수정
+    if (['page-3', 'page-5', 'page-6', 'page-7', 'page-8'].includes(pageId)) {
         arrow.style.display = 'block';
     } else {
         arrow.style.display = 'none';
@@ -552,7 +516,6 @@ function submitVote(selection) {
     if (historyStack[lastIdx] === 'page-6') { historyStack.splice(lastIdx, 1); }
 }
 
-// ✨✨ [핵심 수정] 그래프 업데이트 함수 ✨✨
 function updateResultGraph() {
     const counts = voteCounts[currentPostId] || { A: 1, B: 1 }; 
     const total = counts.A + counts.B;
@@ -563,16 +526,12 @@ function updateResultGraph() {
     const barA = document.getElementById('bar-a');
     const barB = document.getElementById('bar-b');
     
-    // 3. 비율에 따른 너비 설정
     barA.style.width = percentA + '%';
     barB.style.width = percentB + '%';
     
-    // 텍스트 업데이트
     document.getElementById('percent-a').innerText = percentA + '%';
     document.getElementById('percent-b').innerText = percentB + '%';
 
-    // 1. 색상 로직: 이긴 쪽이 진한색(#333), 진 쪽이 연한색(#B0B0B0), 비기면 둘 다 (#555)
-    // 2. 100%일 때 색상 문제도 자연스럽게 해결됨 (width가 100%이므로 꽉 참)
     if (counts.A > counts.B) {
         barA.style.backgroundColor = '#333';
         barB.style.backgroundColor = '#B0B0B0';
@@ -580,12 +539,10 @@ function updateResultGraph() {
         barB.style.backgroundColor = '#333';
         barA.style.backgroundColor = '#B0B0B0';
     } else {
-        // 동점
         barA.style.backgroundColor = '#555';
         barB.style.backgroundColor = '#555';
     }
 
-    // 텍스트 숨김 (너무 좁을 때)
     document.getElementById('percent-a').style.display = percentA < 10 ? 'none' : 'block';
     document.getElementById('percent-b').style.display = percentB < 10 ? 'none' : 'block';
 }
@@ -599,24 +556,25 @@ function submitUserInfo() {
     const major = document.getElementById('input-major').value;
     if (!nickname) { alert("닉네임을 입력해주세요!"); return; }
     if (!major) { alert("학과를 선택해주세요!"); return; }
-     
+      
     currentUser.nickname = nickname;
     currentUser.major = major;
     document.getElementById('display-name').innerText = nickname;
     goToPage('page-3');
 }
 
-// 이미지 확대 모달 (클래스 기반으로 자동 적용)
+// 이미지 확대 모달
 const modal = document.getElementById("image-modal");
 const modalImg = document.getElementById("modal-image");
 const closeBtn = document.querySelector(".modal-close");
 
-// 페이지 로드 시 기존 이미지들에 이벤트 연결
-document.querySelectorAll('.option-image').forEach(img => {
-    img.addEventListener('click', function() { 
+// 동적으로 생성된 이미지에도 이벤트 적용을 위해 위임 방식이나 생성 시점 바인딩이 필요하지만,
+// 여기서는 간단히 클릭 시점 로직을 유지합니다.
+document.addEventListener('click', function(e) {
+    if(e.target.classList.contains('option-image')) {
         modal.style.display = "block"; 
-        modalImg.src = this.getAttribute('data-full-src'); 
-    });
+        modalImg.src = e.target.getAttribute('data-full-src'); 
+    }
 });
 
 closeBtn.onclick = function() { modal.style.display = "none"; }
@@ -648,11 +606,9 @@ const textarea = document.getElementById('feedbackTextarea');
 const shareButton = document.querySelector('.share-button');
 const imageWrapper = document.getElementById('imageWrapper');
 
-// 텍스트 확장
 textarea.addEventListener('focus', () => { textarea.rows = 8; });
 textarea.addEventListener('blur', () => { if (textarea.value.trim() === '') { textarea.rows = 4; } });
 
-// 파일 선택 버튼 연결
 const optionButtons = document.querySelectorAll('.option-button');
 const uploadInputs = document.querySelectorAll('.image-upload-input');
 
@@ -667,7 +623,6 @@ optionButtons.forEach(button => {
     });
 });
 
-// 파일 처리 (Base64 변환)
 uploadInputs.forEach(input => {
     input.addEventListener('change', (event) => {
         const file = event.target.files[0];
@@ -690,6 +645,7 @@ uploadInputs.forEach(input => {
                 const trashBtn = document.createElement('button');
                 trashBtn.className = 'delete-img-btn';
                 trashBtn.innerHTML = '🗑️';
+                trashBtn.style.cssText = "position:absolute; bottom:5px; right:5px; border:none; background:rgba(0,0,0,0.5); color:white; border-radius:50%; width:25px; height:25px; cursor:pointer;";
                 
                 trashBtn.onclick = (evt) => {
                     evt.stopPropagation();
@@ -728,6 +684,11 @@ textarea.addEventListener('input', checkFormValidity);
 
 function addNewPostToBoard(postId, question, imgA, imgB) {
     const list = document.querySelector('#page-5 .post-list');
+    
+    // 빈 상태 메시지 제거
+    const emptyMsg = list.querySelector('.empty-message');
+    if (emptyMsg) emptyMsg.remove();
+
     const article = document.createElement('article');
     article.className = 'post-item special-bg'; 
     
