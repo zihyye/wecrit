@@ -339,9 +339,9 @@
             <div class="progress-b" id="bar-b"><span>B</span><span id="percent-b">50%</span></div>
         </div>
 
-        <div class="comment-section" id="comment-list"></div>
-        <!-- 🔵 버튼 텍스트 변경 -->
-        <button class="btn-comment" onclick="openCommentModal()">댓글 작성</button>
+        <div class="comment-section" id="comment-list">
+            </div>
+        <button class="btn-comment" onclick="openCommentModal()">댓글 달기</button>
         <footer class="footer"><div class="footer-logo">WECRIT</div><p>Kaywon Univ. of Art & Design<br>Copyright © 2024 WECRIT. All rights reserved.</p></footer>
     </section>
 
@@ -365,54 +365,44 @@
     </section>
 
 
-    <!-- 🔵 댓글 모달 수정 -->
     <div id="comment-modal" class="comment-modal-bg">
         <div class="comment-box">
-            <div class="comment-header">
-                <span class="comment-title">댓글 작성</span>
-                <span class="comment-close-btn" onclick="closeCommentModal()">&times;</span>
-            </div>
-            <!-- 닉네임 입력칸 대신 사용자 정보 표시 -->
-            <div style="width: 100%; padding: 12px; background-color: #f5f5f5; border-radius: 8px; margin-bottom: 10px; font-size: 14px; color: #555;">
-                <span id="comment-user-info" style="font-weight: 600;">닉네임 (학과)</span>
-            </div>
+            <div class="comment-header"><span class="comment-title">댓글 작성</span><span class="comment-close-btn" onclick="closeCommentModal()">&times;</span></div>
+            <input type="text" id="new-comment-nickname" class="comment-input" placeholder="닉네임 (선택)">
             <textarea id="new-comment-text" class="comment-textarea" placeholder="댓글 내용을 입력하세요..."></textarea>
             <button class="btn-submit-comment" onclick="submitComment()">등록하기</button>
         </div>
     </div>
-    
     <div id="image-modal" class="modal"><span class="modal-close">&times;</span><img class="modal-content" id="modal-image"></div>
 
 </div>
 
 <script>
 /* ==========================================
-   🔴 [중요] 방금 "새 배포"로 받은 URL을 여기에 넣으세요! 🔴
+   🔴 [중요] 배포된 웹 앱 URL 확인 필수 🔴
    ========================================== */
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxh_GuSmxkCOOuX8araVHaIcehaKLz_o6HGwvhB7873flef7I2JrBOLrOw7g-VySFJvIQ/exec"; 
-
 
 /* =====================
    1. 전역 변수 및 설정
    ===================== */
 let historyStack = [];
 let currentUser = { nickname: "", major: "" };
-const fileData = { A: null, B: null };
 let currentPostId = null;
 const voteCounts = {}; 
-
+let commentInterval = null; // 댓글 자동 새로고침용 타이머
 
 /* =====================
-   1-1. 로컬 스토리지에서 사용자 정보 불러오기
+   1-1. 초기화 및 사용자 정보
    ===================== */
 function loadUserInfo() {
     const savedNickname = localStorage.getItem('userNickname');
     const savedMajor = localStorage.getItem('userMajor');
-    
     if (savedNickname && savedMajor) {
         currentUser.nickname = savedNickname;
         currentUser.major = savedMajor;
-        document.getElementById('display-name').innerText = savedNickname;
+        const displayName = document.getElementById('display-name');
+        if(displayName) displayName.innerText = savedNickname;
         return true;
     }
     return false;
@@ -423,6 +413,10 @@ function saveUserInfo(nickname, major) {
     localStorage.setItem('userMajor', major);
 }
 
+window.onload = function() {
+    loadUserInfo();
+    updateUI('page-1');
+};
 
 /* =====================
    2. 페이지 이동 (SPA)
@@ -434,19 +428,27 @@ function goToPage(pageId) {
     document.getElementById(pageId).classList.add('active');
     window.scrollTo(0, 0);
     updateUI(pageId);
+
+    // 댓글 페이지(page-7)에 들어오면 자동 새로고침 시작, 나가면 중지
+    if (pageId === 'page-7' && currentPostId) {
+        startCommentPolling();
+    } else {
+        stopCommentPolling();
+    }
 }
 
 function goBack() {
     if (historyStack.length > 0) {
         const prevPage = historyStack.pop();
-        if (prevPage === 'page-4') {
-            goBack();
-            return;
-        }
+        // 페이지 이동 로직
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(prevPage).classList.add('active');
         window.scrollTo(0, 0);
         updateUI(prevPage);
+
+        if (prevPage === 'page-7') startCommentPolling();
+        else stopCommentPolling();
+
     } else {
         goToPage('page-3');
     }
@@ -458,16 +460,17 @@ function updateUI(pageId) {
     const title = document.getElementById('page-title');
 
     if (['page-3', 'page-5', 'page-6', 'page-7', 'page-8'].includes(pageId)) {
-        arrow.style.display = 'block';
+        if(arrow) arrow.style.display = 'block';
     } else {
-        arrow.style.display = 'none';
+        if(arrow) arrow.style.display = 'none';
     }
 
-    if (pageId === 'page-5') { fab.style.display = 'flex'; } else { fab.style.display = 'none'; }
-    if (pageId === 'page-8') { title.style.display = 'block'; } else { title.style.display = 'none'; }
+    if (pageId === 'page-5' && fab) { fab.style.display = 'flex'; } 
+    else if(fab) { fab.style.display = 'none'; }
+    
+    if (pageId === 'page-8' && title) { title.style.display = 'block'; } 
+    else if(title) { title.style.display = 'none'; }
 }
-updateUI('page-1');
-
 
 /* =====================
    3. 투표 페이지 & 로직
@@ -483,48 +486,31 @@ function openVotePage(postId, question, imgASrc, imgBSrc) {
     const optionA = document.querySelector('.option-a');
     const optionB = document.querySelector('.option-b');
 
-    // A 이미지 (문자열 URL 또는 객체)
-    if (imgASrc) {
-        const src = typeof imgASrc === 'string' ? imgASrc : 
-                   (imgASrc.url || (imgASrc.data ? `data:${imgASrc.mimeType};base64,${imgASrc.data}` : null));
+    // 이미지 세팅 로직 (간소화)
+    const setImg = (el, src, container) => {
         if (src) {
-            imgAEl.src = src;
-            imgAEl.setAttribute('data-full-src', src);
-            optionA.style.display = 'flex';
+            const finalSrc = typeof src === 'string' ? src : (src.url || `data:${src.mimeType};base64,${src.data}`);
+            el.src = finalSrc;
+            el.setAttribute('data-full-src', finalSrc);
+            container.style.display = 'flex';
         } else {
-            optionA.style.display = 'none';
+            container.style.display = 'none';
         }
-    } else { 
-        optionA.style.display = 'none'; 
-    }
+    };
+    setImg(imgAEl, imgASrc, optionA);
+    setImg(imgBEl, imgBSrc, optionB);
 
-    // B 이미지 (문자열 URL 또는 객체)
-    if (imgBSrc) {
-        const src = typeof imgBSrc === 'string' ? imgBSrc : 
-                   (imgBSrc.url || (imgBSrc.data ? `data:${imgBSrc.mimeType};base64,${imgBSrc.data}` : null));
-        if (src) {
-            imgBEl.src = src;
-            imgBEl.setAttribute('data-full-src', src);
-            optionB.style.display = 'flex';
-        } else {
-            optionB.style.display = 'none';
-        }
-    } else { 
-        optionB.style.display = 'none'; 
-    }
-
-    const resA = document.getElementById('result-img-a');
-    const resB = document.getElementById('result-img-b');
-    resA.src = imgAEl.src; 
-    resA.setAttribute('data-full-src', imgAEl.src);
-    resB.src = imgBEl.src; 
-    resB.setAttribute('data-full-src', imgBEl.src);
+    // 결과 페이지 이미지도 세팅
+    document.getElementById('result-img-a').src = imgAEl.src;
+    document.getElementById('result-img-b').src = imgBEl.src;
 
     const storageKey = 'voted_' + currentPostId;
     if (localStorage.getItem(storageKey)) {
-        updateResultGraph();
-        loadComments(postId);
+        // 이미 투표했으면 바로 결과 페이지로
         goToPage('page-7');
+        // 결과 페이지 진입 시 데이터 로드
+        loadVoteResults(currentPostId); 
+        loadComments(currentPostId);
     } else {
         goToPage('page-6');
     }
@@ -532,48 +518,53 @@ function openVotePage(postId, question, imgASrc, imgBSrc) {
 
 function submitVote(selection) {
     if (!currentPostId) return;
-
     const storageKey = 'voted_' + currentPostId;
-    if (localStorage.getItem(storageKey)) { return; }
+    if (localStorage.getItem(storageKey)) return;
 
     localStorage.setItem(storageKey, 'true'); 
     
+    // 로컬 집계 (즉시 반영)
     if (!voteCounts[currentPostId]) voteCounts[currentPostId] = { A: 0, B: 0 };
     voteCounts[currentPostId][selection]++;
-
-    // 서버에 투표 저장
+    
+    // 서버 전송 (백그라운드)
     fetch(SCRIPT_URL, {
         method: 'POST',
-        body: JSON.stringify({ 
-            action: 'vote', 
-            id: currentPostId, 
-            select: selection 
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.result === 'success') {
-            console.log('투표가 서버에 저장되었습니다.');
-        }
-    })
-    .catch(err => console.error('투표 저장 오류:', err));
+        body: JSON.stringify({ action: 'vote', id: currentPostId, select: selection })
+    }).catch(console.error); // 에러나도 사용자 방해 안 함
 
+    // 바로 결과 페이지 이동 및 그래프 갱신
     updateResultGraph();
-    loadComments(currentPostId);
     goToPage('page-7');
-    
+    loadComments(currentPostId); // 댓글 로딩 시작
+
+    // 히스토리 정리 (뒤로가기 시 다시 투표화면 안 나오게)
     const lastIdx = historyStack.length - 1;
-    if (historyStack[lastIdx] === 'page-6') { 
-        historyStack.splice(lastIdx, 1); 
-    }
+    if (historyStack[lastIdx] === 'page-6') { historyStack.splice(lastIdx, 1); }
+}
+
+// 서버에서 최신 투표 결과 가져오기 (결과 페이지 진입 시 호출)
+function loadVoteResults(postId) {
+    fetch(`${SCRIPT_URL}?action=getPost&id=${postId}`)
+    .then(res => res.json())
+    .then(data => {
+        if(data && data.votes) {
+            voteCounts[postId] = data.votes;
+            updateResultGraph();
+        }
+    });
 }
 
 function updateResultGraph() {
-    const counts = voteCounts[currentPostId] || { A: 1, B: 1 }; 
+    const counts = voteCounts[currentPostId] || { A: 0, B: 0 }; 
     const total = counts.A + counts.B;
     
-    const percentA = total === 0 ? 50 : Math.round((counts.A / total) * 100);
-    const percentB = total === 0 ? 50 : 100 - percentA;
+    // 0표일 때 50:50 보여주기
+    let percentA = 50, percentB = 50;
+    if (total > 0) {
+        percentA = Math.round((counts.A / total) * 100);
+        percentB = 100 - percentA;
+    }
 
     const barA = document.getElementById('bar-a');
     const barB = document.getElementById('bar-b');
@@ -583,25 +574,19 @@ function updateResultGraph() {
     
     document.getElementById('percent-a').innerText = percentA + '%';
     document.getElementById('percent-b').innerText = percentB + '%';
-
+    
+    // 색상 처리
     if (counts.A > counts.B) {
-        barA.style.backgroundColor = '#333';
-        barB.style.backgroundColor = '#B0B0B0';
+        barA.style.backgroundColor = '#333'; barB.style.backgroundColor = '#B0B0B0';
     } else if (counts.B > counts.A) {
-        barB.style.backgroundColor = '#333';
-        barA.style.backgroundColor = '#B0B0B0';
+        barB.style.backgroundColor = '#333'; barA.style.backgroundColor = '#B0B0B0';
     } else {
-        barA.style.backgroundColor = '#555';
-        barB.style.backgroundColor = '#555';
+        barA.style.backgroundColor = '#555'; barB.style.backgroundColor = '#555';
     }
-
-    document.getElementById('percent-a').style.display = percentA < 10 ? 'none' : 'block';
-    document.getElementById('percent-b').style.display = percentB < 10 ? 'none' : 'block';
 }
 
-
 /* =====================
-   4. 사용자 정보 및 기본 기능
+   4. 사용자 정보 및 모달
    ===================== */
 function submitUserInfo() {
     const nickname = document.getElementById('input-nickname').value;
@@ -611,30 +596,32 @@ function submitUserInfo() {
       
     currentUser.nickname = nickname;
     currentUser.major = major;
-    saveUserInfo(nickname, major); // 🔵 로컬 스토리지에 저장
+    saveUserInfo(nickname, major);
     document.getElementById('display-name').innerText = nickname;
     goToPage('page-3');
 }
 
-// 이미지 확대 모달
+// 이미지 모달
 const modal = document.getElementById("image-modal");
 const modalImg = document.getElementById("modal-image");
 const closeBtn = document.querySelector(".modal-close");
-
 document.addEventListener('click', function(e) {
     if(e.target.classList.contains('option-image')) {
         modal.style.display = "block"; 
         modalImg.src = e.target.getAttribute('data-full-src'); 
     }
 });
-
-closeBtn.onclick = function() { modal.style.display = "none"; }
+if(closeBtn) closeBtn.onclick = function() { modal.style.display = "none"; }
 window.onclick = function(event) { if (event.target == modal) { modal.style.display = "none"; } }
 
-// 🔵 댓글 모달 - 사용자 정보 표시
+/* =====================
+   5. [핵심] 댓글 시스템 (속도 최적화)
+   ===================== */
+
 function openCommentModal() {
     const userInfoEl = document.getElementById('comment-user-info');
     userInfoEl.innerText = `${currentUser.nickname} (${currentUser.major})`;
+    document.getElementById('new-comment-text').value = ''; // 초기화
     document.getElementById('comment-modal').style.display = 'block'; 
 }
 
@@ -642,331 +629,101 @@ function closeCommentModal() {
     document.getElementById('comment-modal').style.display = 'none'; 
 }
 
-// 🔵 댓글 저장 함수 - 닉네임 자동 사용
-async function submitComment() {
+// ✅ [수정 1] 댓글 작성 즉시 반영 (Optimistic UI)
+function submitComment() {
     const textInput = document.getElementById('new-comment-text');
     const text = textInput.value.trim();
     
-    if (text === "") { 
-        alert("댓글 내용을 입력해주세요!"); 
-        return; 
-    }
-    
-    if (!currentPostId) {
-        alert("게시물 정보를 찾을 수 없습니다.");
-        return;
-    }
+    if (text === "") { alert("내용을 입력해주세요!"); return; }
+    if (!currentPostId) { alert("오류: 게시물 ID가 없습니다."); return; }
     
     const nickname = currentUser.nickname || "익명";
-    
-    // 로컬에 댓글 추가 (즉시 표시)
+
+    // 1. 모달 즉시 닫기 (기다리지 않음)
+    closeCommentModal();
+
+    // 2. 내 화면에 바로 추가 (기다리지 않음)
     const commentList = document.getElementById('comment-list');
     const newCommentDiv = document.createElement('div');
-    newCommentDiv.classList.add('comment-item');
-    newCommentDiv.innerHTML = `<div class="comment-user">${nickname}</div><div class="comment-text">${text}</div><hr class="comment-hr">`;
-    commentList.prepend(newCommentDiv);
-    
-    // 서버에 댓글 저장
-    try {
-        const response = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                action: 'comment',
-                postId: currentPostId,
-                nickname: nickname,
-                text: text
-            })
-        });
-        
-        const result = await response.json();
-        
-        if (result.result === 'success') {
-            console.log('댓글이 서버에 저장되었습니다.');
-        } else {
-            console.error('댓글 저장 실패:', result.message);
-        }
-    } catch (error) {
-        console.error('댓글 저장 오류:', error);
-    }
-    
-    // 입력창 초기화 및 모달 닫기
-    textInput.value = "";
-    closeCommentModal();
-}
+    newCommentDiv.className = 'comment-item';
+    newCommentDiv.innerHTML = `
+        <div class="comment-user">${nickname}</div>
+        <div class="comment-text">${text}</div>
+        <hr class="comment-hr">
+    `;
+    // 최상단에 추가
+    commentList.insertBefore(newCommentDiv, commentList.firstChild);
 
-// 🔵 댓글 불러오기 함수
-async function loadComments(postId) {
-    try {
-        const response = await fetch(`${SCRIPT_URL}?action=getComments&postId=${postId}`);
-        const comments = await response.json();
-        
-        console.log(`댓글 ${comments.length}개 로드됨:`, comments);
-        
-        const commentList = document.getElementById('comment-list');
-        commentList.innerHTML = '';
-        
-        if (comments.length === 0) {
-            commentList.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">아직 댓글이 없습니다.</div>';
-            return;
-        }
-        
-        comments.reverse().forEach(comment => {
-            const commentDiv = document.createElement('div');
-            commentDiv.classList.add('comment-item');
-            commentDiv.innerHTML = `
-                <div class="comment-user">${comment.nickname || '익명'}</div>
-                <div class="comment-text">${comment.text || ''}</div>
-                <hr class="comment-hr">
-            `;
-            commentList.appendChild(commentDiv);
-        });
-        
-    } catch (error) {
-        console.error('댓글 로딩 오류:', error);
-        const commentList = document.getElementById('comment-list');
-        commentList.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">댓글을 불러올 수 없습니다.</div>';
-    }
-}
-
-
-/* =====================
-   5. 게시물 작성 & 구글 전송
-   ===================== */
-const textarea = document.getElementById('feedbackTextarea');
-const shareButton = document.querySelector('.share-button');
-const imageWrapper = document.getElementById('imageWrapper');
-
-textarea.addEventListener('focus', () => { textarea.rows = 8; });
-textarea.addEventListener('blur', () => { if (textarea.value.trim() === '') { textarea.rows = 4; } });
-
-const optionButtons = document.querySelectorAll('.option-button');
-const uploadInputs = document.querySelectorAll('.image-upload-input');
-
-optionButtons.forEach(button => {
-    button.addEventListener('click', (e) => {
-        const option = button.getAttribute('data-option');
-        if (fileData[option]) {
-            alert('이미지가 이미 등록되었습니다. 삭제 후 다시 시도해주세요.');
-            return;
-        }
-        document.getElementById(`upload${option}`).click();
-    });
-});
-
-uploadInputs.forEach(input => {
-    input.addEventListener('change', (event) => {
-        const file = event.target.files[0];
-        const option = event.target.getAttribute('data-option');
-        
-        if (file && !fileData[option]) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const base64String = e.target.result.split(',')[1]; 
-                const mimeType = file.type;
-                fileData[option] = { data: base64String, mimeType: mimeType };
-
-                const previewDiv = document.createElement('div');
-                previewDiv.className = 'preview-item';
-                previewDiv.dataset.optionRef = option;
-                previewDiv.style.cssText = "position:relative; display:inline-block;";
-
-                const mainImg = document.createElement('img');
-                mainImg.src = e.target.result;
-                
-                const trashBtn = document.createElement('button');
-                trashBtn.className = 'delete-img-btn';
-                trashBtn.innerHTML = '🗑️';
-                trashBtn.style.cssText = "position:absolute; bottom:5px; right:5px; border:none; background:rgba(0,0,0,0.5); color:white; border-radius:50%; width:25px; height:25px; cursor:pointer;";
-                
-                trashBtn.onclick = (evt) => {
-                    evt.stopPropagation();
-                    if (confirm('사진을 삭제하시겠습니까?')) {
-                        imageWrapper.removeChild(previewDiv);
-                        fileData[option] = null;
-                        document.getElementById(`upload${option}`).value = '';
-                        document.getElementById(`btnOption${option}`).classList.remove('disabled');
-                        checkFormValidity();
-                    }
-                };
-
-                previewDiv.appendChild(mainImg);
-                previewDiv.appendChild(trashBtn);
-                imageWrapper.appendChild(previewDiv);
-                document.getElementById(`btnOption${option}`).classList.add('disabled');
-                checkFormValidity();
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-});
-
-function checkFormValidity() {
-    const isTextareaFilled = textarea.value.trim().length > 0;
-    const isOptionImageUploaded = fileData.A !== null || fileData.B !== null;
-    if (isTextareaFilled && isOptionImageUploaded) {
-        shareButton.classList.add('active');
-        shareButton.disabled = false;
-    } else {
-        shareButton.classList.remove('active');
-        shareButton.disabled = true;
-    }
-}
-textarea.addEventListener('input', checkFormValidity);
-
-function addNewPostToBoard(postId, question, imgA, imgB) {
-    const list = document.querySelector('#page-5 .post-list');
-    
-    const emptyMsg = list.querySelector('.empty-message');
-    if (emptyMsg) emptyMsg.remove();
-
-    const article = document.createElement('article');
-    article.className = 'post-item special-bg'; 
-    
-    article.onclick = function() { 
-        openVotePage(postId, question, imgA, imgB); 
-    }; 
-
-    let imagesHtml = '';
-    const srcA = imgA ? `data:${imgA.mimeType};base64,${imgA.data}` : null;
-    const srcB = imgB ? `data:${imgB.mimeType};base64,${imgB.data}` : null;
-
-    if (srcA && srcB) {
-        imagesHtml = `<img src="${srcA}" class="w-50"><img src="${srcB}" class="w-50">`;
-    } else if (srcA) {
-        imagesHtml = `<img src="${srcA}" style="width:100%; height:100%; object-fit:cover;">`;
-    } else if (srcB) {
-        imagesHtml = `<img src="${srcB}" style="width:100%; height:100%; object-fit:cover;">`;
-    }
-
-    article.innerHTML = `<div class="image-row">${imagesHtml}</div><div class="title-box gray-box">${question}</div>`;
-    list.prepend(article);
-}
-
-shareButton.addEventListener('click', () => {
-    if (!shareButton.classList.contains('active')) return;
-
-    const originalText = shareButton.innerText;
-    shareButton.innerText = "업로드 중...";
-    shareButton.disabled = true;
-
-    const newPostId = 'post_' + Date.now();
-    addNewPostToBoard(newPostId, textarea.value, fileData.A, fileData.B);
-    voteCounts[newPostId] = { A: 0, B: 0 };
-
-    const payload = {
-        id: newPostId,
-        nickname: currentUser.nickname || "익명",
-        major: currentUser.major || "미선택",
-        question: textarea.value,
-        imageA: fileData.A,
-        imageB: fileData.B
-    };
-
+    // 3. 서버로 전송 (백그라운드 처리)
     fetch(SCRIPT_URL, {
         method: 'POST',
-        body: JSON.stringify(payload)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.result !== 'success') { console.log('Server warning: ' + data.message); }
-    })
-    .catch(error => { console.error('Error:', error); })
-    .finally(() => {
-        alert('게시물이 성공적으로 공유되었습니다!');
-        imageWrapper.innerHTML = '';
-        textarea.value = '';
-        fileData.A = null; 
-        fileData.B = null;
-        document.getElementById('btnOptionA').classList.remove('disabled');
-        document.getElementById('btnOptionB').classList.remove('disabled');
-        checkFormValidity();
-        
-        shareButton.innerText = originalText;
-        shareButton.disabled = false;
-        
-        goToPage('page-5');
+        body: JSON.stringify({
+            action: 'comment',
+            postId: currentPostId,
+            nickname: nickname,
+            content: text,
+            timestamp: new Date().toISOString()
+        })
+    }).then(() => {
+        console.log("댓글 서버 저장 완료");
+    }).catch(err => {
+        console.error("댓글 저장 실패:", err);
+        // 실패 시 처리는 복잡하므로 일단 생략하거나 alert
     });
-});
+}
 
+// ✅ [수정 2] 댓글 불러오기 및 렌더링
+function loadComments(postId) {
+    // 굳이 '로딩중' 표시를 내지 않고 조용히 업데이트
+    fetch(`${SCRIPT_URL}?action=getComments&postId=${postId}`)
+    .then(response => response.json())
+    .then(comments => {
+        renderComments(comments);
+    })
+    .catch(err => console.error(err));
+}
 
-/* =====================
-   6. 게시물 불러오기
-   ===================== */
-async function loadPostsFromSheet() {
-    try {
-        const response = await fetch(SCRIPT_URL);
-        const posts = await response.json();
-        
-        console.log('불러온 게시물:', posts);
-        
-        const list = document.querySelector('#page-5 .post-list');
-        const emptyMsg = list.querySelector('.empty-message');
-        
-        if (posts.length === 0) {
-            if (!emptyMsg) {
-                list.innerHTML = '<div class="empty-message">등록된 피드백 요청이 없습니다.<br>첫 번째 게시물을 올려보세요!</div>';
-            }
-            return;
-        }
-        
-        if (emptyMsg) emptyMsg.remove();
-        list.innerHTML = '';
-        
-        posts.forEach(post => {
-            voteCounts[post.id] = {
-                A: parseInt(post.voteA) || 0,
-                B: parseInt(post.voteB) || 0
-            };
-            
-            const imgA = post.imgA || null;
-            const imgB = post.imgB || null;
-            
-            console.log(`게시물 ${post.id} 이미지:`, imgA, imgB);
-            
-            addExistingPostToBoard(post.id, post.question, imgA, imgB);
+function renderComments(comments) {
+    const list = document.getElementById('comment-list');
+    // 기존 입력 중인 내용이 있을 수 있으니 전체 삭제보다는 비교가 좋지만, 
+    // 간단 구현을 위해 innerHTML 교체 (깜빡임 최소화 필요)
+    
+    let html = '';
+    // 최신순 정렬 가정 (서버에서 정렬해서 주거나 여기서 reverse)
+    if(comments && comments.length > 0) {
+        // 서버가 오래된 순으로 준다면 reverse() 사용
+        comments.slice().reverse().forEach(c => {
+            html += `
+            <div class="comment-item">
+                <div class="comment-user">${c.nickname}</div>
+                <div class="comment-text">${c.content}</div>
+                <hr class="comment-hr">
+            </div>`;
         });
-        
-    } catch (error) {
-        console.error('게시물 로딩 오류:', error);
+    } else {
+        html = '<div style="padding:20px; text-align:center; color:#999;">첫 댓글을 남겨주세요!</div>';
+    }
+    list.innerHTML = html;
+}
+
+// ✅ [수정 3] 실시간 동기화 (Polling)
+// 결과 페이지(page-7)에 머무르는 동안 4초마다 댓글을 새로고침
+function startCommentPolling() {
+    if (commentInterval) clearInterval(commentInterval);
+    commentInterval = setInterval(() => {
+        if (currentPostId && document.getElementById('page-7').classList.contains('active')) {
+            loadComments(currentPostId);
+        }
+    }, 4000); // 4초 주기 (서버 부하 고려)
+}
+
+function stopCommentPolling() {
+    if (commentInterval) {
+        clearInterval(commentInterval);
+        commentInterval = null;
     }
 }
 
-function addExistingPostToBoard(postId, question, imgA, imgB) {
-    const list = document.querySelector('#page-5 .post-list');
-    
-    const article = document.createElement('article');
-    article.className = 'post-item special-bg';
-    
-    article.onclick = function() { 
-        openVotePage(postId, question, imgA, imgB); 
-    };
-
-    let imagesHtml = '';
-    const srcA = imgA;
-    const srcB = imgB;
-
-    if (srcA && srcB) {
-        imagesHtml = `<img src="${srcA}" class="w-50" onerror="this.style.display='none'"><img src="${srcB}" class="w-50" onerror="this.style.display='none'">`;
-    } else if (srcA) {
-        imagesHtml = `<img src="${srcA}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">`;
-    } else if (srcB) {
-        imagesHtml = `<img src="${srcB}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">`;
-    }
-
-    article.innerHTML = `<div class="image-row">${imagesHtml}</div><div class="title-box gray-box">${question}</div>`;
-    list.appendChild(article);
-}
-
-// 🔵 페이지 로드 시 사용자 정보 확인 및 게시물 불러오기
-window.addEventListener('DOMContentLoaded', () => {
-    // 저장된 사용자 정보 확인
-    if (loadUserInfo()) {
-        // 정보가 있으면 바로 홈 화면으로
-        goToPage('page-3');
-    }
-    // 게시물 불러오기
-    loadPostsFromSheet();
-});
 </script>
 
 </body>
