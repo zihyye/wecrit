@@ -168,14 +168,14 @@
         .option-a, .option-b { flex: 1; display: flex; flex-direction: column; align-items: center; }
         .option-label { font-size: 24px; font-weight: bold; margin-bottom: 15px; color: #333; }
         
-        .option-image { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; margin-bottom: 20px; cursor: zoom-in; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s; background-color: #eee; }
+        .option-image { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; margin-bottom: 20px; cursor: zoom-in; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.1s; background-color: #eee; }
         
-        .select-button { width: 100%; padding: 12px 0; background-color: white; border: 2px solid #333; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .select-button { width: 100%; padding: 12px 0; background-color: white; border: 2px solid #333; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.2s; }
         .select-button:hover { background-color: #333; color: white; }
         
         .progress-container { width: 100%; height: 50px; display: flex; border-radius: 25px; overflow: hidden; margin-bottom: 40px; font-size: 18px; font-weight: 700; color: #fff; background-color: #eee; }
-        .progress-a { width: 50%; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; transition: width 0.5s ease, background-color 0.3s; }
-        .progress-b { width: 50%; display: flex; align-items: center; justify-content: flex-end; padding: 0 20px; transition: width 0.5s ease, background-color 0.3s; }
+        .progress-a { width: 50%; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; transition: width 0.2s ease, background-color 0.15s; }
+        .progress-b { width: 50%; display: flex; align-items: center; justify-content: flex-end; padding: 0 20px; transition: width 0.2s ease, background-color 0.15s; }
         
         .comment-section { width: 100%; text-align: left; padding: 0 5px; margin-bottom: 40px; }
         .comment-item { margin-bottom: 15px; } 
@@ -389,7 +389,7 @@
 /* ==========================================
    🔴 [중요] 방금 "새 배포"로 받은 URL을 여기에 넣으세요! 🔴
    ========================================== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1vPYKGe_kGTfupdwoRN0AZIycDmfkZoBrnbhcv9KK6gF4TX8JJEsVQZeNeKGQz7BsiA/exec"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwyvJo9eCShoORBlil-CrkFPBXJ6MqK9Ss0EnwFVufJzG-Wn8tloitPXQnau_vguIafiw/exec"; 
 
 
 /* =====================
@@ -541,7 +541,7 @@ function submitVote(selection) {
     if (!voteCounts[currentPostId]) voteCounts[currentPostId] = { A: 0, B: 0 };
     voteCounts[currentPostId][selection]++;
 
-    // 서버에 투표 저장
+    // 서버에 투표 저장 (비동기, UI는 즉시 반영)
     fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({ 
@@ -642,8 +642,8 @@ function closeCommentModal() {
     document.getElementById('comment-modal').style.display = 'none'; 
 }
 
-// 🔵 댓글 저장 함수 - 닉네임 자동 사용
-async function submitComment() {
+// 🔵 댓글 저장 함수 - 닉네임 자동 사용, 빠르게 UI 반영, 모달 즉시 닫기
+function submitComment() {
     const textInput = document.getElementById('new-comment-text');
     const text = textInput.value.trim();
     
@@ -658,46 +658,60 @@ async function submitComment() {
     }
     
     const nickname = currentUser.nickname || "익명";
+    const major = currentUser.major || "미선택";
     
-    // 로컬에 댓글 추가 (즉시 표시)
+    // 1) 로컬에 댓글 추가 (즉시 표시)
     const commentList = document.getElementById('comment-list');
     const newCommentDiv = document.createElement('div');
     newCommentDiv.classList.add('comment-item');
-    newCommentDiv.innerHTML = `<div class="comment-user">${nickname}</div><div class="comment-text">${text}</div><hr class="comment-hr">`;
+    // 닉네임 옆에 학과 포함
+    newCommentDiv.innerHTML = `<div class="comment-user">${escapeHtml(nickname)} (${escapeHtml(major)})</div><div class="comment-text">${escapeHtml(text)}</div><hr class="comment-hr">`;
     commentList.prepend(newCommentDiv);
-    
-    // 서버에 댓글 저장
-    try {
-        const response = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                action: 'comment',
-                postId: currentPostId,
-                nickname: nickname,
-                text: text
-            })
-        });
-        
-        const result = await response.json();
-        
+
+    // 2) 입력창 초기화 및 모달 즉시 닫기 (빠른 UX)
+    textInput.value = "";
+    closeCommentModal();
+
+    // 3) 서버에 댓글 저장 (비동기로 처리, UI는 이미 반영됨)
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            action: 'comment',
+            postId: currentPostId,
+            nickname: nickname,
+            major: major,
+            text: text
+        })
+    })
+    .then(response => response.json())
+    .then(result => {
         if (result.result === 'success') {
             console.log('댓글이 서버에 저장되었습니다.');
         } else {
-            console.error('댓글 저장 실패:', result.message);
+            console.warn('댓글 저장 실패:', result.message);
+            // (선택) 여기서 실패하면 사용자에게 재시도 안내를 할 수 있음
         }
-    } catch (error) {
+    })
+    .catch(error => {
         console.error('댓글 저장 오류:', error);
-    }
-    
-    // 입력창 초기화 및 모달 닫기
-    textInput.value = "";
-    closeCommentModal();
+    });
 }
 
-// 🔵 댓글 불러오기 함수
+// 간단한 XSS 예방 위해 text를 escape 처리
+function escapeHtml(str) {
+    if (!str && str !== 0) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+}
+
+// 🔵 댓글 불러오기 함수 (서버에서 nickname + major를 받을 수 있게 처리)
 async function loadComments(postId) {
     try {
-        const response = await fetch(`${SCRIPT_URL}?action=getComments&postId=${postId}`);
+        const response = await fetch(`${SCRIPT_URL}?action=getComments&postId=${encodeURIComponent(postId)}`);
         const comments = await response.json();
         
         console.log(`댓글 ${comments.length}개 로드됨:`, comments);
@@ -705,17 +719,20 @@ async function loadComments(postId) {
         const commentList = document.getElementById('comment-list');
         commentList.innerHTML = '';
         
-        if (comments.length === 0) {
+        if (!comments || comments.length === 0) {
             commentList.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">아직 댓글이 없습니다.</div>';
             return;
         }
         
+        // 서버에서 온 댓글을 최신 순서로 (서버가 전달하는 순서를 고려)
         comments.reverse().forEach(comment => {
             const commentDiv = document.createElement('div');
             commentDiv.classList.add('comment-item');
+            const nick = comment.nickname || '익명';
+            const maj = comment.major || '';
             commentDiv.innerHTML = `
-                <div class="comment-user">${comment.nickname || '익명'}</div>
-                <div class="comment-text">${comment.text || ''}</div>
+                <div class="comment-user">${escapeHtml(nick)}${maj ? ' (' + escapeHtml(maj) + ')' : ''}</div>
+                <div class="comment-text">${escapeHtml(comment.text || '')}</div>
                 <hr class="comment-hr">
             `;
             commentList.appendChild(commentDiv);
@@ -730,7 +747,7 @@ async function loadComments(postId) {
 
 
 /* =====================
-   5. 게시물 작성 & 구글 전송
+   5. 게시물 작성 & 구글 전송 (빠른 UX: UI를 즉시 갱신하고 서버 전송은 백그라운드)
    ===================== */
 const textarea = document.getElementById('feedbackTextarea');
 const shareButton = document.querySelector('.share-button');
@@ -838,7 +855,7 @@ function addNewPostToBoard(postId, question, imgA, imgB) {
         imagesHtml = `<img src="${srcB}" style="width:100%; height:100%; object-fit:cover;">`;
     }
 
-    article.innerHTML = `<div class="image-row">${imagesHtml}</div><div class="title-box gray-box">${question}</div>`;
+    article.innerHTML = `<div class="image-row">${imagesHtml}</div><div class="title-box gray-box">${escapeHtml(question)}</div>`;
     list.prepend(article);
 }
 
@@ -850,9 +867,23 @@ shareButton.addEventListener('click', () => {
     shareButton.disabled = true;
 
     const newPostId = 'post_' + Date.now();
+    // 즉시 UI 반영 (빠르게 보이도록)
     addNewPostToBoard(newPostId, textarea.value, fileData.A, fileData.B);
     voteCounts[newPostId] = { A: 0, B: 0 };
 
+    // UI 초기화 및 이동을 서버 응답 대기 없이 빠르게 수행
+    imageWrapper.innerHTML = '';
+    textarea.value = '';
+    fileData.A = null; 
+    fileData.B = null;
+    document.getElementById('btnOptionA').classList.remove('disabled');
+    document.getElementById('btnOptionB').classList.remove('disabled');
+    checkFormValidity();
+    shareButton.innerText = originalText;
+    shareButton.disabled = false;
+    goToPage('page-5');
+
+    // 서버에 비동기로 전송 (백그라운드)
     const payload = {
         id: newPostId,
         nickname: currentUser.nickname || "익명",
@@ -869,23 +900,9 @@ shareButton.addEventListener('click', () => {
     .then(response => response.json())
     .then(data => {
         if (data.result !== 'success') { console.log('Server warning: ' + data.message); }
+        else { console.log('게시물이 서버에 저장되었습니다.'); }
     })
-    .catch(error => { console.error('Error:', error); })
-    .finally(() => {
-        alert('게시물이 성공적으로 공유되었습니다!');
-        imageWrapper.innerHTML = '';
-        textarea.value = '';
-        fileData.A = null; 
-        fileData.B = null;
-        document.getElementById('btnOptionA').classList.remove('disabled');
-        document.getElementById('btnOptionB').classList.remove('disabled');
-        checkFormValidity();
-        
-        shareButton.innerText = originalText;
-        shareButton.disabled = false;
-        
-        goToPage('page-5');
-    });
+    .catch(error => { console.error('Error:', error); });
 });
 
 
@@ -902,7 +919,7 @@ async function loadPostsFromSheet() {
         const list = document.querySelector('#page-5 .post-list');
         const emptyMsg = list.querySelector('.empty-message');
         
-        if (posts.length === 0) {
+        if (!posts || posts.length === 0) {
             if (!emptyMsg) {
                 list.innerHTML = '<div class="empty-message">등록된 피드백 요청이 없습니다.<br>첫 번째 게시물을 올려보세요!</div>';
             }
@@ -953,7 +970,7 @@ function addExistingPostToBoard(postId, question, imgA, imgB) {
         imagesHtml = `<img src="${srcB}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">`;
     }
 
-    article.innerHTML = `<div class="image-row">${imagesHtml}</div><div class="title-box gray-box">${question}</div>`;
+    article.innerHTML = `<div class="image-row">${imagesHtml}</div><div class="title-box gray-box">${escapeHtml(question)}</div>`;
     list.appendChild(article);
 }
 
