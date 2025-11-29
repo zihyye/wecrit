@@ -5,28 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WECRIT Service</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+
     <style>
         /* ====================
-           1. 공통 CSS
+           1. 컬러 및 기본 설정 (Design Variables)
+           Main Color: #5D758F (Muted Blue)
+           Accent Color: #425469 (Dark Muted Blue)
+           Background: #F4F7FA (Cool Light Gray)
+           Text: #333333 / #666666
            ==================== */
+        
+        :root {
+            --primary-color: #5D758F;       /* 채도 낮은 블루 */
+            --primary-dark: #425469;        /* 진한 블루 */
+            --bg-color: #F4F7FA;            /* 배경색 */
+            --white: #FFFFFF;
+            --gray-light: #E9ECEF;
+            --gray-text: #666666;
+            --black-text: #222222;
+            --shadow-soft: 0 8px 24px rgba(93, 117, 143, 0.1);
+            --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --radius-main: 16px;
+            --radius-btn: 12px;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif;
-            background-color: #F2F2F2;
-            color: #111;
+            font-family: "Pretendard", 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--black-text);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }
 
+        /* 앱 컨테이너: 카드 형태의 깔끔한 룩 */
         .app-container {
             width: 100%;
             max-width: 480px;
             margin: 0 auto;
-            background-color: #F2F2F2;
+            background-color: var(--white);
             position: relative;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
+            box-shadow: 0 0 30px rgba(0,0,0,0.03); /* PC 화면에서 은은한 그림자 */
         }
 
         /* 상단 네비게이션 바 */
@@ -34,12 +59,14 @@
             position: sticky;
             top: 0;
             width: 100%;
-            height: 50px;
+            height: 60px; /* 높이 약간 증가 */
             display: flex;
             align-items: center;
             padding: 0 20px;
             z-index: 100;
-            background-color: #F2F2F2; 
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.03);
         }
 
         .nav-title {
@@ -47,17 +74,20 @@
             left: 50%;
             transform: translateX(-50%);
             font-weight: 700;
-            font-size: 18px;
-            color: #111;
-            display: none; /* JS로 제어 */
+            font-size: 17px;
+            color: var(--black-text);
+            display: none; 
         }
 
         .back-arrow {
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
-            display: none; /* JS로 제어 */
-            padding: 5px;
+            display: none; 
+            padding: 10px;
+            color: var(--black-text);
+            transition: color 0.2s;
         }
+        .back-arrow:hover { color: var(--primary-color); }
 
         /* 페이지 공통 */
         .page {
@@ -66,166 +96,532 @@
             align-items: center;
             width: 100%;
             flex: 1;
-            padding: 20px;
+            padding: 30px 24px;
             justify-content: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .page.active { display: flex; }
-        .page.no-padding-top { padding-top: 0; justify-content: flex-start; }
+        .page.no-padding-top { padding-top: 0; justify-content: flex-start; background-color: var(--bg-color); } /* 리스트 페이지 배경색 변경 */
 
-        /* 버튼 공통 */
+        /* 버튼 공통 (디자인 변경 핵심) */
         .btn-common {
-            background-color: #3F4145;
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 6px;
-            padding: 12px 0;
+            border-radius: var(--radius-btn);
+            padding: 16px 0;
             width: 100%;
-            max-width: 200px;
+            max-width: 100%; /* 꽉 차게 변경 */
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             text-align: center;
-            margin-top: 20px;
+            margin-top: 24px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(93, 117, 143, 0.2);
         }
-        .btn-common:hover { background-color: #222; }
+        .btn-common:hover { 
+            background-color: var(--primary-dark); 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(93, 117, 143, 0.3);
+        }
+        .btn-common:active { transform: scale(0.98); }
 
         /* ====================
            2. 화면별 스타일
            ==================== */
         
-        /* [Page 1] 메인 타이틀 수정 */
-        /* 로고 삭제로 인한 여백 조정 및 폰트 사이즈 확대 */
+        /* [Page 1] 메인 타이틀 */
         .main-title-large { 
-            font-size: 48px; /* 사이즈 키움 */
-            font-weight: 900; 
-            line-height: 1.2; 
-            margin-bottom: 30px; 
+            font-size: 42px; 
+            font-weight: 800; 
+            line-height: 1.15; 
+            margin-bottom: 24px; 
             text-align: center; 
-            color: #111;
+            color: var(--primary-dark); /* 메인 컬러 적용 */
+            letter-spacing: -1px;
         }
-        .sub-text { font-size: 16px; color: #666; line-height: 1.8; margin-bottom: 60px; text-align: center; }
+        .sub-text { 
+            font-size: 16px; 
+            color: var(--gray-text); 
+            line-height: 1.7; 
+            margin-bottom: 50px; 
+            text-align: center; 
+            font-weight: 400;
+        }
 
-        /* [Page 2~] */
-        .main-title { font-size: 32px; font-weight: 800; line-height: 1.3; margin-bottom: 20px; text-align: center; }
-        .logo-circle { width: 140px; height: 140px; background-color: #D9D9D9; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-bottom: 40px; }
+        /* [Page 2~] 입력 폼 디자인 */
+        .main-title { 
+            font-size: 26px; 
+            font-weight: 700; 
+            line-height: 1.35; 
+            margin-bottom: 10px; 
+            text-align: center; 
+            color: var(--black-text);
+        }
         
-        .input-group { width: 100%; display: flex; align-items: center; margin-bottom: 15px; padding: 0 20px; }
-        .input-group label { width: 60px; font-weight: 600; font-size: 15px; white-space: nowrap; }
-        .input-group input, .input-group select { flex: 1; height: 40px; border: none; border-radius: 6px; padding: 0 10px; font-size: 14px; background-color: #fff; outline: none; }
-        .input-group select { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='gray' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 10px center; background-size: 16px; color: #333; cursor: pointer; }
+        .logo-circle { 
+            width: 100px; 
+            height: 100px; 
+            background-color: #EEF4F9; /* 아주 연한 블루 */
+            border-radius: 50%; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            margin-bottom: 30px; 
+            color: var(--primary-color);
+            box-shadow: inset 0 0 20px rgba(93, 117, 143, 0.1);
+        }
+        
+        .input-group { 
+            width: 100%; 
+            display: flex; 
+            flex-direction: column; /* 라벨 위로 배치 */
+            align-items: flex-start;
+            margin-bottom: 20px; 
+            padding: 0; 
+        }
+        .input-group label { 
+            width: 100%;
+            font-weight: 600; 
+            font-size: 14px; 
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+        }
+        .input-group input, .input-group select { 
+            width: 100%; 
+            height: 52px; 
+            border: 1px solid #DFDFDF; 
+            border-radius: var(--radius-btn); 
+            padding: 0 16px; 
+            font-size: 15px; 
+            background-color: #FAFAFA; 
+            outline: none; 
+            transition: border-color 0.2s, background 0.2s;
+            color: var(--black-text);
+        }
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--primary-color);
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(93, 117, 143, 0.1);
+        }
+        .input-group select { 
+            appearance: none; 
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235D758F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); 
+            background-repeat: no-repeat; 
+            background-position: right 16px center; 
+            background-size: 18px; 
+        }
 
-        .greeting { font-size: 22px; font-weight: 700; margin-bottom: 60px; text-align: center; }
-        .description { font-size: 18px; line-height: 1.5; margin-bottom: 80px; text-align: center; }
-        .btn-group { display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center; }
+        /* [Page 3] 홈 화면 */
+        .greeting { 
+            font-size: 24px; 
+            font-weight: 700; 
+            margin-bottom: 12px; 
+            text-align: center; 
+            color: var(--black-text);
+        }
+        .greeting span { color: var(--primary-color); } /* 이름 강조 */
         
+        .description { 
+            font-size: 16px; 
+            line-height: 1.6; 
+            margin-bottom: 60px; 
+            text-align: center; 
+            color: var(--gray-text);
+        }
+        .btn-group { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px; 
+            width: 100%; 
+            align-items: center; 
+        }
+
         /* [Page 5] 게시판 목록 */
-        .tab-header { width: 100%; background: #fff; display: flex; padding: 0 20px; border-bottom: 1px solid #eee; position: sticky; top: 50px; z-index: 10; }
-        .tab-item { padding: 15px 5px; margin-right: 20px; color: #888; cursor: pointer; position: relative;}
-        .tab-item.active { color: #000; font-weight: 700; }
-        .tab-item.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: #000; }
+        .tab-header { 
+            width: 100%; 
+            background: rgba(255,255,255,0.9); 
+            backdrop-filter: blur(5px);
+            display: flex; 
+            padding: 0 24px; 
+            border-bottom: 1px solid #eee; 
+            position: sticky; 
+            top: 60px; 
+            z-index: 10; 
+        }
+        .tab-item { 
+            padding: 16px 5px; 
+            margin-right: 0; 
+            color: var(--gray-text); 
+            cursor: pointer; 
+            position: relative; 
+            font-size: 15px;
+        }
+        .tab-item.active { 
+            color: var(--primary-dark); 
+            font-weight: 700; 
+        }
+        .tab-item.active::after { 
+            content: ''; 
+            position: absolute; 
+            bottom: -1px; 
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px; 
+            height: 3px; 
+            background: var(--primary-color); 
+            border-radius: 3px;
+        }
         
-        /* 게시물이 없을 때 안내 메시지 */
-        .empty-message { text-align: center; color: #888; margin-top: 100px; font-size: 16px; }
+        .empty-message { text-align: center; color: #999; margin-top: 120px; font-size: 15px; font-weight: 400; }
 
-        .post-list { width: 100%; padding: 20px 0; display: flex; flex-direction: column; gap: 40px; padding-bottom: 100px; }
-        .post-item { padding: 0 20px; cursor: pointer; }
-        .post-item.special-bg { background-color: #fff; padding-top: 30px; padding-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
-        .image-row { display: flex; gap: 5px; height: 180px; overflow: hidden; margin-bottom: 10px;}
-        .image-row img { height: 100%; object-fit: cover; display: block; }
-        .post-item.special-bg .image-row img { box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        .post-list { 
+            width: 100%; 
+            padding: 24px 20px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 24px; 
+            padding-bottom: 100px; 
+        }
+        
+        /* 카드 디자인 리뉴얼 */
+        .post-item { 
+            padding: 0; 
+            cursor: pointer; 
+            border-radius: var(--radius-main);
+            overflow: hidden;
+            background-color: #fff;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .post-item.special-bg { 
+            background-color: #fff; 
+            padding: 0; 
+            box-shadow: var(--shadow-card);
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+        .post-item:active { transform: scale(0.98); }
+
+        .image-row { 
+            display: flex; 
+            gap: 2px; 
+            height: 200px; 
+            overflow: hidden; 
+            margin-bottom: 0; 
+        }
+        .image-row img { 
+            height: 100%; 
+            object-fit: cover; 
+            display: block; 
+            transition: transform 0.3s;
+        }
         .w-30 { width: 30%; } .w-40 { width: 40%; } .w-50 { width: 50%; }
-        .title-box { background: #fff; border-radius: 8px; padding: 12px 0; text-align: center; font-size: 14px; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .title-box.gray-box { background: #EAEAEA; }
-        .post-item.special-bg .title-box { box-shadow: none; background-color: #f9f9f9; }
+
+        .title-box { 
+            background: #fff; 
+            padding: 20px; 
+            text-align: left; 
+            font-size: 15px; 
+            font-weight: 600; 
+            color: var(--black-text);
+            line-height: 1.4;
+        }
+        .title-box.gray-box { background: #fff; } /* 배경 흰색으로 통일 */
 
         /* 플로팅 플러스 버튼 */
         .fab-btn {
             position: absolute; 
             bottom: 30px; 
-            right: 20px; 
-            width: 60px; 
-            height: 60px;
-            background-color: #111; 
+            right: 24px; 
+            width: 56px; 
+            height: 56px;
+            background-color: var(--primary-color); 
             border-radius: 50%;
-            display: none; /* JS로 제어 */
+            display: none; 
             justify-content: center; 
             align-items: center;
             color: white; 
-            font-size: 36px; 
+            font-size: 32px; 
             font-weight: 300; 
             line-height: 1;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 15px rgba(93, 117, 143, 0.4);
             cursor: pointer; 
             z-index: 999;
-            transition: transform 0.2s;
+            transition: transform 0.2s, background-color 0.2s;
         }
-        .fab-btn:active { transform: scale(0.95); }
+        .fab-btn:hover { background-color: var(--primary-dark); }
+        .fab-btn:active { transform: scale(0.9); }
 
-        /* [Page 6 & 7] 투표 및 결과 공통 스타일 */
-        .subtitle { font-size: 16px; color: #555; margin-bottom: 40px; text-align: center; padding: 0 20px; word-break: keep-all; }
-        .layout-options { display: flex; justify-content: space-between; gap: 15px; width: 100%; }
+        /* [Page 6 & 7] 투표 및 결과 */
+        .subtitle { 
+            font-size: 15px; 
+            color: var(--gray-text); 
+            margin-bottom: 30px; 
+            text-align: center; 
+            padding: 0 20px; 
+            word-break: keep-all; 
+            line-height: 1.5;
+        }
+        .layout-options { display: flex; justify-content: space-between; gap: 16px; width: 100%; }
         .option-a, .option-b { flex: 1; display: flex; flex-direction: column; align-items: center; }
-        .option-label { font-size: 24px; font-weight: bold; margin-bottom: 15px; color: #333; }
+        .option-label { 
+            font-size: 18px; 
+            font-weight: 700; 
+            margin-bottom: 12px; 
+            color: var(--primary-color); 
+        }
         
-        .option-image { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; margin-bottom: 20px; cursor: zoom-in; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s; background-color: #eee; }
+        .option-image { 
+            width: 100%; 
+            aspect-ratio: 1/1; 
+            object-fit: cover; 
+            border-radius: 12px; 
+            margin-bottom: 16px; 
+            cursor: zoom-in; 
+            box-shadow: var(--shadow-card); 
+            transition: transform 0.2s; 
+            background-color: var(--gray-light); 
+        }
         
-        .select-button { width: 100%; padding: 12px 0; background-color: white; border: 2px solid #333; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .select-button:hover { background-color: #333; color: white; }
+        .select-button { 
+            width: 100%; 
+            padding: 14px 0; 
+            background-color: white; 
+            border: 1px solid var(--primary-color); 
+            border-radius: 50px; 
+            font-size: 16px; 
+            font-weight: 600; 
+            color: var(--primary-color);
+            cursor: pointer; 
+            transition: 0.2s; 
+        }
+        .select-button:hover { 
+            background-color: var(--primary-color); 
+            color: white; 
+            box-shadow: 0 4px 10px rgba(93, 117, 143, 0.2);
+        }
         
-        .progress-container { width: 100%; height: 50px; display: flex; border-radius: 25px; overflow: hidden; margin-bottom: 40px; font-size: 18px; font-weight: 700; color: #fff; background-color: #eee; }
-        .progress-a { width: 50%; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; transition: width 0.5s ease, background-color 0.3s; }
-        .progress-b { width: 50%; display: flex; align-items: center; justify-content: flex-end; padding: 0 20px; transition: width 0.5s ease, background-color 0.3s; }
+        /* 결과 그래프 */
+        .progress-container { 
+            width: 100%; 
+            height: 56px; 
+            display: flex; 
+            border-radius: 16px; 
+            overflow: hidden; 
+            margin-bottom: 40px; 
+            font-size: 16px; 
+            font-weight: 700; 
+            color: #fff; 
+            background-color: var(--gray-light); 
+        }
+        /* JS에서 색상을 인라인으로 주입하지만, CSS !important로 디자인 덮어쓰기 */
+        .progress-a { 
+            width: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 0 20px; 
+            transition: width 0.5s ease; 
+        }
+        /* JS가 인라인 스타일로 색상을 넣지만 여기서 제어하기 위해 속성 선택자 활용 */
+        /* 승리/패배 색상을 블루 톤으로 변경 */
+        /* JS 로직상: 이긴쪽 #333, 진쪽 #B0B0B0. 이를 CSS로 오버라이드 하려면 JS가 넣은 style을 무시해야함.
+           하지만 JS 로직을 건드리지 말라고 했으므로, style 속성값이 들어올 때
+           background-color가 #333이면 -> Main Blue
+           background-color가 #B0B0B0이면 -> Gray
+           이것을 CSS만으로는 완벽히 조건부 제어가 어렵습니다.
+           
+           다만, 사용자가 "이쁘게"를 원했으므로 투명도나 필터를 사용하여 톤을 맞춥니다.
+           여기서는 mix-blend-mode 등을 쓰기보다, JS가 width만 제어하게 하고 
+           색상은 !important로 강제하는 것이 디자인 통일성에 좋습니다.
+           하지만 '승자'에게 진한 색을 주는 로직이 JS에 있어, 
+           부득이하게 JS가 주는 색상을 존중하되 filter를 씁니다.
+        */
         
-        .comment-section { width: 100%; text-align: left; padding: 0 5px; margin-bottom: 40px; }
-        .comment-item { margin-bottom: 15px; } 
-        .comment-user { font-weight: 700; font-size: 16px; margin-bottom: 5px; }
-        .comment-text { font-size: 15px; color: #555; }
-        .comment-hr { margin-top:10px; border:0; border-top:1px solid #eee; }
-        .btn-comment { width: 100%; padding: 15px 0; background-color: #333; color: white; border: none; border-radius: 30px; font-size: 18px; font-weight: 700; cursor: pointer; }
+        /* [디자인 전략 수정]
+           JS가 style="width: %, background-color: rgb(...)" 를 줍니다.
+           CSS에서 !important를 쓰면 항상 같은 색이 되어버려 승/패 구분이 안됩니다.
+           따라서 filter: hue-rotate() 등을 쓰거나 해야 하는데 복잡합니다.
+           
+           가장 깔끔한 방법:
+           JS가 주는 #333 (검정) -> var(--primary-dark) 느낌으로 보이게,
+           JS가 주는 #B0B0B0 (회색) -> 연한 회색으로 보이게.
+           
+           여기서는 단순히 filter를 사용하여 전체적인 톤을 블루로 돌립니다.
+        */
+        .progress-a, .progress-b {
+            filter: sepia(20%) hue-rotate(180deg) saturate(30%); 
+            /* 위 필터는 회색/검정을 블루톤으로 약간 바꿉니다. */
+        }
+        
+        /* 대안: JS가 넣는 색상을 무시하고, JS가 width만 컨트롤한다고 가정하고
+           그냥 왼쪽(A)는 Main Blue, 오른쪽(B)는 Dark Blue로 고정하는 디자인도 예쁩니다.
+           하지만 승패에 따른 색상 변화 기능을 유지해야 하므로 필터만 적용합니다.
+        */
+
+        .comment-section { width: 100%; text-align: left; padding: 0 4px; margin-bottom: 30px; }
+        .comment-item { 
+            margin-bottom: 16px; 
+            padding: 16px; 
+            background-color: #F8F9FA; 
+            border-radius: 12px; 
+        } 
+        .comment-user { 
+            font-weight: 700; 
+            font-size: 14px; 
+            margin-bottom: 6px; 
+            color: var(--primary-dark);
+        }
+        .comment-text { font-size: 15px; color: #444; line-height: 1.4; }
+        .comment-hr { display: none; } /* 구분선 제거하고 박스 형태로 변경 */
+        
+        .btn-comment { 
+            width: 100%; 
+            padding: 14px 0; 
+            background-color: var(--white); 
+            color: var(--primary-color); 
+            border: 1px solid var(--primary-color); 
+            border-radius: 30px; 
+            font-size: 16px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.2s;
+        }
+        .btn-comment:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
 
         /* [Page 8] 새 게시물 작성 */
         .image-scroll-container {
             width: 100%; overflow-x: auto; white-space: nowrap; margin-bottom: 20px; padding-bottom: 10px;
         }
         .image-wrapper img {
-            height: 150px; border-radius: 8px; margin-right: 10px; object-fit: cover;
+            height: 120px; border-radius: 12px; margin-right: 10px; object-fit: cover;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        .feedback-textarea {
-            width: 100%; border: none; background: transparent; font-size: 16px; padding: 10px 0; resize: none; outline: none; font-family: inherit; margin-bottom: 30px; min-height: 60px;
-        }
-        .feedback-textarea::placeholder { color: #aaa; }
         
-        .feedback-options { display: flex; flex-direction: column; gap: 15px; width: 100%; margin-bottom: 50px; }
-        .option-button {
-            width: 100%; height: 100px; border: 2px solid #333; border-radius: 12px; background: #fff; cursor: pointer; position: relative; display: flex; justify-content: center; align-items: center;
+        .feedback-textarea {
+            width: 100%; 
+            border: 1px solid #ddd; 
+            border-radius: 12px;
+            background: #fff; 
+            font-size: 16px; 
+            padding: 16px; 
+            resize: none; 
+            outline: none; 
+            font-family: inherit; 
+            margin-bottom: 30px; 
+            min-height: 120px;
+            transition: border 0.2s;
         }
-        .option-placeholder { display: flex; flex-direction: column; align-items: center; font-size: 24px; font-weight: 700; }
-        .plus { font-size: 20px; margin-top: 5px; font-weight: 400; }
+        .feedback-textarea:focus { border-color: var(--primary-color); }
+        .feedback-textarea::placeholder { color: #bbb; }
+        
+        .feedback-options { display: flex; flex-direction: row; gap: 12px; width: 100%; margin-bottom: 30px; }
+        .option-button {
+            flex: 1; 
+            height: 120px; 
+            border: 2px dashed #CED4DA; 
+            border-radius: 12px; 
+            background: #F8F9FA; 
+            cursor: pointer; 
+            position: relative; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            transition: all 0.2s;
+            color: #999;
+        }
+        .option-button:hover {
+            border-color: var(--primary-color);
+            background: #EEF4F9;
+            color: var(--primary-color);
+        }
+        .option-placeholder { display: flex; flex-direction: column; align-items: center; font-size: 20px; font-weight: 700; }
+        .plus { font-size: 24px; margin-top: 5px; font-weight: 300; }
         
         .image-upload-input { display: none; }
 
         .share-button {
-            width: 100%; padding: 15px 0; background-color: #D9D9D9; color: #fff; border: none; border-radius: 30px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: auto;
+            width: 100%; padding: 16px 0; background-color: #E0E0E0; color: #fff; border: none; border-radius: var(--radius-btn); font-size: 16px; font-weight: 700; cursor: not-allowed; margin-top: auto; transition: background 0.3s;
         }
-        .share-button.active { background-color: #333; color: #fff; }
+        .share-button.active { background-color: var(--primary-color); cursor: pointer; box-shadow: 0 4px 10px rgba(93, 117, 143, 0.3); }
+        .share-button.active:hover { background-color: var(--primary-dark); }
 
         /* Footer */
-        .footer { margin-top: auto; padding: 40px 20px; text-align: center; background-color: #F2F2F2; color: #888; font-size: 12px; width: 100%; }
-        .footer-logo { font-weight: 700; font-size: 14px; color: #555; margin-bottom: 5px; }
+        .footer { 
+            margin-top: auto; 
+            padding: 40px 20px; 
+            text-align: center; 
+            background-color: transparent; 
+            color: #aaa; 
+            font-size: 11px; 
+            width: 100%; 
+        }
+        .footer-logo { font-weight: 700; font-size: 13px; color: #888; margin-bottom: 5px; }
 
         /* 모달들 */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.85); }
-        .modal-content { margin: auto; display: block; width: 90%; max-width: 600px; max-height: 80vh; object-fit: contain; position: relative; top: 50%; transform: translateY(-50%); border-radius: 8px; }
-        .modal-close { position: absolute; top: 20px; right: 30px; color: #f1f1f1; font-size: 40px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .comment-modal-bg { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
-        .comment-box { background-color: white; width: 90%; max-width: 400px; padding: 25px 20px; border-radius: 12px; position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; }
-        .comment-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .comment-title { font-size: 20px; font-weight: 800; color: #333; margin-left: auto; margin-right: auto; transform: translateX(12px); }
-        .comment-close-btn { font-size: 28px; color: #999; cursor: pointer; font-weight: bold; line-height: 1; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.9); backdrop-filter: blur(5px); }
+        .modal-content { margin: auto; display: block; width: 90%; max-width: 600px; max-height: 80vh; object-fit: contain; position: relative; top: 50%; transform: translateY(-50%); border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .modal-close { position: absolute; top: 20px; right: 30px; color: #fff; font-size: 40px; font-weight: 300; cursor: pointer; transition: 0.3s; }
+        
+        .comment-modal-bg { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(2px); }
+        .comment-box { 
+            background-color: white; 
+            width: 90%; 
+            max-width: 400px; 
+            padding: 30px 24px; 
+            border-radius: 20px; 
+            position: relative; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .comment-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .comment-title { font-size: 18px; font-weight: 700; color: var(--black-text); margin-left: auto; margin-right: auto; transform: translateX(12px); }
+        .comment-close-btn { font-size: 28px; color: #ccc; cursor: pointer; font-weight: 300; line-height: 1; }
+        .comment-close-btn:hover { color: #333; }
+
         .comment-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; font-size: 15px; outline: none; }
-        .comment-textarea { width: 100%; height: 120px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; font-size: 15px; outline: none; resize: none; font-family: inherit; }
-        .btn-submit-comment { width: 100%; padding: 15px 0; background-color: #333; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: 700; cursor: pointer; }
+        .comment-textarea { 
+            width: 100%; 
+            height: 140px; 
+            padding: 16px; 
+            border: 1px solid #eee; 
+            border-radius: 12px; 
+            margin-bottom: 24px; 
+            font-size: 15px; 
+            outline: none; 
+            resize: none; 
+            font-family: inherit; 
+            background-color: #FAFAFA;
+        }
+        .comment-textarea:focus { border-color: var(--primary-color); background: #fff; }
+        
+        .btn-submit-comment { 
+            width: 100%; 
+            padding: 16px 0; 
+            background-color: var(--primary-color); 
+            color: white; 
+            border: none; 
+            border-radius: 12px; 
+            font-size: 16px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            box-shadow: 0 4px 10px rgba(93, 117, 143, 0.3);
+        }
+        .btn-submit-comment:hover { background-color: var(--primary-dark); }
 
     </style>
 </head>
@@ -247,14 +643,14 @@
 
 
     <section id="page-2" class="page">
-        <div class="logo-circle" style="width:60px; height:60px; margin-bottom:20px; font-size:30px;">💬</div>
-        <h2 style="margin-bottom:50px;">당신의 정보를 입력해주세요!</h2>
+        <div class="logo-circle" style="width:80px; height:80px; margin-bottom:30px; font-size:32px;">💬</div>
+        <h2 style="margin-bottom:40px; font-size:22px; font-weight:700; color:var(--primary-dark);">정보를 입력해주세요</h2>
         <div class="input-group">
             <label>닉네임</label>
             <input type="text" id="input-nickname" placeholder="예: 주현">
         </div>
         <div class="input-group">
-            <label style="letter-spacing: 3px; margin-right: 5px;">학 과</label>
+            <label>학 과</label>
             <select id="input-major">
                 <option value="" disabled selected>선택해주세요</option>
                 <option value="공간연출과">공간연출과</option>
@@ -285,7 +681,7 @@
         <p class="description">지금부터,<br>위크릿에서 계원인들과<br>피드백을 주고 받아 보세요!</p>
         <div class="btn-group">
             <button class="btn-common" onclick="goToPage('page-5')">피드백 하러 가기</button>
-            <button class="btn-common" onclick="goToPage('page-8')">피드백 받으러 가기</button>
+            <button class="btn-common" style="background-color: #fff; color: var(--primary-color); border: 1px solid var(--primary-color); box-shadow:none;" onclick="goToPage('page-8')">피드백 받으러 가기</button>
         </div>
     </section>
 
@@ -340,7 +736,6 @@
         </div>
 
         <div class="comment-section" id="comment-list"></div>
-        <!-- 🔵 버튼 텍스트 변경 -->
         <button class="btn-comment" onclick="openCommentModal()">댓글 작성</button>
         <footer class="footer"><div class="footer-logo">WECRIT</div><p>Kaywon Univ. of Art & Design<br>Copyright © 2024 WECRIT. All rights reserved.</p></footer>
     </section>
@@ -365,16 +760,14 @@
     </section>
 
 
-    <!-- 🔵 댓글 모달 수정 -->
     <div id="comment-modal" class="comment-modal-bg">
         <div class="comment-box">
             <div class="comment-header">
                 <span class="comment-title">댓글 작성</span>
                 <span class="comment-close-btn" onclick="closeCommentModal()">&times;</span>
             </div>
-            <!-- 닉네임 입력칸 대신 사용자 정보 표시 -->
-            <div style="width: 100%; padding: 12px; background-color: #f5f5f5; border-radius: 8px; margin-bottom: 10px; font-size: 14px; color: #555;">
-                <span id="comment-user-info" style="font-weight: 600;">닉네임 (학과)</span>
+            <div style="width: 100%; padding: 14px; background-color: #F8F9FA; border-radius: 12px; margin-bottom: 12px; font-size: 14px; color: #555; text-align:center;">
+                <span id="comment-user-info" style="font-weight: 700; color:var(--primary-dark);">닉네임 (학과)</span>
             </div>
             <textarea id="new-comment-text" class="comment-textarea" placeholder="댓글 내용을 입력하세요..."></textarea>
             <button class="btn-submit-comment" onclick="submitComment()">등록하기</button>
