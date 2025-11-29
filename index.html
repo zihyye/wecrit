@@ -1,250 +1,86 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>WECRIT Service</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* ====================
-           1. 공통 CSS
-           ==================== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
             font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif;
-            background-color: #F2F2F2;
-            color: #111;
+            background-color: #F2F2F2; color: #111;
         }
-
-        .app-container {
-            width: 100%;
-            max-width: 480px;
-            margin: 0 auto;
-            background-color: #F2F2F2;
-            position: relative;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-        }
-
-        /* 상단 네비게이션 바 */
-        .top-nav {
-            position: sticky;
-            top: 0;
-            width: 100%;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            z-index: 100;
-            background-color: #F2F2F2; 
-        }
-
-        .nav-title {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            font-weight: 700;
-            font-size: 18px;
-            color: #111;
-            display: none; /* JS로 제어 */
-        }
-
-        .back-arrow {
-            font-size: 24px;
-            cursor: pointer;
-            display: none; /* JS로 제어 */
-            padding: 5px;
-        }
-
-        /* 페이지 공통 */
-        .page {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            flex: 1;
-            padding: 20px;
-            justify-content: center;
-        }
-
-        .page.active { display: flex; }
-        .page.no-padding-top { padding-top: 0; justify-content: flex-start; }
-
-        /* 버튼 공통 */
-        .btn-common {
-            background-color: #3F4145;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 12px 0;
-            width: 100%;
-            max-width: 200px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            text-align: center;
-            margin-top: 20px;
-        }
-        .btn-common:hover { background-color: #222; }
-
-        /* ====================
-           2. 화면별 스타일
-           ==================== */
-        
-        /* [Page 1] 메인 타이틀 수정 */
-        /* 로고 삭제로 인한 여백 조정 및 폰트 사이즈 확대 */
-        .main-title-large { 
-            font-size: 48px; /* 사이즈 키움 */
-            font-weight: 900; 
-            line-height: 1.2; 
-            margin-bottom: 30px; 
-            text-align: center; 
-            color: #111;
-        }
-        .sub-text { font-size: 16px; color: #666; line-height: 1.8; margin-bottom: 60px; text-align: center; }
-
-        /* [Page 2~] */
-        .main-title { font-size: 32px; font-weight: 800; line-height: 1.3; margin-bottom: 20px; text-align: center; }
-        .logo-circle { width: 140px; height: 140px; background-color: #D9D9D9; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-bottom: 40px; }
-        
-        .input-group { width: 100%; display: flex; align-items: center; margin-bottom: 15px; padding: 0 20px; }
-        .input-group label { width: 60px; font-weight: 600; font-size: 15px; white-space: nowrap; }
-        .input-group input, .input-group select { flex: 1; height: 40px; border: none; border-radius: 6px; padding: 0 10px; font-size: 14px; background-color: #fff; outline: none; }
-        .input-group select { appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='gray' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 10px center; background-size: 16px; color: #333; cursor: pointer; }
-
-        .greeting { font-size: 22px; font-weight: 700; margin-bottom: 60px; text-align: center; }
-        .description { font-size: 18px; line-height: 1.5; margin-bottom: 80px; text-align: center; }
-        .btn-group { display: flex; flex-direction: column; gap: 15px; width: 100%; align-items: center; }
-        
-        /* [Page 5] 게시판 목록 */
-        .tab-header { width: 100%; background: #fff; display: flex; padding: 0 20px; border-bottom: 1px solid #eee; position: sticky; top: 50px; z-index: 10; }
-        .tab-item { padding: 15px 5px; margin-right: 20px; color: #888; cursor: pointer; position: relative;}
-        .tab-item.active { color: #000; font-weight: 700; }
-        .tab-item.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: #000; }
-        
-        /* 게시물이 없을 때 안내 메시지 */
-        .empty-message { text-align: center; color: #888; margin-top: 100px; font-size: 16px; }
-
-        .post-list { width: 100%; padding: 20px 0; display: flex; flex-direction: column; gap: 40px; padding-bottom: 100px; }
-        .post-item { padding: 0 20px; cursor: pointer; }
-        .post-item.special-bg { background-color: #fff; padding-top: 30px; padding-bottom: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
-        .image-row { display: flex; gap: 5px; height: 180px; overflow: hidden; margin-bottom: 10px;}
-        .image-row img { height: 100%; object-fit: cover; display: block; }
-        .post-item.special-bg .image-row img { box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-        .w-30 { width: 30%; } .w-40 { width: 40%; } .w-50 { width: 50%; }
-        .title-box { background: #fff; border-radius: 8px; padding: 12px 0; text-align: center; font-size: 14px; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .title-box.gray-box { background: #EAEAEA; }
-        .post-item.special-bg .title-box { box-shadow: none; background-color: #f9f9f9; }
-
-        /* 플로팅 플러스 버튼 */
-        .fab-btn {
-            position: absolute; 
-            bottom: 30px; 
-            right: 20px; 
-            width: 60px; 
-            height: 60px;
-            background-color: #111; 
-            border-radius: 50%;
-            display: none; /* JS로 제어 */
-            justify-content: center; 
-            align-items: center;
-            color: white; 
-            font-size: 36px; 
-            font-weight: 300; 
-            line-height: 1;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            cursor: pointer; 
-            z-index: 999;
-            transition: transform 0.2s;
-        }
-        .fab-btn:active { transform: scale(0.95); }
-
-        /* [Page 6 & 7] 투표 및 결과 공통 스타일 */
-        .subtitle { font-size: 16px; color: #555; margin-bottom: 40px; text-align: center; padding: 0 20px; word-break: keep-all; }
-        .layout-options { display: flex; justify-content: space-between; gap: 15px; width: 100%; }
-        .option-a, .option-b { flex: 1; display: flex; flex-direction: column; align-items: center; }
-        .option-label { font-size: 24px; font-weight: bold; margin-bottom: 15px; color: #333; }
-        
-        .option-image { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; margin-bottom: 20px; cursor: zoom-in; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.1s; background-color: #eee; }
-        
-        .select-button { width: 100%; padding: 12px 0; background-color: white; border: 2px solid #333; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .select-button:hover { background-color: #333; color: white; }
-        
-        .progress-container { width: 100%; height: 50px; display: flex; border-radius: 25px; overflow: hidden; margin-bottom: 40px; font-size: 18px; font-weight: 700; color: #fff; background-color: #eee; }
-        .progress-a { width: 50%; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; transition: width 0.2s ease, background-color 0.15s; }
-        .progress-b { width: 50%; display: flex; align-items: center; justify-content: flex-end; padding: 0 20px; transition: width 0.2s ease, background-color 0.15s; }
-        
-        .comment-section { width: 100%; text-align: left; padding: 0 5px; margin-bottom: 40px; }
-        .comment-item { margin-bottom: 15px; } 
-        .comment-user { font-weight: 700; font-size: 16px; margin-bottom: 5px; }
-        .comment-text { font-size: 15px; color: #555; }
+        .app-container { width:100%; max-width:480px; margin:0 auto; background:#F2F2F2; position:relative; min-height:100vh; display:flex; flex-direction:column; overflow-x:hidden; }
+        .top-nav { position:sticky; top:0; width:100%; height:50px; display:flex; align-items:center; padding:0 20px; z-index:100; background:#F2F2F2; }
+        .nav-title { position:absolute; left:50%; transform:translateX(-50%); font-weight:700; font-size:18px; color:#111; display:none; }
+        .back-arrow { font-size:24px; cursor:pointer; display:none; padding:5px; }
+        .page { display:none; flex-direction:column; align-items:center; width:100%; flex:1; padding:20px; justify-content:center; }
+        .page.active { display:flex; }
+        .page.no-padding-top { padding-top:0; justify-content:flex-start; }
+        .btn-common { background:#3F4145; color:white; border:none; border-radius:6px; padding:12px 0; width:100%; max-width:200px; font-size:16px; font-weight:600; cursor:pointer; text-align:center; margin-top:20px; }
+        .main-title-large { font-size:48px; font-weight:900; line-height:1.2; margin-bottom:30px; text-align:center; color:#111; }
+        .sub-text { font-size:16px; color:#666; line-height:1.8; margin-bottom:60px; text-align:center; }
+        .input-group { width:100%; display:flex; align-items:center; margin-bottom:15px; padding:0 20px; }
+        .input-group label { width:60px; font-weight:600; font-size:15px; white-space:nowrap; }
+        .input-group input, .input-group select { flex:1; height:40px; border:none; border-radius:6px; padding:0 10px; font-size:14px; background:#fff; outline:none; }
+        .greeting { font-size:22px; font-weight:700; margin-bottom:60px; text-align:center; }
+        .description { font-size:18px; line-height:1.5; margin-bottom:80px; text-align:center; }
+        .btn-group { display:flex; flex-direction:column; gap:15px; width:100%; align-items:center; }
+        .tab-header { width:100%; background:#fff; display:flex; padding:0 20px; border-bottom:1px solid #eee; position:sticky; top:50px; z-index:10; }
+        .tab-item { padding:15px 5px; margin-right:20px; color:#888; cursor:pointer; position:relative; }
+        .tab-item.active { color:#000; font-weight:700; }
+        .empty-message { text-align:center; color:#888; margin-top:100px; font-size:16px; }
+        .post-list { width:100%; padding:20px 0; display:flex; flex-direction:column; gap:40px; padding-bottom:100px; }
+        .post-item { padding:0 20px; cursor:pointer; }
+        .post-item.special-bg { background:#fff; padding-top:30px; padding-bottom:30px; box-shadow:0 2px 10px rgba(0,0,0,0.03); }
+        .image-row { display:flex; gap:5px; height:180px; overflow:hidden; margin-bottom:10px; }
+        .image-row img { height:100%; object-fit:cover; display:block; }
+        .title-box { background:#fff; border-radius:8px; padding:12px 0; text-align:center; font-size:14px; font-weight:600; box-shadow:0 1px 3px rgba(0,0,0,0.05); }
+        .title-box.gray-box { background:#EAEAEA; }
+        .fab-btn { position:absolute; bottom:30px; right:20px; width:60px; height:60px; background:#111; border-radius:50%; display:none; justify-content:center; align-items:center; color:white; font-size:36px; box-shadow:0 4px 15px rgba(0,0,0,0.3); cursor:pointer; z-index:999; transition:transform 0.2s; }
+        .option-image { width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:8px; margin-bottom:20px; cursor:zoom-in; box-shadow:0 2px 8px rgba(0,0,0,0.1); transition:transform 0.1s; background:#eee; }
+        .progress-container { width:100%; height:50px; display:flex; border-radius:25px; overflow:hidden; margin-bottom:40px; font-size:18px; font-weight:700; color:#fff; background:#eee; }
+        .progress-a, .progress-b { width:50%; display:flex; align-items:center; justify-content:space-between; padding:0 20px; transition:width 0.2s ease, background-color 0.15s; }
+        .comment-section { width:100%; text-align:left; padding:0 5px; margin-bottom:40px; }
+        .comment-item { margin-bottom:15px; }
+        .comment-user { font-weight:700; font-size:16px; margin-bottom:5px; }
+        .comment-text { font-size:15px; color:#555; }
         .comment-hr { margin-top:10px; border:0; border-top:1px solid #eee; }
-        .btn-comment { width: 100%; padding: 15px 0; background-color: #333; color: white; border: none; border-radius: 30px; font-size: 18px; font-weight: 700; cursor: pointer; }
-
-        /* [Page 8] 새 게시물 작성 */
-        .image-scroll-container {
-            width: 100%; overflow-x: auto; white-space: nowrap; margin-bottom: 20px; padding-bottom: 10px;
-        }
-        .image-wrapper img {
-            height: 150px; border-radius: 8px; margin-right: 10px; object-fit: cover;
-        }
-        .feedback-textarea {
-            width: 100%; border: none; background: transparent; font-size: 16px; padding: 10px 0; resize: none; outline: none; font-family: inherit; margin-bottom: 30px; min-height: 60px;
-        }
-        .feedback-textarea::placeholder { color: #aaa; }
-        
-        .feedback-options { display: flex; flex-direction: column; gap: 15px; width: 100%; margin-bottom: 50px; }
-        .option-button {
-            width: 100%; height: 100px; border: 2px solid #333; border-radius: 12px; background: #fff; cursor: pointer; position: relative; display: flex; justify-content: center; align-items: center;
-        }
-        .option-placeholder { display: flex; flex-direction: column; align-items: center; font-size: 24px; font-weight: 700; }
-        .plus { font-size: 20px; margin-top: 5px; font-weight: 400; }
-        
-        .image-upload-input { display: none; }
-
-        .share-button {
-            width: 100%; padding: 15px 0; background-color: #D9D9D9; color: #fff; border: none; border-radius: 30px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: auto;
-        }
-        .share-button.active { background-color: #333; color: #fff; }
-
-        /* Footer */
-        .footer { margin-top: auto; padding: 40px 20px; text-align: center; background-color: #F2F2F2; color: #888; font-size: 12px; width: 100%; }
-        .footer-logo { font-weight: 700; font-size: 14px; color: #555; margin-bottom: 5px; }
-
-        /* 모달들 */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.85); }
-        .modal-content { margin: auto; display: block; width: 90%; max-width: 600px; max-height: 80vh; object-fit: contain; position: relative; top: 50%; transform: translateY(-50%); border-radius: 8px; }
-        .modal-close { position: absolute; top: 20px; right: 30px; color: #f1f1f1; font-size: 40px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .comment-modal-bg { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
-        .comment-box { background-color: white; width: 90%; max-width: 400px; padding: 25px 20px; border-radius: 12px; position: relative; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; }
-        .comment-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .comment-title { font-size: 20px; font-weight: 800; color: #333; margin-left: auto; margin-right: auto; transform: translateX(12px); }
-        .comment-close-btn { font-size: 28px; color: #999; cursor: pointer; font-weight: bold; line-height: 1; }
-        .comment-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; font-size: 15px; outline: none; }
-        .comment-textarea { width: 100%; height: 120px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; font-size: 15px; outline: none; resize: none; font-family: inherit; }
-        .btn-submit-comment { width: 100%; padding: 15px 0; background-color: #333; color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: 700; cursor: pointer; }
-
+        .btn-comment { width:100%; padding:15px 0; background:#333; color:white; border:none; border-radius:30px; font-size:18px; font-weight:700; cursor:pointer; }
+        .image-scroll-container { width:100%; overflow-x:auto; white-space:nowrap; margin-bottom:20px; padding-bottom:10px; }
+        .image-wrapper img { height:150px; border-radius:8px; margin-right:10px; object-fit:cover; }
+        .feedback-textarea { width:100%; border:none; background:transparent; font-size:16px; padding:10px 0; resize:none; outline:none; font-family:inherit; margin-bottom:30px; min-height:60px; }
+        .feedback-options { display:flex; flex-direction:column; gap:15px; width:100%; margin-bottom:50px; }
+        .option-button { width:100%; height:100px; border:2px solid #333; border-radius:12px; background:#fff; cursor:pointer; position:relative; display:flex; justify-content:center; align-items:center; }
+        .option-placeholder { display:flex; flex-direction:column; align-items:center; font-size:24px; font-weight:700; }
+        .image-upload-input { display:none; }
+        .share-button { width:100%; padding:15px 0; background:#D9D9D9; color:#fff; border:none; border-radius:30px; font-size:16px; font-weight:700; cursor:pointer; margin-top:auto; }
+        .share-button.active { background:#333; color:#fff; }
+        .modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:auto; background:rgba(0,0,0,0.85); }
+        .modal-content { margin:auto; display:block; width:90%; max-width:600px; max-height:80vh; object-fit:contain; position:relative; top:50%; transform:translateY(-50%); border-radius:8px; }
+        .modal-close { position:absolute; top:20px; right:30px; color:#f1f1f1; font-size:40px; font-weight:bold; cursor:pointer; transition:0.3s; }
+        .comment-modal-bg { display:none; position:fixed; z-index:2000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5); }
+        .comment-box { background:#fff; width:90%; max-width:400px; padding:25px 20px; border-radius:12px; position:relative; top:50%; left:50%; transform:translate(-50%,-50%); display:flex; flex-direction:column; align-items:center; }
+        .comment-header { width:100%; display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+        .comment-title { font-size:20px; font-weight:800; color:#333; }
+        .comment-close-btn { font-size:28px; color:#999; cursor:pointer; font-weight:bold; line-height:1; }
+        .comment-textarea { width:100%; height:120px; padding:12px; border:1px solid #ddd; border-radius:8px; margin-bottom:20px; font-size:15px; outline:none; resize:none; font-family:inherit; }
     </style>
 </head>
 <body>
-
 <div class="app-container">
 
     <nav class="top-nav">
-        <span class="back-arrow" onclick="goBack()">&#10094;</span> 
-        <span class="nav-title" id="page-title">새 게시물</span> 
+        <span class="back-arrow" onclick="goBack()">&#10094;</span>
+        <span class="nav-title" id="page-title">새 게시물</span>
     </nav>
-
 
     <section id="page-1" class="page active">
         <h1 class="main-title-large">WELCOME<br>TO<br>WECRIT!</h1>
         <p class="sub-text">과제 고민,<br>혼자 하고 계신가요?<br>이제는 계원인들에게 물어보세요!</p>
         <button class="btn-common" onclick="goToPage('page-2')">참여하기</button>
     </section>
-
 
     <section id="page-2" class="page">
         <div class="logo-circle" style="width:60px; height:60px; margin-bottom:20px; font-size:30px;">💬</div>
@@ -254,7 +90,7 @@
             <input type="text" id="input-nickname" placeholder="예: 주현">
         </div>
         <div class="input-group">
-            <label style="letter-spacing: 3px; margin-right: 5px;">학 과</label>
+            <label style="letter-spacing:3px; margin-right:5px;">학 과</label>
             <select id="input-major">
                 <option value="" disabled selected>선택해주세요</option>
                 <option value="공간연출과">공간연출과</option>
@@ -279,7 +115,6 @@
         <button class="btn-common" onclick="submitUserInfo()">등 록</button>
     </section>
 
-
     <section id="page-3" class="page">
         <h2 class="greeting"><span id="display-name">000</span>님 반가워요!👋</h2>
         <p class="description">지금부터,<br>위크릿에서 계원인들과<br>피드백을 주고 받아 보세요!</p>
@@ -291,7 +126,7 @@
 
     <section id="page-5" class="page no-padding-top">
         <header class="tab-header">
-            <div class="tab-item active" style="width: 100%; text-align: center; border: none;">자유피드백 게시판</div>
+            <div class="tab-item active" style="width:100%; text-align:center; border:none;">자유피드백 게시판</div>
         </header>
         <div class="post-list">
             <div class="empty-message">등록된 피드백 요청이 없습니다.<br>첫 번째 게시물을 올려보세요!</div>
@@ -299,7 +134,6 @@
     </section>
 
     <div class="fab-btn" id="fab-write" onclick="goToPage('page-8')">+</div>
-
 
     <section id="page-6" class="page">
         <h1 class="main-title">과제 피드백 TIME!</h1>
@@ -322,8 +156,8 @@
     <section id="page-7" class="page">
         <h1 class="main-title">투표 결과</h1>
         <p class="subtitle">소중한 한 표 감사합니다!</p>
-        
-        <div class="layout-options" style="margin-bottom: 20px;">
+
+        <div class="layout-options" style="margin-bottom:20px;">
             <div class="option-a">
                 <span class="option-label">A</span>
                 <img src="" id="result-img-a" class="option-image">
@@ -333,24 +167,22 @@
                 <img src="" id="result-img-b" class="option-image">
             </div>
         </div>
-        
+
         <div class="progress-container">
             <div class="progress-a" id="bar-a"><span>A</span><span id="percent-a">50%</span></div>
             <div class="progress-b" id="bar-b"><span>B</span><span id="percent-b">50%</span></div>
         </div>
 
         <div class="comment-section" id="comment-list"></div>
-        <!-- 🔵 버튼 텍스트 변경 -->
         <button class="btn-comment" onclick="openCommentModal()">댓글 작성</button>
         <footer class="footer"><div class="footer-logo">WECRIT</div><p>Kaywon Univ. of Art & Design<br>Copyright © 2024 WECRIT. All rights reserved.</p></footer>
     </section>
 
-
-    <section id="page-8" class="page" style="justify-content: flex-start; padding-top: 20px;">
+    <section id="page-8" class="page" style="justify-content:flex-start; padding-top:20px;">
         <div class="image-scroll-container">
             <div class="image-wrapper" id="imageWrapper"></div>
         </div>
-        <div class="feedback-options" style="margin-bottom: 20px;">
+        <div class="feedback-options" style="margin-bottom:20px;">
             <button class="option-button" id="btnOptionA" data-option="A">
                 <input type="file" class="image-upload-input" accept="image/*" id="uploadA" data-option="A">
                 <div class="option-placeholder"><span>A</span><span class="plus">+</span></div>
@@ -360,165 +192,121 @@
                 <div class="option-placeholder"><span>B</span><span class="plus">+</span></div>
             </button>
         </div>
-        <textarea class="feedback-textarea" id="feedbackTextarea" placeholder="받고 싶은 피드백을 적어주세요..." rows="4" style="margin-bottom: 30px;"></textarea>
+        <textarea class="feedback-textarea" id="feedbackTextarea" placeholder="받고 싶은 피드백을 적어주세요..." rows="4" style="margin-bottom:30px;"></textarea>
         <button class="share-button">공유하기</button>
     </section>
 
-
-    <!-- 🔵 댓글 모달 수정 -->
     <div id="comment-modal" class="comment-modal-bg">
         <div class="comment-box">
             <div class="comment-header">
                 <span class="comment-title">댓글 작성</span>
                 <span class="comment-close-btn" onclick="closeCommentModal()">&times;</span>
             </div>
-            <!-- 닉네임 입력칸 대신 사용자 정보 표시 -->
-            <div style="width: 100%; padding: 12px; background-color: #f5f5f5; border-radius: 8px; margin-bottom: 10px; font-size: 14px; color: #555;">
-                <span id="comment-user-info" style="font-weight: 600;">닉네임 (학과)</span>
+            <div style="width:100%; padding:12px; background:#f5f5f5; border-radius:8px; margin-bottom:10px; font-size:14px; color:#555;">
+                <span id="comment-user-info" style="font-weight:600;">닉네임 (학과)</span>
             </div>
             <textarea id="new-comment-text" class="comment-textarea" placeholder="댓글 내용을 입력하세요..."></textarea>
             <button class="btn-submit-comment" onclick="submitComment()">등록하기</button>
         </div>
     </div>
-    
-    <div id="image-modal" class="modal"><span class="modal-close">&times;</span><img class="modal-content" id="modal-image"></div>
 
+    <div id="image-modal" class="modal"><span class="modal-close">&times;</span><img class="modal-content" id="modal-image"></div>
 </div>
 
 <script>
 /* ==========================================
-   🔴 [중요] 방금 "새 배포"로 받은 URL을 여기에 넣으세요! 🔴
+   배포된 Apps Script 웹앱 URL을 여기에 넣으세요
    ========================================== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwyvJo9eCShoORBlil-CrkFPBXJ6MqK9Ss0EnwFVufJzG-Wn8tloitPXQnau_vguIafiw/exec"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxG3sDXUDTjw6S9F-oxDqrZNy-JHE_idYl_MaR-8HcXPXNl38qV-IrYSDoOl7gD2jMBXg/exec";
 
-
-/* =====================
-   1. 전역 변수 및 설정
-   ===================== */
 let historyStack = [];
 let currentUser = { nickname: "", major: "" };
 const fileData = { A: null, B: null };
 let currentPostId = null;
-const voteCounts = {}; 
+const voteCounts = {};
 
+// 유틸: XSS 방지용 escape
+function escapeHtml(str) {
+    if (!str && str !== 0) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
 
 /* =====================
-   1-1. 로컬 스토리지에서 사용자 정보 불러오기
+   사용자 정보 저장/불러오기
    ===================== */
 function loadUserInfo() {
     const savedNickname = localStorage.getItem('userNickname');
     const savedMajor = localStorage.getItem('userMajor');
-    
     if (savedNickname && savedMajor) {
         currentUser.nickname = savedNickname;
         currentUser.major = savedMajor;
-        document.getElementById('display-name').innerText = savedNickname;
+        document.getElementById('display-name') && (document.getElementById('display-name').innerText = savedNickname);
         return true;
     }
     return false;
 }
-
 function saveUserInfo(nickname, major) {
     localStorage.setItem('userNickname', nickname);
     localStorage.setItem('userMajor', major);
 }
 
-
 /* =====================
-   2. 페이지 이동 (SPA)
+   SPA 페이지 이동
    ===================== */
 function goToPage(pageId) {
     const activePage = document.querySelector('.page.active');
-    if (activePage && activePage.id !== 'page-1') { historyStack.push(activePage.id); }
+    if (activePage && activePage.id !== 'page-1') historyStack.push(activePage.id);
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(pageId).classList.add('active');
-    window.scrollTo(0, 0);
+    window.scrollTo(0,0);
     updateUI(pageId);
 }
-
 function goBack() {
     if (historyStack.length > 0) {
         const prevPage = historyStack.pop();
-        if (prevPage === 'page-4') {
-            goBack();
-            return;
-        }
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(prevPage).classList.add('active');
-        window.scrollTo(0, 0);
+        window.scrollTo(0,0);
         updateUI(prevPage);
     } else {
         goToPage('page-3');
     }
 }
-
 function updateUI(pageId) {
     const arrow = document.querySelector('.back-arrow');
     const fab = document.getElementById('fab-write');
     const title = document.getElementById('page-title');
-
-    if (['page-3', 'page-5', 'page-6', 'page-7', 'page-8'].includes(pageId)) {
-        arrow.style.display = 'block';
-    } else {
-        arrow.style.display = 'none';
-    }
-
-    if (pageId === 'page-5') { fab.style.display = 'flex'; } else { fab.style.display = 'none'; }
-    if (pageId === 'page-8') { title.style.display = 'block'; } else { title.style.display = 'none'; }
+    if (['page-3','page-5','page-6','page-7','page-8'].includes(pageId)) arrow.style.display = 'block'; else arrow.style.display = 'none';
+    if (pageId === 'page-5') fab.style.display = 'flex'; else fab.style.display = 'none';
+    if (pageId === 'page-8') title.style.display = 'block'; else title.style.display = 'none';
 }
 updateUI('page-1');
 
-
 /* =====================
-   3. 투표 페이지 & 로직
+   투표 페이지 & 로직
    ===================== */
 function openVotePage(postId, question, imgASrc, imgBSrc) {
     currentPostId = postId;
-
     const questionEl = document.getElementById('vote-question');
     if (questionEl) questionEl.innerText = question;
-
     const imgAEl = document.getElementById('vote-img-a');
     const imgBEl = document.getElementById('vote-img-b');
     const optionA = document.querySelector('.option-a');
     const optionB = document.querySelector('.option-b');
 
-    // A 이미지 (문자열 URL 또는 객체)
-    if (imgASrc) {
-        const src = typeof imgASrc === 'string' ? imgASrc : 
-                   (imgASrc.url || (imgASrc.data ? `data:${imgASrc.mimeType};base64,${imgASrc.data}` : null));
-        if (src) {
-            imgAEl.src = src;
-            imgAEl.setAttribute('data-full-src', src);
-            optionA.style.display = 'flex';
-        } else {
-            optionA.style.display = 'none';
-        }
-    } else { 
-        optionA.style.display = 'none'; 
-    }
+    // 이미지 소스 처리 (data URL 또는 외부 URL)
+    const srcA = imgASrc && typeof imgASrc === 'object' && imgASrc.data ? `data:${imgASrc.mimeType};base64,${imgASrc.data}` : (imgASrc || '');
+    const srcB = imgBSrc && typeof imgBSrc === 'object' && imgBSrc.data ? `data:${imgBSrc.mimeType};base64,${imgBSrc.data}` : (imgBSrc || '');
 
-    // B 이미지 (문자열 URL 또는 객체)
-    if (imgBSrc) {
-        const src = typeof imgBSrc === 'string' ? imgBSrc : 
-                   (imgBSrc.url || (imgBSrc.data ? `data:${imgBSrc.mimeType};base64,${imgBSrc.data}` : null));
-        if (src) {
-            imgBEl.src = src;
-            imgBEl.setAttribute('data-full-src', src);
-            optionB.style.display = 'flex';
-        } else {
-            optionB.style.display = 'none';
-        }
-    } else { 
-        optionB.style.display = 'none'; 
-    }
+    if (srcA) { imgAEl.src = srcA; imgAEl.setAttribute('data-full-src', srcA); optionA.style.display = 'flex'; } else optionA.style.display = 'none';
+    if (srcB) { imgBEl.src = srcB; imgBEl.setAttribute('data-full-src', srcB); optionB.style.display = 'flex'; } else optionB.style.display = 'none';
 
     const resA = document.getElementById('result-img-a');
     const resB = document.getElementById('result-img-b');
-    resA.src = imgAEl.src; 
-    resA.setAttribute('data-full-src', imgAEl.src);
-    resB.src = imgBEl.src; 
-    resB.setAttribute('data-full-src', imgBEl.src);
+    resA.src = imgAEl.src || '';
+    resA.setAttribute('data-full-src', imgAEl.src || '');
+    resB.src = imgBEl.src || '';
+    resB.setAttribute('data-full-src', imgBEl.src || '');
 
     const storageKey = 'voted_' + currentPostId;
     if (localStorage.getItem(storageKey)) {
@@ -532,229 +320,99 @@ function openVotePage(postId, question, imgASrc, imgBSrc) {
 
 function submitVote(selection) {
     if (!currentPostId) return;
-
     const storageKey = 'voted_' + currentPostId;
-    if (localStorage.getItem(storageKey)) { return; }
-
-    localStorage.setItem(storageKey, 'true'); 
-    
-    if (!voteCounts[currentPostId]) voteCounts[currentPostId] = { A: 0, B: 0 };
+    if (localStorage.getItem(storageKey)) return;
+    localStorage.setItem(storageKey, 'true');
+    if (!voteCounts[currentPostId]) voteCounts[currentPostId] = { A:0, B:0 };
     voteCounts[currentPostId][selection]++;
-
-    // 서버에 투표 저장 (비동기, UI는 즉시 반영)
-    fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({ 
-            action: 'vote', 
-            id: currentPostId, 
-            select: selection 
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.result === 'success') {
-            console.log('투표가 서버에 저장되었습니다.');
-        }
-    })
-    .catch(err => console.error('투표 저장 오류:', err));
-
+    fetch(SCRIPT_URL, { method:'POST', headers:{ 'Content-Type':'application/json' }, body: JSON.stringify({ action:'vote', id: currentPostId, select: selection }) })
+        .then(r => r.json()).then(d => console.log('vote saved', d)).catch(e=>console.error(e));
     updateResultGraph();
     loadComments(currentPostId);
     goToPage('page-7');
-    
-    const lastIdx = historyStack.length - 1;
-    if (historyStack[lastIdx] === 'page-6') { 
-        historyStack.splice(lastIdx, 1); 
-    }
 }
-
-function updateResultGraph() {
-    const counts = voteCounts[currentPostId] || { A: 1, B: 1 }; 
-    const total = counts.A + counts.B;
-    
-    const percentA = total === 0 ? 50 : Math.round((counts.A / total) * 100);
-    const percentB = total === 0 ? 50 : 100 - percentA;
-
-    const barA = document.getElementById('bar-a');
-    const barB = document.getElementById('bar-b');
-    
-    barA.style.width = percentA + '%';
-    barB.style.width = percentB + '%';
-    
-    document.getElementById('percent-a').innerText = percentA + '%';
-    document.getElementById('percent-b').innerText = percentB + '%';
-
-    if (counts.A > counts.B) {
-        barA.style.backgroundColor = '#333';
-        barB.style.backgroundColor = '#B0B0B0';
-    } else if (counts.B > counts.A) {
-        barB.style.backgroundColor = '#333';
-        barA.style.backgroundColor = '#B0B0B0';
-    } else {
-        barA.style.backgroundColor = '#555';
-        barB.style.backgroundColor = '#555';
-    }
-
-    document.getElementById('percent-a').style.display = percentA < 10 ? 'none' : 'block';
-    document.getElementById('percent-b').style.display = percentB < 10 ? 'none' : 'block';
-}
-
 
 /* =====================
-   4. 사용자 정보 및 기본 기능
+   댓글 모달/댓글 로직
    ===================== */
-function submitUserInfo() {
-    const nickname = document.getElementById('input-nickname').value;
-    const major = document.getElementById('input-major').value;
-    if (!nickname) { alert("닉네임을 입력해주세요!"); return; }
-    if (!major) { alert("학과를 선택해주세요!"); return; }
-      
-    currentUser.nickname = nickname;
-    currentUser.major = major;
-    saveUserInfo(nickname, major); // 🔵 로컬 스토리지에 저장
-    document.getElementById('display-name').innerText = nickname;
-    goToPage('page-3');
-}
-
-// 이미지 확대 모달
-const modal = document.getElementById("image-modal");
-const modalImg = document.getElementById("modal-image");
-const closeBtn = document.querySelector(".modal-close");
-
-document.addEventListener('click', function(e) {
-    if(e.target.classList.contains('option-image')) {
-        modal.style.display = "block"; 
-        modalImg.src = e.target.getAttribute('data-full-src'); 
-    }
-});
-
-closeBtn.onclick = function() { modal.style.display = "none"; }
-window.onclick = function(event) { if (event.target == modal) { modal.style.display = "none"; } }
-
-// 🔵 댓글 모달 - 사용자 정보 표시
 function openCommentModal() {
-    const userInfoEl = document.getElementById('comment-user-info');
-    userInfoEl.innerText = `${currentUser.nickname} (${currentUser.major})`;
-    document.getElementById('comment-modal').style.display = 'block'; 
+    document.getElementById('comment-user-info').innerText = `${currentUser.nickname} (${currentUser.major})`;
+    document.getElementById('comment-modal').style.display = 'block';
+}
+function closeCommentModal() {
+    document.getElementById('comment-modal').style.display = 'none';
 }
 
-function closeCommentModal() { 
-    document.getElementById('comment-modal').style.display = 'none'; 
-}
-
-// 🔵 댓글 저장 함수 - 닉네임 자동 사용, 빠르게 UI 반영, 모달 즉시 닫기
-function submitComment() {
+async function submitComment() {
     const textInput = document.getElementById('new-comment-text');
     const text = textInput.value.trim();
-    
-    if (text === "") { 
-        alert("댓글 내용을 입력해주세요!"); 
-        return; 
-    }
-    
-    if (!currentPostId) {
-        alert("게시물 정보를 찾을 수 없습니다.");
-        return;
-    }
-    
+    if (text === "") { alert("댓글 내용을 입력해주세요!"); return; }
+    if (!currentPostId) { alert("게시물 정보를 찾을 수 없습니다."); return; }
+
     const nickname = currentUser.nickname || "익명";
-    const major = currentUser.major || "미선택";
-    
-    // 1) 로컬에 댓글 추가 (즉시 표시)
+    const major = currentUser.major || "";
+
+    // 즉시 UI 반영 (닉네임 옆에 학과 포함)
     const commentList = document.getElementById('comment-list');
     const newCommentDiv = document.createElement('div');
     newCommentDiv.classList.add('comment-item');
-    // 닉네임 옆에 학과 포함
     newCommentDiv.innerHTML = `<div class="comment-user">${escapeHtml(nickname)} (${escapeHtml(major)})</div><div class="comment-text">${escapeHtml(text)}</div><hr class="comment-hr">`;
     commentList.prepend(newCommentDiv);
 
-    // 2) 입력창 초기화 및 모달 즉시 닫기 (빠른 UX)
     textInput.value = "";
     closeCommentModal();
 
-    // 3) 서버에 댓글 저장 (비동기로 처리, UI는 이미 반영됨)
-    fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-            action: 'comment',
-            postId: currentPostId,
-            nickname: nickname,
-            major: major,
-            text: text
-        })
-    })
-    .then(response => response.json())
-    .then(result => {
-        if (result.result === 'success') {
-            console.log('댓글이 서버에 저장되었습니다.');
-        } else {
-            console.warn('댓글 저장 실패:', result.message);
-            // (선택) 여기서 실패하면 사용자에게 재시도 안내를 할 수 있음
-        }
-    })
-    .catch(error => {
-        console.error('댓글 저장 오류:', error);
-    });
+    // 서버 전송 (async)
+    try {
+        const res = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'comment', postId: currentPostId, nickname, major, text })
+        });
+        const json = await res.json();
+        console.log('comment saved server:', json);
+    } catch (err) {
+        console.error('comment save error:', err);
+    }
 }
 
-// 간단한 XSS 예방 위해 text를 escape 처리
-function escapeHtml(str) {
-    if (!str && str !== 0) return '';
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
-}
-
-// 🔵 댓글 불러오기 함수 (서버에서 nickname + major를 받을 수 있게 처리)
+/* =====================
+   댓글 불러오기 (서버에서 major 포함 반환)
+   ===================== */
 async function loadComments(postId) {
     try {
         const response = await fetch(`${SCRIPT_URL}?action=getComments&postId=${encodeURIComponent(postId)}`);
         const comments = await response.json();
-        
-        console.log(`댓글 ${comments.length}개 로드됨:`, comments);
-        
         const commentList = document.getElementById('comment-list');
         commentList.innerHTML = '';
-        
         if (!comments || comments.length === 0) {
             commentList.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">아직 댓글이 없습니다.</div>';
             return;
         }
-        
-        // 서버에서 온 댓글을 최신 순서로 (서버가 전달하는 순서를 고려)
         comments.reverse().forEach(comment => {
-            const commentDiv = document.createElement('div');
-            commentDiv.classList.add('comment-item');
+            const div = document.createElement('div');
+            div.classList.add('comment-item');
             const nick = comment.nickname || '익명';
             const maj = comment.major || '';
-            commentDiv.innerHTML = `
-                <div class="comment-user">${escapeHtml(nick)}${maj ? ' (' + escapeHtml(maj) + ')' : ''}</div>
-                <div class="comment-text">${escapeHtml(comment.text || '')}</div>
-                <hr class="comment-hr">
-            `;
-            commentList.appendChild(commentDiv);
+            div.innerHTML = `<div class="comment-user">${escapeHtml(nick)}${maj ? ' (' + escapeHtml(maj) + ')' : ''}</div><div class="comment-text">${escapeHtml(comment.text || '')}</div><hr class="comment-hr">`;
+            commentList.appendChild(div);
         });
-        
-    } catch (error) {
-        console.error('댓글 로딩 오류:', error);
-        const commentList = document.getElementById('comment-list');
-        commentList.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">댓글을 불러올 수 없습니다.</div>';
+    } catch (err) {
+        console.error('loadComments error:', err);
+        document.getElementById('comment-list').innerHTML = '<div style="text-align:center; color:#999; padding:20px;">댓글을 불러올 수 없습니다.</div>';
     }
 }
 
-
 /* =====================
-   5. 게시물 작성 & 구글 전송 (빠른 UX: UI를 즉시 갱신하고 서버 전송은 백그라운드)
+   게시물 작성 (이미지 업로드/미리보기 포함)
+   핵심: payload를 캡처한 뒤 UI를 바로 갱신하고, 캡처본을 서버로 전송합니다.
    ===================== */
 const textarea = document.getElementById('feedbackTextarea');
 const shareButton = document.querySelector('.share-button');
 const imageWrapper = document.getElementById('imageWrapper');
 
-textarea.addEventListener('focus', () => { textarea.rows = 8; });
-textarea.addEventListener('blur', () => { if (textarea.value.trim() === '') { textarea.rows = 4; } });
+textarea && textarea.addEventListener('focus', () => { textarea.rows = 8; });
+textarea && textarea.addEventListener('blur', () => { if (textarea.value.trim() === '') textarea.rows = 4; });
 
 const optionButtons = document.querySelectorAll('.option-button');
 const uploadInputs = document.querySelectorAll('.image-upload-input');
@@ -762,10 +420,7 @@ const uploadInputs = document.querySelectorAll('.image-upload-input');
 optionButtons.forEach(button => {
     button.addEventListener('click', (e) => {
         const option = button.getAttribute('data-option');
-        if (fileData[option]) {
-            alert('이미지가 이미 등록되었습니다. 삭제 후 다시 시도해주세요.');
-            return;
-        }
+        if (fileData[option]) { alert('이미지가 이미 등록되었습니다. 삭제 후 다시 시도해주세요.'); return; }
         document.getElementById(`upload${option}`).click();
     });
 });
@@ -774,11 +429,10 @@ uploadInputs.forEach(input => {
     input.addEventListener('change', (event) => {
         const file = event.target.files[0];
         const option = event.target.getAttribute('data-option');
-        
         if (file && !fileData[option]) {
             const reader = new FileReader();
             reader.onload = (e) => {
-                const base64String = e.target.result.split(',')[1]; 
+                const base64String = e.target.result.split(',')[1];
                 const mimeType = file.type;
                 fileData[option] = { data: base64String, mimeType: mimeType };
 
@@ -789,12 +443,16 @@ uploadInputs.forEach(input => {
 
                 const mainImg = document.createElement('img');
                 mainImg.src = e.target.result;
-                
+                mainImg.style.height = '150px';
+                mainImg.style.borderRadius = '8px';
+                mainImg.style.marginRight = '10px';
+                mainImg.style.objectFit = 'cover';
+
                 const trashBtn = document.createElement('button');
                 trashBtn.className = 'delete-img-btn';
                 trashBtn.innerHTML = '🗑️';
                 trashBtn.style.cssText = "position:absolute; bottom:5px; right:5px; border:none; background:rgba(0,0,0,0.5); color:white; border-radius:50%; width:25px; height:25px; cursor:pointer;";
-                
+
                 trashBtn.onclick = (evt) => {
                     evt.stopPropagation();
                     if (confirm('사진을 삭제하시겠습니까?')) {
@@ -818,7 +476,7 @@ uploadInputs.forEach(input => {
 });
 
 function checkFormValidity() {
-    const isTextareaFilled = textarea.value.trim().length > 0;
+    const isTextareaFilled = textarea && textarea.value.trim().length > 0;
     const isOptionImageUploaded = fileData.A !== null || fileData.B !== null;
     if (isTextareaFilled && isOptionImageUploaded) {
         shareButton.classList.add('active');
@@ -828,163 +486,164 @@ function checkFormValidity() {
         shareButton.disabled = true;
     }
 }
-textarea.addEventListener('input', checkFormValidity);
+textarea && textarea.addEventListener('input', checkFormValidity);
 
+// addNewPostToBoard: UI에 즉시 추가 (이미지는 data URL 또는 서버 URL 모두 처리)
 function addNewPostToBoard(postId, question, imgA, imgB) {
     const list = document.querySelector('#page-5 .post-list');
-    
     const emptyMsg = list.querySelector('.empty-message');
     if (emptyMsg) emptyMsg.remove();
 
     const article = document.createElement('article');
-    article.className = 'post-item special-bg'; 
-    
-    article.onclick = function() { 
-        openVotePage(postId, question, imgA, imgB); 
-    }; 
+    article.className = 'post-item special-bg';
+    article.onclick = function() { openVotePage(postId, question, imgA, imgB); };
 
     let imagesHtml = '';
-    const srcA = imgA ? `data:${imgA.mimeType};base64,${imgA.data}` : null;
-    const srcB = imgB ? `data:${imgB.mimeType};base64,${imgB.data}` : null;
+    const srcA = imgA && typeof imgA === 'object' && imgA.data ? `data:${imgA.mimeType};base64,${imgA.data}` : (typeof imgA === 'string' ? imgA : '');
+    const srcB = imgB && typeof imgB === 'object' && imgB.data ? `data:${imgB.mimeType};base64,${imgB.data}` : (typeof imgB === 'string' ? imgB : '');
 
-    if (srcA && srcB) {
-        imagesHtml = `<img src="${srcA}" class="w-50"><img src="${srcB}" class="w-50">`;
-    } else if (srcA) {
-        imagesHtml = `<img src="${srcA}" style="width:100%; height:100%; object-fit:cover;">`;
-    } else if (srcB) {
-        imagesHtml = `<img src="${srcB}" style="width:100%; height:100%; object-fit:cover;">`;
-    }
+    if (srcA && srcB) imagesHtml = `<img src="${srcA}" class="w-50"><img src="${srcB}" class="w-50">`;
+    else if (srcA) imagesHtml = `<img src="${srcA}" style="width:100%; height:100%; object-fit:cover;">`;
+    else if (srcB) imagesHtml = `<img src="${srcB}" style="width:100%; height:100%; object-fit:cover;">`;
 
     article.innerHTML = `<div class="image-row">${imagesHtml}</div><div class="title-box gray-box">${escapeHtml(question)}</div>`;
     list.prepend(article);
 }
 
-shareButton.addEventListener('click', () => {
+shareButton && shareButton.addEventListener('click', () => {
     if (!shareButton.classList.contains('active')) return;
 
+    // 캡처: UI 초기화 전에 값을 복사
+    const capturedQuestion = textarea.value;
+    const capturedFileA = fileData.A ? { data: fileData.A.data, mimeType: fileData.A.mimeType } : null;
+    const capturedFileB = fileData.B ? { data: fileData.B.data, mimeType: fileData.B.mimeType } : null;
+
+    // UI 즉시 반영 (빠른 체감)
     const originalText = shareButton.innerText;
     shareButton.innerText = "업로드 중...";
     shareButton.disabled = true;
 
     const newPostId = 'post_' + Date.now();
-    // 즉시 UI 반영 (빠르게 보이도록)
-    addNewPostToBoard(newPostId, textarea.value, fileData.A, fileData.B);
-    voteCounts[newPostId] = { A: 0, B: 0 };
+    addNewPostToBoard(newPostId, capturedQuestion, capturedFileA, capturedFileB);
+    voteCounts[newPostId] = { A:0, B:0 };
 
-    // UI 초기화 및 이동을 서버 응답 대기 없이 빠르게 수행
+    // UI 초기화
     imageWrapper.innerHTML = '';
     textarea.value = '';
-    fileData.A = null; 
-    fileData.B = null;
-    document.getElementById('btnOptionA').classList.remove('disabled');
-    document.getElementById('btnOptionB').classList.remove('disabled');
+    fileData.A = null; fileData.B = null;
+    document.getElementById('btnOptionA') && document.getElementById('btnOptionA').classList.remove('disabled');
+    document.getElementById('btnOptionB') && document.getElementById('btnOptionB').classList.remove('disabled');
     checkFormValidity();
     shareButton.innerText = originalText;
     shareButton.disabled = false;
+
     goToPage('page-5');
 
-    // 서버에 비동기로 전송 (백그라운드)
+    // 서버 전송: 캡처본을 사용 (debug 로그 포함)
     const payload = {
         id: newPostId,
         nickname: currentUser.nickname || "익명",
         major: currentUser.major || "미선택",
-        question: textarea.value,
-        imageA: fileData.A,
-        imageB: fileData.B
+        question: capturedQuestion,
+        imageA: capturedFileA,
+        imageB: capturedFileB
     };
+
+    console.log('DEBUG: sending post payload', payload);
 
     fetch(SCRIPT_URL, {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.result !== 'success') { console.log('Server warning: ' + data.message); }
-        else { console.log('게시물이 서버에 저장되었습니다.'); }
+    .then(response => {
+        console.log('DEBUG: raw response status', response.status, response.statusText);
+        return response.json().catch(err => {
+            console.error('DEBUG: response json parse error', err);
+            return null;
+        });
     })
-    .catch(error => { console.error('Error:', error); });
+    .then(data => {
+        console.log('DEBUG: server response', data);
+        if (data && data.result === 'success') {
+            // 서버 저장 성공. (이미 UI는 반영되어 있음)
+        } else if (data) {
+            console.warn('Server returned warning', data);
+        }
+    })
+    .catch(err => {
+        console.error('DEBUG: fetch error', err);
+    });
 });
 
-
 /* =====================
-   6. 게시물 불러오기
+   게시물 불러오기 (서버에서 imgA/imgB가 Drive URL로 저장되어있음)
    ===================== */
 async function loadPostsFromSheet() {
     try {
         const response = await fetch(SCRIPT_URL);
         const posts = await response.json();
-        
-        console.log('불러온 게시물:', posts);
-        
+        console.log('loadPostsFromSheet -> posts:', posts);
         const list = document.querySelector('#page-5 .post-list');
         const emptyMsg = list.querySelector('.empty-message');
-        
+
         if (!posts || posts.length === 0) {
-            if (!emptyMsg) {
-                list.innerHTML = '<div class="empty-message">등록된 피드백 요청이 없습니다.<br>첫 번째 게시물을 올려보세요!</div>';
-            }
+            if (!emptyMsg) list.innerHTML = '<div class="empty-message">등록된 피드백 요청이 없습니다.<br>첫 번째 게시물을 올려보세요!</div>';
             return;
         }
-        
         if (emptyMsg) emptyMsg.remove();
         list.innerHTML = '';
-        
+
         posts.forEach(post => {
-            voteCounts[post.id] = {
-                A: parseInt(post.voteA) || 0,
-                B: parseInt(post.voteB) || 0
-            };
-            
-            const imgA = post.imgA || null;
-            const imgB = post.imgB || null;
-            
-            console.log(`게시물 ${post.id} 이미지:`, imgA, imgB);
-            
-            addExistingPostToBoard(post.id, post.question, imgA, imgB);
+            voteCounts[post.id] = { A: parseInt(post.voteA) || 0, B: parseInt(post.voteB) || 0 };
+            // post.imgA and post.imgB are expected to be URLs (Drive thumbnails) or empty string
+            addExistingPostToBoard(post.id, post.question, post.imgA || '', post.imgB || '');
         });
-        
-    } catch (error) {
-        console.error('게시물 로딩 오류:', error);
+    } catch (err) {
+        console.error('loadPostsFromSheet error', err);
     }
 }
 
 function addExistingPostToBoard(postId, question, imgA, imgB) {
     const list = document.querySelector('#page-5 .post-list');
-    
     const article = document.createElement('article');
     article.className = 'post-item special-bg';
-    
-    article.onclick = function() { 
-        openVotePage(postId, question, imgA, imgB); 
-    };
+    article.onclick = function() { openVotePage(postId, question, imgA, imgB); };
 
     let imagesHtml = '';
-    const srcA = imgA;
-    const srcB = imgB;
+    const srcA = imgA || '';
+    const srcB = imgB || '';
 
-    if (srcA && srcB) {
-        imagesHtml = `<img src="${srcA}" class="w-50" onerror="this.style.display='none'"><img src="${srcB}" class="w-50" onerror="this.style.display='none'">`;
-    } else if (srcA) {
-        imagesHtml = `<img src="${srcA}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">`;
-    } else if (srcB) {
-        imagesHtml = `<img src="${srcB}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">`;
-    }
+    if (srcA && srcB) imagesHtml = `<img src="${srcA}" class="w-50" onerror="this.style.display='none'"><img src="${srcB}" class="w-50" onerror="this.style.display='none'>`;
+    else if (srcA) imagesHtml = `<img src="${srcA}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'>`;
+    else if (srcB) imagesHtml = `<img src="${srcB}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'>`;
 
     article.innerHTML = `<div class="image-row">${imagesHtml}</div><div class="title-box gray-box">${escapeHtml(question)}</div>`;
     list.appendChild(article);
 }
 
-// 🔵 페이지 로드 시 사용자 정보 확인 및 게시물 불러오기
+/* =====================
+   초기 로드
+   ===================== */
 window.addEventListener('DOMContentLoaded', () => {
-    // 저장된 사용자 정보 확인
     if (loadUserInfo()) {
-        // 정보가 있으면 바로 홈 화면으로
         goToPage('page-3');
     }
-    // 게시물 불러오기
     loadPostsFromSheet();
 });
-</script>
 
+// 이미지 모달 확대
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('option-image')) {
+        const modal = document.getElementById('image-modal');
+        const modalImg = document.getElementById('modal-image');
+        modal.style.display = 'block';
+        modalImg.src = e.target.getAttribute('data-full-src') || e.target.src;
+    }
+});
+document.querySelector('.modal-close') && (document.querySelector('.modal-close').onclick = function(){ document.getElementById('image-modal').style.display = 'none';});
+window.onclick = function(event) { if (event.target == document.getElementById('image-modal')) document.getElementById('image-modal').style.display = 'none'; };
+
+</script>
 </body>
 </html>
