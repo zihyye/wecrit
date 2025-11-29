@@ -389,7 +389,7 @@
 /* ==========================================
    🔴 [중요] 방금 "새 배포"로 받은 URL을 여기에 넣으세요! 🔴
    ========================================== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzIaccmrVGXV4MLGevilvg5YclpgWop5AiLKDBqhrJakin-5WPKfqS6FJpjEN92LArFsQ/exec"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxh_GuSmxkCOOuX8araVHaIcehaKLz_o6HGwvhB7873flef7I2JrBOLrOw7g-VySFJvIQ/exec"; 
 
 
 /* =====================
@@ -399,6 +399,7 @@ let historyStack = [];
 let currentUser = { nickname: "", major: "" };
 const fileData = { A: null, B: null };
 let currentPostId = null;
+let currentPostAuthor = null; // 추가: 현재 열어본 게시물의 작성자
 const voteCounts = {}; 
 
 
@@ -472,8 +473,9 @@ updateUI('page-1');
 /* =====================
    3. 투표 페이지 & 로직
    ===================== */
-function openVotePage(postId, question, imgASrc, imgBSrc) {
+function openVotePage(postId, question, imgASrc, imgBSrc, authorNickname) {
     currentPostId = postId;
+    currentPostAuthor = authorNickname || null;
 
     const questionEl = document.getElementById('vote-question');
     if (questionEl) questionEl.innerText = question;
@@ -521,7 +523,11 @@ function openVotePage(postId, question, imgASrc, imgBSrc) {
     resB.setAttribute('data-full-src', imgBEl.src);
 
     const storageKey = 'voted_' + currentPostId;
-    if (localStorage.getItem(storageKey)) {
+
+    // 변경: 게시물 작성자이면 투표하지 않아도 결과를 바로 보여줌
+    const isAuthor = currentUser.nickname && currentPostAuthor && (currentUser.nickname === currentPostAuthor);
+
+    if (localStorage.getItem(storageKey) || isAuthor) {
         updateResultGraph();
         loadComments(postId);
         goToPage('page-7');
@@ -815,7 +821,7 @@ function checkFormValidity() {
 }
 textarea.addEventListener('input', checkFormValidity);
 
-function addNewPostToBoard(postId, question, imgA, imgB) {
+function addNewPostToBoard(postId, question, imgA, imgB, authorNickname) {
     const list = document.querySelector('#page-5 .post-list');
     
     const emptyMsg = list.querySelector('.empty-message');
@@ -823,9 +829,12 @@ function addNewPostToBoard(postId, question, imgA, imgB) {
 
     const article = document.createElement('article');
     article.className = 'post-item special-bg'; 
+    if (authorNickname) {
+        article.dataset.author = authorNickname;
+    }
     
     article.onclick = function() { 
-        openVotePage(postId, question, imgA, imgB); 
+        openVotePage(postId, question, imgA, imgB, authorNickname); 
     }; 
 
     let imagesHtml = '';
@@ -852,7 +861,9 @@ shareButton.addEventListener('click', () => {
     shareButton.disabled = true;
 
     const newPostId = 'post_' + Date.now();
-    addNewPostToBoard(newPostId, textarea.value, fileData.A, fileData.B);
+    // 작성자 정보를 전달하여 게시물 추가 (작성자는 결과 바로 보기 가능)
+    const authorNick = currentUser.nickname || "익명";
+    addNewPostToBoard(newPostId, textarea.value, fileData.A, fileData.B, authorNick);
     voteCounts[newPostId] = { A: 0, B: 0 };
 
     const payload = {
@@ -928,7 +939,8 @@ async function loadPostsFromSheet() {
             
             console.log(`게시물 ${post.id} 이미지:`, imgA, imgB);
             
-            addExistingPostToBoard(post.id, post.question, imgA, imgB);
+            // 작성자(nickname) 정보를 전달
+            addExistingPostToBoard(post.id, post.question, imgA, imgB, post.nickname);
         });
         
     } catch (error) {
@@ -936,14 +948,17 @@ async function loadPostsFromSheet() {
     }
 }
 
-function addExistingPostToBoard(postId, question, imgA, imgB) {
+function addExistingPostToBoard(postId, question, imgA, imgB, authorNickname) {
     const list = document.querySelector('#page-5 .post-list');
     
     const article = document.createElement('article');
     article.className = 'post-item special-bg';
+    if (authorNickname) {
+        article.dataset.author = authorNickname;
+    }
     
     article.onclick = function() { 
-        openVotePage(postId, question, imgA, imgB); 
+        openVotePage(postId, question, imgA, imgB, authorNickname); 
     };
 
     let imagesHtml = '';
