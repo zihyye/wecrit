@@ -389,7 +389,7 @@
 /* ==========================================
    🔴 [중요] 방금 "새 배포"로 받은 URL을 여기에 넣으세요! 🔴
    ========================================== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxh_GuSmxkCOOuX8araVHaIcehaKLz_o6HGwvhB7873flef7I2JrBOLrOw7g-VySFJvIQ/exec"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzIaccmrVGXV4MLGevilvg5YclpgWop5AiLKDBqhrJakin-5WPKfqS6FJpjEN92LArFsQ/exec"; 
 
 
 /* =====================
@@ -643,7 +643,7 @@ function closeCommentModal() {
 }
 
 // 🔵 댓글 저장 함수 - 닉네임 자동 사용
-async function submitComment() {
+function submitComment() {
     const textInput = document.getElementById('new-comment-text');
     const text = textInput.value.trim();
     
@@ -658,37 +658,38 @@ async function submitComment() {
     }
     
     const nickname = currentUser.nickname || "익명";
+    const major = currentUser.major || "미선택";
     
     // 로컬에 댓글 추가 (즉시 표시)
     const commentList = document.getElementById('comment-list');
     const newCommentDiv = document.createElement('div');
     newCommentDiv.classList.add('comment-item');
-    newCommentDiv.innerHTML = `<div class="comment-user">${nickname}</div><div class="comment-text">${text}</div><hr class="comment-hr">`;
+    newCommentDiv.innerHTML = `<div class="comment-user">${nickname} <span style="font-weight:400; font-size:13px; color:#777;">(${major})</span></div><div class="comment-text">${text}</div><hr class="comment-hr">`;
     commentList.prepend(newCommentDiv);
     
-    // 서버에 댓글 저장
-    try {
-        const response = await fetch(SCRIPT_URL, {
-            method: 'POST',
-            body: JSON.stringify({
-                action: 'comment',
-                postId: currentPostId,
-                nickname: nickname,
-                text: text
-            })
-        });
-        
-        const result = await response.json();
-        
+    // 서버에 댓글 저장 (비동기, UI는 기다리지 않음)
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            action: 'comment',
+            postId: currentPostId,
+            nickname: nickname,
+            major: major,
+            text: text
+        })
+    })
+    .then(response => response.json())
+    .then(result => {
         if (result.result === 'success') {
             console.log('댓글이 서버에 저장되었습니다.');
         } else {
             console.error('댓글 저장 실패:', result.message);
         }
-    } catch (error) {
+    })
+    .catch(error => {
         console.error('댓글 저장 오류:', error);
-    }
-    
+    });
+
     // 입력창 초기화 및 모달 닫기
     textInput.value = "";
     closeCommentModal();
@@ -713,8 +714,9 @@ async function loadComments(postId) {
         comments.reverse().forEach(comment => {
             const commentDiv = document.createElement('div');
             commentDiv.classList.add('comment-item');
+            const displayMajor = comment.major || '미선택';
             commentDiv.innerHTML = `
-                <div class="comment-user">${comment.nickname || '익명'}</div>
+                <div class="comment-user">${comment.nickname || '익명'} <span style="font-weight:400; font-size:13px; color:#777;">(${displayMajor})</span></div>
                 <div class="comment-text">${comment.text || ''}</div>
                 <hr class="comment-hr">
             `;
@@ -862,6 +864,24 @@ shareButton.addEventListener('click', () => {
         imageB: fileData.B
     };
 
+    // 낙관적 업데이트: UI 상태(게시판 추가, 초기화, 이동)는 서버 응답을 기다리지 않고 즉시 반영
+    // 서버 전송은 백그라운드에서 수행 (UI 체감 속도 개선)
+    imageWrapper.innerHTML = '';
+    textarea.value = '';
+    fileData.A = null; 
+    fileData.B = null;
+    document.getElementById('btnOptionA').classList.remove('disabled');
+    document.getElementById('btnOptionB').classList.remove('disabled');
+    checkFormValidity();
+
+    shareButton.innerText = originalText;
+    shareButton.disabled = false;
+    
+    // 사용자 피드백 빠르게: 바로 알림 및 페이지 이동
+    alert('게시물이 성공적으로 공유되었습니다!');
+    goToPage('page-5');
+
+    // 서버 전송은 비동기(백그라운드)로 실행하고 응답은 로그로 처리
     fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify(payload)
@@ -870,22 +890,7 @@ shareButton.addEventListener('click', () => {
     .then(data => {
         if (data.result !== 'success') { console.log('Server warning: ' + data.message); }
     })
-    .catch(error => { console.error('Error:', error); })
-    .finally(() => {
-        alert('게시물이 성공적으로 공유되었습니다!');
-        imageWrapper.innerHTML = '';
-        textarea.value = '';
-        fileData.A = null; 
-        fileData.B = null;
-        document.getElementById('btnOptionA').classList.remove('disabled');
-        document.getElementById('btnOptionB').classList.remove('disabled');
-        checkFormValidity();
-        
-        shareButton.innerText = originalText;
-        shareButton.disabled = false;
-        
-        goToPage('page-5');
-    });
+    .catch(error => { console.error('Error:', error); });
 });
 
 
