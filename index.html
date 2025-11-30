@@ -56,7 +56,7 @@
             box-shadow: 0 0 60px rgba(0,0,0,0.03); 
         }
 
-        /* 상단 네비게이션 바 */
+        /* 🔵 [수정] 상단 네비게이션 바 (Page 5 헤더와 위치 통일) */
         .top-nav {
             position: sticky;
             top: 0;
@@ -64,7 +64,7 @@
             height: 64px;
             display: flex;
             align-items: center;
-            padding: 0 24px;
+            padding: 0 10px; /* Page 5의 tab-header와 동일한 패딩 */
             z-index: 100;
             background-color: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
@@ -81,13 +81,18 @@
             display: none; 
         }
 
+        /* 🔵 [수정] 뒤로가기 버튼 스타일 통일 */
         .back-arrow {
             font-size: 22px;
+            padding: 10px; /* 터치 영역 확보 및 위치 보정 */
             cursor: pointer;
             display: none; 
-            padding: 8px;
             color: var(--text-main);
-            margin-left: -8px;
+            margin-right: 5px; /* tab-back-arrow와 동일하게 */
+            transition: color 0.2s;
+        }
+        .back-arrow:hover { 
+            color: var(--primary-color); 
         }
 
         /* 페이지 공통 */
@@ -299,6 +304,13 @@
             animation: fadeIn 0.5s ease-out;
         }
         
+        .notice-link-line {
+            display: block;
+            margin-top: 8px;
+            font-weight: 700;
+            color: #366ED8;
+        }
+        
         .empty-message { text-align: center; color: #999; margin-top: 80px; font-size: 15px; font-weight: 400; }
 
         .post-list { 
@@ -405,9 +417,7 @@
             border-radius: 30px;
             justify-content: flex-start;
         }
-        
         .fab-btn:hover .icon { display: none; }
-        
         .fab-btn:hover .text { 
             display: block; 
             width: 100%;
@@ -460,9 +470,7 @@
             border-color: var(--primary-color);
             justify-content: flex-start;
         }
-        
         .fab-survey:hover .icon { display: none; }
-        
         .fab-survey:hover .text {
             display: block;
             width: 100%;
@@ -481,7 +489,6 @@
                 margin-left: 80px; 
                 width: 140px;
             }
-            
             .fab-survey {
                 right: auto;
                 left: 50%;
@@ -567,7 +574,7 @@
             height: 100%;
             display: flex; 
             align-items: center;
-            justify-content: center; 
+            justify-content: flex-start; 
             padding: 0 16px;
             transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
@@ -594,35 +601,23 @@
             z-index: 1; 
             border-radius: 0 18px 18px 0; 
         }
-
-        /* JS 인라인 스타일 오버라이드 (색상) */
-        div[style*="rgb(51, 51, 51)"] { /* #333 - 이긴 쪽 */
-            background-color: var(--primary-dark) !important;
-            background-image: linear-gradient(135deg, #366ED8 0%, #1E4F9E 100%);
-        }
-        div[style*="rgb(176, 176, 176)"] { /* #B0B0B0 - 진 쪽 */
-            background-color: #8EB7FF !important; 
-        }
-        div[style*="rgb(85, 85, 85)"] { /* #555 - 비김 */
-            background-color: var(--primary-color) !important;
-        }
         
-        /* 🔵 [수정] 투표 0일때 텍스트 양끝 정렬 (여백 최소화) */
+        /* 투표 0일때 텍스트 처리 */
         .progress-a.zero-vote {
             background-color: transparent !important;
             background-image: none !important;
             color: #999;
             text-shadow: none;
-            justify-content: flex-start; /* 왼쪽 정렬 */
-            padding-left: 8px; /* 최소 여백 */
+            justify-content: flex-start; 
+            padding-left: 16px; 
         }
         .progress-b.zero-vote {
             background-color: transparent !important;
             background-image: none !important;
             color: #999;
             text-shadow: none;
-            justify-content: flex-end; /* 오른쪽 정렬 */
-            padding-right: 8px; /* 최소 여백 */
+            justify-content: flex-end; 
+            padding-right: 16px; 
         }
 
 
@@ -870,9 +865,12 @@
             <div class="tab-item" id="tab-my" onclick="switchTab('my')">내가 쓴 글</div>
         </header>
         <div class="notice-box">
-            위크릿은 계원예술대학교 학생들이 편하게 피드백을<br>
+            위크릿은 계원예술대학교 학생들이 가볍게 피드백을<br>
             주고받을 수 있도록 만든 서비스입니다.<br>
-            참고용으로 이용해 주시면 감사하겠습니다!
+            참고용으로 이용해 주시면 감사하겠습니다!<br>
+            <div class="notice-link-line">
+               
+            </div>
         </div>
         <div class="post-list">
             <div class="empty-message">등록된 피드백 요청이 없습니다.<br>첫 번째 게시물을 올려보세요!</div>
@@ -1169,7 +1167,7 @@ function submitVote(selection) {
     }
 }
 
-/* 🔵 [수정] 투표 결과 그래프 로직 개선 */
+/* 🔵 [수정] 투표 결과 그래프 로직 개선 (색상 강제 적용) */
 function updateResultGraph() {
     const counts = voteCounts[currentPostId] || { A: 0, B: 0 }; 
     const total = counts.A + counts.B;
@@ -1197,15 +1195,16 @@ function updateResultGraph() {
         document.getElementById('percent-a').style.display = percentA < 10 ? 'none' : 'block';
         document.getElementById('percent-b').style.display = percentB < 10 ? 'none' : 'block';
         
+        // 🔴 [수정] JS에서 직접 파란색 테마 색상을 주입 (기존 회색/검정색 코드 제거)
         if (counts.A > counts.B) {
-            barA.style.backgroundColor = '#333'; 
-            barB.style.backgroundColor = '#B0B0B0'; 
+            barA.style.backgroundColor = '#366ED8'; // Dark Blue (Winner)
+            barB.style.backgroundColor = '#8EB7FF'; // Light Blue (Loser)
         } else if (counts.B > counts.A) {
-            barB.style.backgroundColor = '#333';
-            barA.style.backgroundColor = '#B0B0B0';
+            barB.style.backgroundColor = '#366ED8'; // Dark Blue (Winner)
+            barA.style.backgroundColor = '#8EB7FF'; // Light Blue (Loser)
         } else {
-            barA.style.backgroundColor = '#555'; 
-            barB.style.backgroundColor = '#555';
+            barA.style.backgroundColor = '#4A8CFF'; // Main Blue (Draw)
+            barB.style.backgroundColor = '#4A8CFF'; // Main Blue (Draw)
         }
         
         barA.style.width = percentA + '%';
