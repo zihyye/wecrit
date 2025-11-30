@@ -284,7 +284,7 @@
             border-radius: 10px;
         }
 
-        /* 안내 문구 박스 스타일 */
+        /* 안내 문구 박스 */
         .notice-box {
             width: 100%;
             padding: 20px 24px;
@@ -359,7 +359,7 @@
         }
         .title-box.gray-box { background: #fff; } 
 
-        /* 🔵 [수정] 글쓰기 플로팅 버튼 (연필 모양 & 호버 텍스트) */
+        /* 글쓰기 플로팅 버튼 */
         .fab-btn {
             position: fixed; 
             bottom: 30px; 
@@ -368,7 +368,7 @@
             height: 60px;
             background: var(--primary-gradient); 
             border-radius: 50%;
-            display: none; /* JS로 제어 */
+            display: none; 
             justify-content: center; 
             align-items: center;
             color: white; 
@@ -379,7 +379,7 @@
             cursor: pointer; 
             z-index: 999; 
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            overflow: hidden; /* 텍스트 숨김을 위해 필수 */
+            overflow: hidden;
         }
         
         .fab-btn .icon {
@@ -398,9 +398,8 @@
             padding-left: 5px;
         }
 
-        /* 글쓰기 버튼 호버 효과 */
         .fab-btn:hover { 
-            width: 140px; /* 버튼 늘어남 */
+            width: 140px; 
             transform: translateY(-3px); 
             box-shadow: 0 15px 35px rgba(74, 140, 255, 0.5);
             border-radius: 30px;
@@ -416,7 +415,7 @@
             padding: 0;
         }
 
-        /* 🔵 설문조사 링크 버튼 (이전 요청 기능 유지) */
+        /* 설문조사 링크 버튼 */
         .fab-survey {
             position: fixed;
             bottom: 105px; 
@@ -471,16 +470,15 @@
             padding: 0;
         }
 
-        /* PC 화면 위치 보정 */
         @media (min-width: 481px) {
             .fab-btn {
                 right: auto;
                 left: 50%;
-                margin-left: 160px; /* 기본 위치 */
+                margin-left: 160px; 
                 transform: translateX(0);
             }
             .fab-btn:hover {
-                margin-left: 80px; /* 160 - (140-60) = 80 (왼쪽으로 늘어남) */
+                margin-left: 80px; 
                 width: 140px;
             }
             
@@ -561,44 +559,70 @@
             color: #fff; 
             background-color: #E9ECEF; 
             box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
+            position: relative; 
+        }
+        
+        /* A 막대 */
+        .progress-a {
+            height: 100%;
+            display: flex; 
+            align-items: center;
+            justify-content: center; 
+            padding: 0 16px;
+            transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            position: absolute; 
+            left: 0; 
+            top: 0;
+            z-index: 2; 
+            border-radius: 18px 0 0 18px; 
+        }
+
+        /* B 막대 */
+        .progress-b {
+            height: 100%;
+            width: 100%; 
+            display: flex; 
+            align-items: center;
+            justify-content: flex-end; 
+            padding: 0 16px;
+            transition: all 1s cubic-bezier(0.22, 1, 0.36, 1); 
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            position: absolute; 
+            right: 0; 
+            top: 0;
+            z-index: 1; 
+            border-radius: 0 18px 18px 0; 
         }
 
         /* JS 인라인 스타일 오버라이드 (색상) */
-        div[style*="rgb(51, 51, 51)"] {
+        div[style*="rgb(51, 51, 51)"] { /* #333 - 이긴 쪽 */
             background-color: var(--primary-dark) !important;
             background-image: linear-gradient(135deg, #366ED8 0%, #1E4F9E 100%);
         }
-        div[style*="rgb(176, 176, 176)"] {
+        div[style*="rgb(176, 176, 176)"] { /* #B0B0B0 - 진 쪽 */
             background-color: #8EB7FF !important; 
         }
-        div[style*="rgb(85, 85, 85)"] {
+        div[style*="rgb(85, 85, 85)"] { /* #555 - 비김 */
             background-color: var(--primary-color) !important;
         }
         
-        /* 막대바 내부 정렬 */
-        .progress-a, .progress-b {
-            display: flex; 
-            transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-            align-items: center;
-        }
-        
-        /* 투표 0일때 텍스트 양끝 정렬 */
+        /* 🔵 [수정] 투표 0일때 텍스트 양끝 정렬 (여백 최소화) */
         .progress-a.zero-vote {
             background-color: transparent !important;
             background-image: none !important;
             color: #999;
             text-shadow: none;
-            justify-content: flex-start; 
-            padding-left: 16px; 
+            justify-content: flex-start; /* 왼쪽 정렬 */
+            padding-left: 8px; /* 최소 여백 */
         }
         .progress-b.zero-vote {
             background-color: transparent !important;
             background-image: none !important;
             color: #999;
             text-shadow: none;
-            justify-content: flex-end; 
-            padding-right: 16px; 
+            justify-content: flex-end; /* 오른쪽 정렬 */
+            padding-right: 8px; /* 최소 여백 */
         }
 
 
@@ -846,7 +870,7 @@
             <div class="tab-item" id="tab-my" onclick="switchTab('my')">내가 쓴 글</div>
         </header>
         <div class="notice-box">
-            위크릿은 계원예술대학교 학생들이 가법게 피드백을<br>
+            위크릿은 계원예술대학교 학생들이 편하게 피드백을<br>
             주고받을 수 있도록 만든 서비스입니다.<br>
             참고용으로 이용해 주시면 감사하겠습니다!
         </div>
@@ -1021,10 +1045,9 @@ function goBack() {
 function updateUI(pageId) {
     const arrow = document.querySelector('.back-arrow');
     const fab = document.getElementById('fab-write');
-    const fabSurvey = document.getElementById('fab-survey'); // 설문조사 버튼
+    const fabSurvey = document.getElementById('fab-survey'); 
     const title = document.getElementById('page-title');
 
-    // page-3 (홈)에서 뒤로가기 제거 요청 반영
     if (['page-6', 'page-7', 'page-8'].includes(pageId)) {
         arrow.style.display = 'block';
     } else {
