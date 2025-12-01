@@ -14,14 +14,14 @@
            ==================== */
         
         :root {
-            --primary-color: #4A8CFF;       
+            --primary-color: #4A8CFF;        
             --primary-dark: #366ED8;        
-            --primary-light: #EBF3FF;       
+            --primary-light: #EBF3FF;        
             --primary-gradient: linear-gradient(135deg, #4A8CFF 0%, #366ED8 100%);
             
             --bg-body: #F7F9FC;             
-            --surface-white: #FFFFFF;       
-            --surface-input: #F0F4F8;       
+            --surface-white: #FFFFFF;        
+            --surface-input: #F0F4F8;        
             
             --text-main: #1A1A1A;
             --text-sub: #757575;
@@ -64,12 +64,11 @@
             height: 64px;
             display: flex;
             align-items: center;
-            padding: 0 10px; 
+            padding: 0 24px;
             z-index: 100;
             background-color: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(0,0,0,0.03);
-            transition: transform 0.3s ease; /* 부드러운 전환 */
         }
 
         .nav-title {
@@ -84,15 +83,11 @@
 
         .back-arrow {
             font-size: 22px;
-            padding: 10px; 
             cursor: pointer;
             display: none; 
+            padding: 8px;
             color: var(--text-main);
-            margin-right: 5px; 
-            transition: color 0.2s;
-        }
-        .back-arrow:hover { 
-            color: var(--primary-color); 
+            margin-left: -8px;
         }
 
         /* 페이지 공통 */
@@ -237,7 +232,7 @@
             align-items: center; 
         }
 
-        /* 🔵 [수정] 게시판 목록 (탭) - top: 0으로 변경 */
+        /* [Page 5] 게시판 목록 (탭) */
         .tab-header { 
             width: 100%; 
             background: rgba(255,255,255,0.95); 
@@ -247,16 +242,16 @@
             padding: 0 10px; 
             border-bottom: 1px solid rgba(0,0,0,0.04); 
             position: sticky; 
-            top: 0; /* 🔵 상단바가 없어지므로 맨 위로 붙임 */
+            top: 64px; 
             z-index: 10; 
         }
         
         .tab-back-arrow {
             font-size: 22px;
-            padding: 10px; 
+            padding: 10px;
             cursor: pointer;
             color: var(--text-main);
-            margin-right: 5px; 
+            margin-right: 5px;
             transition: color 0.2s;
         }
         .tab-back-arrow:hover { color: var(--primary-color); }
@@ -289,7 +284,7 @@
             border-radius: 10px;
         }
 
-        /* 안내 문구 박스 */
+        /* 🔵 안내 문구 박스 스타일 */
         .notice-box {
             width: 100%;
             padding: 20px 24px;
@@ -302,13 +297,6 @@
             border-bottom: 1px solid rgba(74, 140, 255, 0.1);
             font-weight: 500;
             animation: fadeIn 0.5s ease-out;
-        }
-        
-        .notice-link-line {
-            display: block;
-            margin-top: 8px;
-            font-weight: 700;
-            color: #366ED8;
         }
         
         .empty-message { text-align: center; color: #999; margin-top: 80px; font-size: 15px; font-weight: 400; }
@@ -371,7 +359,7 @@
         }
         .title-box.gray-box { background: #fff; } 
 
-        /* 글쓰기 플로팅 버튼 */
+        /* 🔵 글쓰기 플로팅 버튼 */
         .fab-btn {
             position: fixed; 
             bottom: 30px; 
@@ -384,48 +372,20 @@
             justify-content: center; 
             align-items: center;
             color: white; 
-            font-size: 24px; 
+            font-size: 32px; 
             font-weight: 300; 
             line-height: 1;
             box-shadow: 0 10px 30px rgba(74, 140, 255, 0.4);
             cursor: pointer; 
             z-index: 999; 
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            overflow: hidden;
+            transition: transform 0.3s;
         }
-        
-        .fab-btn .icon {
-            display: block;
-            font-size: 26px;
-            min-width: 60px;
-            text-align: center;
-        }
-        
-        .fab-btn .text {
-            display: none;
-            font-size: 15px; 
-            font-weight: 700;
-            white-space: nowrap;
-            padding-right: 20px;
-            padding-left: 5px;
-        }
-
         .fab-btn:hover { 
-            width: 140px; 
-            transform: translateY(-3px); 
+            transform: scale(1.1) rotate(90deg); 
             box-shadow: 0 15px 35px rgba(74, 140, 255, 0.5);
-            border-radius: 30px;
-            justify-content: flex-start;
-        }
-        .fab-btn:hover .icon { display: none; }
-        .fab-btn:hover .text { 
-            display: block; 
-            width: 100%;
-            text-align: center;
-            padding: 0;
         }
 
-        /* 설문조사 링크 버튼 */
+        /* 🔵 설문조사 링크 버튼 (이전 요청 기능 유지) */
         .fab-survey {
             position: fixed;
             bottom: 105px; 
@@ -470,7 +430,9 @@
             border-color: var(--primary-color);
             justify-content: flex-start;
         }
+        
         .fab-survey:hover .icon { display: none; }
+        
         .fab-survey:hover .text {
             display: block;
             width: 100%;
@@ -483,11 +445,6 @@
                 right: auto;
                 left: 50%;
                 margin-left: 160px; 
-                transform: translateX(0);
-            }
-            .fab-btn:hover {
-                margin-left: 80px; 
-                width: 140px;
             }
             .fab-survey {
                 right: auto;
@@ -566,55 +523,26 @@
             color: #fff; 
             background-color: #E9ECEF; 
             box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
-            position: relative; 
-        }
-        
-        /* A 막대 */
-        .progress-a {
-            height: 100%;
-            display: flex; 
-            align-items: center;
-            justify-content: flex-start; 
-            padding: 0 16px;
-            transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-            position: absolute; 
-            left: 0; 
-            top: 0;
-            z-index: 2; 
-            border-radius: 18px 0 0 18px; 
         }
 
-        /* B 막대 */
-        .progress-b {
-            height: 100%;
-            width: 100%; 
-            display: flex; 
-            align-items: center;
-            justify-content: flex-end; 
-            padding: 0 16px;
-            transition: all 1s cubic-bezier(0.22, 1, 0.36, 1); 
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-            position: absolute; 
-            right: 0; 
-            top: 0;
-            z-index: 1; 
-            border-radius: 0 18px 18px 0; 
-        }
-
-        /* JS 인라인 스타일 오버라이드 (색상) */
-        div[style*="rgb(51, 51, 51)"] { /* #333 - 이긴 쪽 */
+        div[style*="rgb(51, 51, 51)"] {
             background-color: var(--primary-dark) !important;
             background-image: linear-gradient(135deg, #366ED8 0%, #1E4F9E 100%);
         }
-        div[style*="rgb(176, 176, 176)"] { /* #B0B0B0 - 진 쪽 */
+        div[style*="rgb(176, 176, 176)"] {
             background-color: #8EB7FF !important; 
         }
-        div[style*="rgb(85, 85, 85)"] { /* #555 - 비김 */
+        div[style*="rgb(85, 85, 85)"] {
             background-color: var(--primary-color) !important;
         }
         
-        /* 투표 0일때 텍스트 처리 */
+        .progress-a, .progress-b {
+            display: flex; 
+            transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            align-items: center;
+        }
+        
         .progress-a.zero-vote {
             background-color: transparent !important;
             background-image: none !important;
@@ -671,6 +599,27 @@
             background-color: var(--primary-color);
             color: white;
             box-shadow: 0 4px 12px rgba(74, 140, 255, 0.2);
+        }
+
+        /* 🔴 게시물 삭제 버튼 스타일 */
+        .btn-delete {
+            width: 100%;
+            padding: 16px 0;
+            background-color: var(--surface-white);
+            color: #FF4B4B; /* 빨간색 텍스트 */
+            border: 2px solid #FF4B4B; /* 빨간색 테두리 */
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 12px;
+            display: none; /* 기본적으로는 숨김 */
+        }
+        .btn-delete:hover {
+            background-color: #FF4B4B;
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 75, 75, 0.2);
         }
 
         .image-scroll-container {
@@ -838,23 +787,26 @@
             <label>학 과</label>
             <select id="input-major">
                 <option value="" disabled selected>선택해주세요</option>
+                <option value="광고·브랜드디자인과">광고·브랜드디자인과</option>
+                <option value="게임미디어과">게임미디어과</option>
+                <option value="건축디자인과">건축디자인과</option>
                 <option value="공간연출과">공간연출과</option>
+                <option value="디지털미디어디자인과">디지털미디어디자인과</option>
+                <option value="메타스페이스전공">메타스페이스전공</option>
+                <option value="미래디자인학부">미래디자인학부</option>
                 <option value="사진예술과">사진예술과</option>
                 <option value="순수미술과">순수미술과</option>
-                <option value="융합예술과">융합예술과</option>
-                <option value="광고·브랜드디자인과">광고·브랜드디자인과</option>
+                <option value="스마트프로덕트디자인과">스마트프로덕트디자인과</option>
                 <option value="시각디자인과">시각디자인과</option>
-                <option value="게임미디어과">게임미디어과</option>
-                <option value="디지털미디어디자인과">디지털미디어디자인과</option>
+                <option value="실내건축디자인과">실내건축디자인과</option>
+                <option value="스페이스아트앤테크놀로지전공">스페이스아트앤테크놀로지전공</option>
                 <option value="애니메이션과">애니메이션과</option>
                 <option value="영상디자인과">영상디자인과</option>
-                <option value="리빙가구디자인과">리빙가구디자인과</option>
-                <option value="스마트프로덕트디자인과">스마트프로덕트디자인과</option>
-                <option value="플라워디자인과">플라워디자인과</option>
-                <option value="건축디자인과">건축디자인과</option>
-                <option value="실내건축디자인과">실내건축디자인과</option>
+                <option value="융합예술과">융합예술과</option>
                 <option value="전시콘텐츠디자인과">전시콘텐츠디자인과</option>
-                <option value="미래디자인학부">미래디자인학부</option>
+                <option value="플라워디자인과">플라워디자인과</option>
+                <option value="리빙가구디자인과">리빙가구디자인과</option>
+                <option value="VR콘텐츠디자인전공">VR콘텐츠디자인전공</option>
             </select>
         </div>
         <button class="btn-common" onclick="submitUserInfo()">등 록</button>
@@ -874,15 +826,12 @@
         <header class="tab-header">
             <span class="tab-back-arrow" onclick="goBack()">&#10094;</span>
             <div class="tab-item active" id="tab-all" onclick="switchTab('all')">전체 게시물</div>
-            <div class="tab-item" id="tab-my" onclick="switchTab('my')">내가 쓴 글</div>
+            <div class="tab-item" id="tab-my" onclick="switchTab('my')">나의 게시물</div>
         </header>
         <div class="notice-box">
             위크릿은 계원예술대학교 학생들이 편하게 피드백을<br>
             주고받을 수 있도록 만든 서비스입니다.<br>
-            참고용으로 이용해 주시면 감사하겠습니다!<br>
-            <div class="notice-link-line">
-           
-            </div>
+            참고용으로 이용해 주시면 감사하겠습니다!
         </div>
         <div class="post-list">
             <div class="empty-message">등록된 피드백 요청이 없습니다.<br>첫 번째 게시물을 올려보세요!</div>
@@ -894,10 +843,7 @@
         <span class="text">설문조사바로가기</span>
     </a>
 
-    <div class="fab-btn" id="fab-write" onclick="goToPage('page-8')">
-        <span class="icon">✏️</span>
-        <span class="text">게시물 작성</span>
-    </div>
+    <div class="fab-btn" id="fab-write" onclick="goToPage('page-8')">+</div>
 
 
     <section id="page-6" class="page">
@@ -940,6 +886,8 @@
 
         <div class="comment-section" id="comment-list"></div>
         <button class="btn-comment" onclick="openCommentModal()">댓글 작성</button>
+        <button class="btn-delete" id="btn-delete-post" onclick="deleteCurrentPost()">게시물 삭제</button>
+
         <footer class="footer"><div class="footer-logo">WECRIT</div><p>Kaywon Univ. of Art & Design<br>Copyright © 2024 WECRIT. All rights reserved.</p></footer>
     </section>
 
@@ -1055,18 +1003,10 @@ function goBack() {
 function updateUI(pageId) {
     const arrow = document.querySelector('.back-arrow');
     const fab = document.getElementById('fab-write');
-    const fabSurvey = document.getElementById('fab-survey'); 
+    const fabSurvey = document.getElementById('fab-survey'); // 설문조사 버튼
     const title = document.getElementById('page-title');
-    
-    // 🔴 [수정] 상단바 표시 여부 제어
-    const topNav = document.querySelector('.top-nav');
-    if (pageId === 'page-5') {
-        topNav.style.display = 'none'; // 게시판 목록에선 상단바 숨김
-    } else {
-        topNav.style.display = 'flex'; // 그 외 페이지에선 표시
-    }
 
-    // 뒤로가기 화살표 표시 제어 (Page 5 제외)
+    // page-3 (홈)에서 뒤로가기 제거 요청 반영
     if (['page-6', 'page-7', 'page-8'].includes(pageId)) {
         arrow.style.display = 'block';
     } else {
@@ -1141,6 +1081,14 @@ function openVotePage(postId, question, imgASrc, imgBSrc, authorNickname) {
     const storageKey = 'voted_' + currentPostId;
 
     const isAuthor = currentUser.nickname && currentPostAuthor && (currentUser.nickname === currentPostAuthor);
+    
+    // 🔴 삭제 버튼 표시 로직
+    const deleteBtn = document.getElementById('btn-delete-post');
+    if (isAuthor) {
+        deleteBtn.style.display = 'block';
+    } else {
+        deleteBtn.style.display = 'none';
+    }
 
     if (localStorage.getItem(storageKey) || isAuthor) {
         updateResultGraph();
@@ -1188,7 +1136,7 @@ function submitVote(selection) {
     }
 }
 
-/* 🔵 [수정] 투표 결과 그래프 로직 개선 (색상 강제 적용) */
+/* 🔵 투표 결과 그래프 로직 개선 */
 function updateResultGraph() {
     const counts = voteCounts[currentPostId] || { A: 0, B: 0 }; 
     const total = counts.A + counts.B;
@@ -1216,22 +1164,21 @@ function updateResultGraph() {
         document.getElementById('percent-a').style.display = percentA < 10 ? 'none' : 'block';
         document.getElementById('percent-b').style.display = percentB < 10 ? 'none' : 'block';
         
-        // 🔴 [수정] JS에서 직접 파란색 테마 색상을 주입 (기존 회색/검정색 코드 제거)
         if (counts.A > counts.B) {
-            barA.style.backgroundColor = '#366ED8'; // Dark Blue (Winner)
-            barB.style.backgroundColor = '#8EB7FF'; // Light Blue (Loser)
+            barA.style.backgroundColor = '#333'; 
+            barB.style.backgroundColor = '#B0B0B0'; 
         } else if (counts.B > counts.A) {
-            barB.style.backgroundColor = '#366ED8'; // Dark Blue (Winner)
-            barA.style.backgroundColor = '#8EB7FF'; // Light Blue (Loser)
+            barB.style.backgroundColor = '#333';
+            barA.style.backgroundColor = '#B0B0B0';
         } else {
-            barA.style.backgroundColor = '#4A8CFF'; // Main Blue (Draw)
-            barB.style.backgroundColor = '#4A8CFF'; // Main Blue (Draw)
+            barA.style.backgroundColor = '#555'; 
+            barB.style.backgroundColor = '#555';
         }
         
         barA.style.width = percentA + '%';
         barB.style.width = percentB + '%';
     } else {
-        // [수정] 투표가 0일 때
+        // 투표가 0일 때
         document.getElementById('percent-a').innerText = '0%';
         document.getElementById('percent-b').innerText = '0%';
         document.getElementById('percent-a').style.display = 'block';
@@ -1258,7 +1205,7 @@ function submitUserInfo() {
     const major = document.getElementById('input-major').value;
     if (!nickname) { alert("닉네임을 입력해주세요!"); return; }
     if (!major) { alert("학과를 선택해주세요!"); return; }
-      
+       
     currentUser.nickname = nickname;
     currentUser.major = major;
     saveUserInfo(nickname, major); 
@@ -1646,6 +1593,44 @@ function addExistingPostToBoard(postId, question, imgA, imgB, authorNickname) {
 
     article.innerHTML = `<div class="image-row">${imagesHtml}</div><div class="title-box gray-box">${question}</div>`;
     list.appendChild(article);
+}
+
+/* 🔴 게시물 삭제 함수 */
+function deleteCurrentPost() {
+    if (!currentPostId) return;
+    
+    if (!confirm("정말 이 게시물을 삭제하시겠습니까?\n삭제된 내용은 복구할 수 없습니다.")) {
+        return;
+    }
+    
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ 
+            action: 'delete', 
+            id: currentPostId 
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.result === 'success') {
+            alert('게시물이 삭제되었습니다.');
+            
+            // 로컬 데이터에서 삭제
+            allPostsData = allPostsData.filter(p => p.id !== currentPostId);
+            
+            // 목록 갱신
+            renderPosts(currentTab);
+            
+            // 목록 페이지로 이동
+            goBack();
+        } else {
+            alert('삭제 실패: ' + (data.message || '알 수 없는 오류'));
+        }
+    })
+    .catch(error => {
+        console.error('Delete Error:', error);
+        alert('삭제 요청 중 오류가 발생했습니다.');
+    });
 }
 
 window.addEventListener('DOMContentLoaded', () => {
