@@ -56,7 +56,7 @@
             box-shadow: 0 0 60px rgba(0,0,0,0.03); 
         }
 
-        /* 🔵 [수정] 상단 네비게이션 바 (Page 5 헤더와 위치 통일) */
+        /* 상단 네비게이션 바 */
         .top-nav {
             position: sticky;
             top: 0;
@@ -64,11 +64,12 @@
             height: 64px;
             display: flex;
             align-items: center;
-            padding: 0 10px; /* Page 5의 tab-header와 동일한 패딩 */
+            padding: 0 10px; 
             z-index: 100;
             background-color: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(0,0,0,0.03);
+            transition: transform 0.3s ease; /* 부드러운 전환 */
         }
 
         .nav-title {
@@ -81,14 +82,13 @@
             display: none; 
         }
 
-        /* 🔵 [수정] 뒤로가기 버튼 스타일 통일 */
         .back-arrow {
             font-size: 22px;
-            padding: 10px; /* 터치 영역 확보 및 위치 보정 */
+            padding: 10px; 
             cursor: pointer;
             display: none; 
             color: var(--text-main);
-            margin-right: 5px; /* tab-back-arrow와 동일하게 */
+            margin-right: 5px; 
             transition: color 0.2s;
         }
         .back-arrow:hover { 
@@ -237,7 +237,7 @@
             align-items: center; 
         }
 
-        /* [Page 5] 게시판 목록 (탭) */
+        /* 🔵 [수정] 게시판 목록 (탭) - top: 0으로 변경 */
         .tab-header { 
             width: 100%; 
             background: rgba(255,255,255,0.95); 
@@ -247,16 +247,16 @@
             padding: 0 10px; 
             border-bottom: 1px solid rgba(0,0,0,0.04); 
             position: sticky; 
-            top: 64px; 
+            top: 0; /* 🔵 상단바가 없어지므로 맨 위로 붙임 */
             z-index: 10; 
         }
         
         .tab-back-arrow {
             font-size: 22px;
-            padding: 10px;
+            padding: 10px; 
             cursor: pointer;
             color: var(--text-main);
-            margin-right: 5px;
+            margin-right: 5px; 
             transition: color 0.2s;
         }
         .tab-back-arrow:hover { color: var(--primary-color); }
@@ -601,6 +601,18 @@
             z-index: 1; 
             border-radius: 0 18px 18px 0; 
         }
+
+        /* JS 인라인 스타일 오버라이드 (색상) */
+        div[style*="rgb(51, 51, 51)"] { /* #333 - 이긴 쪽 */
+            background-color: var(--primary-dark) !important;
+            background-image: linear-gradient(135deg, #366ED8 0%, #1E4F9E 100%);
+        }
+        div[style*="rgb(176, 176, 176)"] { /* #B0B0B0 - 진 쪽 */
+            background-color: #8EB7FF !important; 
+        }
+        div[style*="rgb(85, 85, 85)"] { /* #555 - 비김 */
+            background-color: var(--primary-color) !important;
+        }
         
         /* 투표 0일때 텍스트 처리 */
         .progress-a.zero-vote {
@@ -865,11 +877,12 @@
             <div class="tab-item" id="tab-my" onclick="switchTab('my')">내가 쓴 글</div>
         </header>
         <div class="notice-box">
-            위크릿은 계원예술대학교 학생들이 가볍게 피드백을<br>
+            위크릿은 계원예술대학교 학생들이 편하게 피드백을<br>
             주고받을 수 있도록 만든 서비스입니다.<br>
             참고용으로 이용해 주시면 감사하겠습니다!<br>
             <div class="notice-link-line">
-               
+                서비스 이용 설문조사 부탁드립니다 🙇‍♀️ 감사합니다 ! 
+                <a href="#" target="_blank" style="text-decoration: underline; color: inherit;">링크</a>
             </div>
         </div>
         <div class="post-list">
@@ -1045,7 +1058,16 @@ function updateUI(pageId) {
     const fab = document.getElementById('fab-write');
     const fabSurvey = document.getElementById('fab-survey'); 
     const title = document.getElementById('page-title');
+    
+    // 🔴 [수정] 상단바 표시 여부 제어
+    const topNav = document.querySelector('.top-nav');
+    if (pageId === 'page-5') {
+        topNav.style.display = 'none'; // 게시판 목록에선 상단바 숨김
+    } else {
+        topNav.style.display = 'flex'; // 그 외 페이지에선 표시
+    }
 
+    // 뒤로가기 화살표 표시 제어 (Page 5 제외)
     if (['page-6', 'page-7', 'page-8'].includes(pageId)) {
         arrow.style.display = 'block';
     } else {
