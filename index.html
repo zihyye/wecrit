@@ -242,7 +242,7 @@
             padding: 0 10px; 
             border-bottom: 1px solid rgba(0,0,0,0.04); 
             position: sticky; 
-            top: 64px; 
+            top: 0; /* 상단 여백 제거를 위해 0으로 설정 */
             z-index: 10; 
         }
         
@@ -398,10 +398,11 @@
         
         .fab-btn .text {
             display: none;
-            font-size: 15px; 
+            /* 🔴 [수정] 15px -> 14px로 통일 */
+            font-size: 14px; 
             font-weight: 700;
             white-space: nowrap;
-            padding-right: 20px;
+            padding-right: 5px;
             padding-left: 5px;
         }
 
@@ -451,10 +452,11 @@
         
         .fab-survey .text {
             display: none;
-            font-size: 13px; 
+            /* 🔴 [수정] 13px -> 14px로 통일 */
+            font-size: 14px; 
             font-weight: 700;
             white-space: nowrap;
-            padding-right: 15px;
+            padding-right: 5px;
             padding-left: 5px;
         }
 
@@ -564,12 +566,11 @@
             position: relative; 
         }
         
-        /* 🔴 [수정] A 막대: flex-start로 변경 */
         .progress-a {
             height: 100%;
             display: flex; 
             align-items: center;
-            justify-content: flex-start; /* 왼쪽 정렬 */
+            justify-content: flex-start; 
             padding: 0 16px;
             transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
@@ -580,7 +581,6 @@
             border-radius: 18px 0 0 18px; 
         }
 
-        /* 🔴 [유지] B 막대: flex-end (오른쪽 정렬) */
         .progress-b {
             height: 100%;
             width: 100%; 
@@ -615,7 +615,7 @@
             background-image: none !important;
             color: #999;
             text-shadow: none;
-            justify-content: flex-start; /* 왼쪽 끝 */
+            justify-content: flex-start; 
             padding-left: 16px; 
         }
         .progress-b.zero-vote {
@@ -623,7 +623,7 @@
             background-image: none !important;
             color: #999;
             text-shadow: none;
-            justify-content: flex-end; /* 오른쪽 끝 */
+            justify-content: flex-end;
             padding-right: 16px; 
         }
 
@@ -889,8 +889,8 @@
     </section>
 
     <a href="https://docs.google.com/forms/d/e/1FAIpQLSfWmzqTsCXWlqi_cRkzjb4EKa2-WuQHKJdI8XSD1Pe5LpiXNw/viewform?usp=sharing&ouid=102902850624431058683" target="_blank" class="fab-survey" id="fab-survey">
-        <span class="icon">🔗</span>
-        <span class="text">설문조사바로가기</span>
+        <span class="icon">📄</span>
+        <span class="text">설문조사 하러가기</span>
     </a>
 
     <div class="fab-btn" id="fab-write" onclick="goToPage('page-8')">
@@ -1052,10 +1052,18 @@ function goBack() {
 }
 
 function updateUI(pageId) {
+    const topNav = document.querySelector('.top-nav'); // 🔴 [수정] 상단바 요소 가져오기
     const arrow = document.querySelector('.back-arrow');
     const fab = document.getElementById('fab-write');
     const fabSurvey = document.getElementById('fab-survey'); 
     const title = document.getElementById('page-title');
+
+    // 🔴 [수정] 페이지 5(게시판 목록)일 때만 상단 네비게이션 바 숨김 처리
+    if (pageId === 'page-5') {
+        topNav.style.display = 'none';
+    } else {
+        topNav.style.display = 'flex';
+    }
 
     if (['page-6', 'page-7', 'page-8'].includes(pageId)) {
         arrow.style.display = 'block';
@@ -1409,7 +1417,7 @@ uploadInputs.forEach(input => {
                 
                 const trashBtn = document.createElement('button');
                 trashBtn.className = 'delete-img-btn';
-                trashBtn.innerHTML = '🗑️';
+                trashBtn.innerHTML = '✕';
                 trashBtn.style.cssText = "position:absolute; bottom:5px; right:5px; border:none; background:rgba(0,0,0,0.5); color:white; border-radius:50%; width:25px; height:25px; cursor:pointer;";
                 
                 trashBtn.onclick = (evt) => {
