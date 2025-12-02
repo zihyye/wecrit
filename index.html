@@ -10,7 +10,6 @@
     <style>
         /* ====================
            1. 디자인 시스템 (Design System)
-           - Main Color: #4A8CFF (Energetic Blue)
            ==================== */
         
         :root {
@@ -781,7 +780,7 @@
         <h2 style="margin-bottom:40px; font-size:22px; font-weight:700; color:var(--text-main);">정보를 입력해주세요</h2>
         <div class="input-group">
             <label>닉네임</label>
-            <input type="text" id="input-nickname" placeholder="예: 주현">
+            <input type="text" id="input-nickname" placeholder="예: 당근이">
         </div>
         <div class="input-group">
             <label>학 과</label>
@@ -949,6 +948,8 @@ const voteCounts = {};
 let allPostsData = [];
 let currentTab = 'all'; 
 
+// 🔴 [NEW] 내가 쓴 글 ID 목록을 로컬 스토리지에서 관리 (닉네임 중복 문제 해결용)
+let myPostIds = JSON.parse(localStorage.getItem('myPostIds') || '[]');
 
 /* =====================
    1-1. 로컬 스토리지에서 사용자 정보 불러오기
@@ -969,6 +970,20 @@ function loadUserInfo() {
 function saveUserInfo(nickname, major) {
     localStorage.setItem('userNickname', nickname);
     localStorage.setItem('userMajor', major);
+}
+
+// 🔴 [NEW] 내 포스트 ID 추가 함수
+function addMyPostId(id) {
+    if (!myPostIds.includes(id)) {
+        myPostIds.push(id);
+        localStorage.setItem('myPostIds', JSON.stringify(myPostIds));
+    }
+}
+
+// 🔴 [NEW] 내 포스트 ID 삭제 함수
+function removeMyPostId(id) {
+    myPostIds = myPostIds.filter(pid => String(pid) !== String(id));
+    localStorage.setItem('myPostIds', JSON.stringify(myPostIds));
 }
 
 
@@ -1003,10 +1018,9 @@ function goBack() {
 function updateUI(pageId) {
     const arrow = document.querySelector('.back-arrow');
     const fab = document.getElementById('fab-write');
-    const fabSurvey = document.getElementById('fab-survey'); // 설문조사 버튼
+    const fabSurvey = document.getElementById('fab-survey'); 
     const title = document.getElementById('page-title');
 
-    // page-3 (홈)에서 뒤로가기 제거 요청 반영
     if (['page-6', 'page-7', 'page-8'].includes(pageId)) {
         arrow.style.display = 'block';
     } else {
@@ -1080,17 +1094,19 @@ function openVotePage(postId, question, imgASrc, imgBSrc, authorNickname) {
 
     const storageKey = 'voted_' + currentPostId;
 
-    const isAuthor = currentUser.nickname && currentPostAuthor && (currentUser.nickname === currentPostAuthor);
+    // 🔴 [Fix] 닉네임이 같아도 내 기기에서 작성한 ID 목록에 있어야 삭제 가능 (엄격한 본인 확인)
+    const isMyPost = myPostIds.includes(String(postId));
     
-    // 🔴 삭제 버튼 표시 로직
+    // 삭제 버튼 표시 로직
     const deleteBtn = document.getElementById('btn-delete-post');
-    if (isAuthor) {
+    if (isMyPost) {
         deleteBtn.style.display = 'block';
     } else {
         deleteBtn.style.display = 'none';
     }
 
-    if (localStorage.getItem(storageKey) || isAuthor) {
+    // 작성자 본인은 바로 결과 페이지로 이동 (투표 안해도 됨)
+    if (localStorage.getItem(storageKey) || isMyPost) {
         updateResultGraph();
         loadComments(postId);
         goToPage('page-7');
@@ -1136,7 +1152,6 @@ function submitVote(selection) {
     }
 }
 
-/* 🔵 투표 결과 그래프 로직 개선 */
 function updateResultGraph() {
     const counts = voteCounts[currentPostId] || { A: 0, B: 0 }; 
     const total = counts.A + counts.B;
@@ -1147,10 +1162,8 @@ function updateResultGraph() {
     const barA = document.getElementById('bar-a');
     const barB = document.getElementById('bar-b');
 
-    // 클래스 초기화
     barA.classList.remove('zero-vote');
     barB.classList.remove('zero-vote');
-    // 스타일 초기화
     barA.style.backgroundColor = '';
     barB.style.backgroundColor = '';
 
@@ -1178,7 +1191,6 @@ function updateResultGraph() {
         barA.style.width = percentA + '%';
         barB.style.width = percentB + '%';
     } else {
-        // 투표가 0일 때
         document.getElementById('percent-a').innerText = '0%';
         document.getElementById('percent-b').innerText = '0%';
         document.getElementById('percent-a').style.display = 'block';
@@ -1187,7 +1199,6 @@ function updateResultGraph() {
         barA.style.width = '50%';
         barB.style.width = '50%';
         
-        // 투명 배경 & 텍스트 양끝 정렬 클래스 추가
         barA.classList.add('zero-vote');
         barB.classList.add('zero-vote');
         
@@ -1408,7 +1419,8 @@ textarea.addEventListener('input', checkFormValidity);
 function addNewPostToBoard(postId, question, imgA, imgB, authorNickname) {
     const list = document.querySelector('#page-5 .post-list');
     
-    if (currentTab === 'my' && authorNickname !== currentUser.nickname) {
+    // 🔴 [Fix] 내가 쓴 글 탭에서 남의 글이 보이는 문제 해결 (UI 즉시 반영용)
+    if (currentTab === 'my' && !myPostIds.includes(String(postId))) {
         return;
     }
     
@@ -1451,6 +1463,9 @@ shareButton.addEventListener('click', () => {
     const newPostId = 'post_' + Date.now();
     const authorNick = currentUser.nickname || "익명";
     
+    // 🔴 [NEW] 작성한 포스트 ID 저장
+    addMyPostId(newPostId);
+
     const newPostData = {
         id: newPostId,
         nickname: authorNick,
@@ -1549,8 +1564,9 @@ function renderPosts(filterType) {
     
     let filteredPosts = allPostsData;
     
+    // 🔴 [Fix] 나의 게시물: 닉네임이 아닌 로컬스토리지 ID 리스트로 필터링 (완벽한 본인 글 확인)
     if (filterType === 'my') {
-        filteredPosts = allPostsData.filter(post => post.nickname === currentUser.nickname);
+        filteredPosts = allPostsData.filter(post => myPostIds.includes(String(post.id)));
     }
     
     if (filteredPosts.length === 0) {
@@ -1598,7 +1614,7 @@ function addExistingPostToBoard(postId, question, imgA, imgB, authorNickname) {
     list.appendChild(article);
 }
 
-/* 🔴 게시물 삭제 함수 (버그 수정) */
+/* 🔴 게시물 삭제 함수 (완전 수정) */
 function deleteCurrentPost() {
     if (!currentPostId) return;
     
@@ -1606,23 +1622,30 @@ function deleteCurrentPost() {
         return;
     }
     
+    // 🔴 [Fix] ID를 문자열로 명확히 변환하여 전송 (삭제 실패 방지)
+    const payload = { 
+        action: 'delete', 
+        id: String(currentPostId) 
+    };
+
     fetch(SCRIPT_URL, {
         method: 'POST',
-        body: JSON.stringify({ 
-            action: 'delete', 
-            id: currentPostId 
-        })
+        body: JSON.stringify(payload)
     })
     .then(response => response.json())
     .then(data => {
         if (data.result === 'success') {
             alert('게시물이 삭제되었습니다.');
             
-            // 🔴 [Fix] ID 타입 불일치 방지 (문자열 변환 비교)
+            // 1. 로컬 데이터 리스트에서 삭제
             allPostsData = allPostsData.filter(p => String(p.id) !== String(currentPostId));
             
-            // 🔴 [Fix] 목록 강제 이동 (뒤로가기 대신 명시적 이동으로 흰 화면 방지)
+            // 2. 내가 쓴 글 ID 목록에서도 삭제
+            removeMyPostId(currentPostId);
+            
+            // 3. 🔴 [Fix] 흰색 박스 방지: 강제로 목록 페이지로 이동하며 새로고침 효과
             goToPage('page-5');
+            renderPosts(currentTab);
         } else {
             alert('삭제 실패: ' + (data.message || '알 수 없는 오류'));
         }
