@@ -1,1705 +1,403 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>WECRIT Service</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
 
     <style>
-        /* ====================
-           1. 디자인 시스템 (Design System)
-           - Main Color: #4A8CFF (Energetic Blue)
-           ==================== */
-        
-        :root {
-            --primary-color: #4A8CFF;        
-            --primary-dark: #366ED8;        
-            --primary-light: #EBF3FF;        
-            --primary-gradient: linear-gradient(135deg, #4A8CFF 0%, #366ED8 100%);
-            
-            --bg-body: #F7F9FC;             
-            --surface-white: #FFFFFF;        
-            --surface-input: #F0F4F8;        
-            
-            --text-main: #1A1A1A;
-            --text-sub: #757575;
-            
-            --shadow-sm: 0 4px 15px rgba(74, 140, 255, 0.1);
-            --shadow-md: 0 10px 30px rgba(74, 140, 255, 0.15);
-            
-            --radius-xl: 24px;
-            --radius-lg: 16px;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: "Pretendard", 'Noto Sans KR', -apple-system, sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        .app-container {
-            width: 100%;
-            max-width: 480px;
-            margin: 0 auto;
-            background-color: var(--surface-white);
-            position: relative;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-            box-shadow: 0 0 60px rgba(0,0,0,0.03); 
-        }
-
-        /* 상단 네비게이션 바 */
-        .top-nav {
-            position: sticky;
-            top: 0;
-            width: 100%;
-            height: 64px;
-            display: flex;
-            align-items: center;
-            padding: 0 24px;
-            z-index: 100;
-            background-color: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(0,0,0,0.03);
-        }
-
-        .nav-title {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            font-weight: 700;
-            font-size: 17px;
-            color: var(--text-main);
-            display: none; 
-        }
-
-        .back-arrow {
-            font-size: 22px;
-            cursor: pointer;
-            display: none; 
-            padding: 8px;
-            color: var(--text-main);
-            margin-left: -8px;
-        }
-
-        /* 페이지 공통 */
-        .page {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            flex: 1;
-            padding: 30px 24px;
-            justify-content: center;
-            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .page.active { display: flex; }
-        .page.no-padding-top { padding-top: 0; justify-content: flex-start; background-color: #FAFBFC; } 
-
-        /* 버튼 공통 */
-        .btn-common {
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            border-radius: var(--radius-lg);
-            padding: 18px 0;
-            width: 100%;
-            font-size: 17px;
-            font-weight: 700;
-            cursor: pointer;
-            text-align: center;
-            margin-top: 24px;
-            transition: all 0.3s ease;
-            box-shadow: 0 6px 20px rgba(74, 140, 255, 0.3);
-        }
-        .btn-common:hover { 
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(74, 140, 255, 0.45);
-        }
-        .btn-common:active { transform: scale(0.98); }
-
-        /* [Page 1] 메인 */
-        .main-title-large { 
-            font-size: 48px; 
-            font-weight: 900; 
-            line-height: 1.1; 
-            margin-bottom: 20px; 
-            text-align: center; 
-            color: var(--primary-color);
-            letter-spacing: -1.5px;
-            text-shadow: 0 10px 30px rgba(74, 140, 255, 0.15);
-        }
-        .sub-text { 
-            font-size: 16px; 
-            color: var(--text-sub); 
-            line-height: 1.6; 
-            margin-bottom: 60px; 
-            text-align: center; 
-            font-weight: 500;
-        }
-
-        /* [Page 2] 입력 폼 */
-        .logo-circle { 
-            width: 100px; 
-            height: 100px; 
-            background: var(--primary-light);
-            border-radius: 40px;
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            margin-bottom: 30px; 
-            color: var(--primary-color);
-            box-shadow: inset 0 0 0 4px #FFFFFF, 0 8px 20px rgba(74, 140, 255, 0.15);
-            font-size: 40px;
-        }
-        
-        .input-group { 
-            width: 100%; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: flex-start;
-            margin-bottom: 24px; 
-        }
-        .input-group label { 
-            width: 100%;
-            font-weight: 700; 
-            font-size: 14px; 
-            color: var(--primary-dark);
-            margin-bottom: 10px;
-            padding-left: 4px;
-        }
-        .input-group input, .input-group select { 
-            width: 100%; 
-            height: 56px; 
-            border: 2px solid transparent; 
-            border-radius: var(--radius-lg); 
-            padding: 0 20px; 
-            font-size: 16px; 
-            background-color: var(--surface-input); 
-            color: var(--text-main);
-            outline: none; 
-            transition: all 0.2s ease;
-            font-weight: 500;
-        }
-        .input-group input:focus, .input-group select:focus {
-            background-color: #fff;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(74, 140, 255, 0.1);
-        }
-        .input-group select { 
-            appearance: none; 
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234A8CFF' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); 
-            background-repeat: no-repeat; 
-            background-position: right 20px center; 
-            background-size: 16px; 
-        }
-
-        /* [Page 3] 홈 */
-        .greeting { 
-            font-size: 24px; 
-            font-weight: 700; 
-            margin-bottom: 16px; 
-            text-align: center; 
-            color: var(--text-main);
-        }
-        .greeting span { color: var(--primary-color); }
-        .description { 
-            font-size: 16px; 
-            line-height: 1.6; 
-            margin-bottom: 50px; 
-            text-align: center; 
-            color: var(--text-sub);
-        }
-        .btn-group { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 16px; 
-            width: 100%; 
-            align-items: center; 
-        }
-
-        /* [Page 5] 게시판 목록 (탭) */
-        .tab-header { 
-            width: 100%; 
-            background: rgba(255,255,255,0.95); 
-            backdrop-filter: blur(10px);
-            display: flex; 
-            align-items: center; 
-            padding: 0 10px; 
-            border-bottom: 1px solid rgba(0,0,0,0.04); 
-            position: sticky; 
-            top: 64px; 
-            z-index: 10; 
-        }
-        
-        .tab-back-arrow {
-            font-size: 22px;
-            padding: 10px;
-            cursor: pointer;
-            color: var(--text-main);
-            margin-right: 5px;
-            transition: color 0.2s;
-        }
-        .tab-back-arrow:hover { color: var(--primary-color); }
-
-        .tab-item { 
-            flex: 1; 
-            padding: 16px 0; 
-            margin: 0;
-            color: var(--text-sub); 
-            cursor: pointer; 
-            position: relative; 
-            font-size: 15px;
-            font-weight: 600;
-            transition: color 0.3s;
-            text-align: center;
-        }
-        .tab-item.active { 
-            color: var(--primary-color); 
-            font-weight: 800; 
-        }
-        .tab-item.active::after { 
-            content: ''; 
-            position: absolute; 
-            bottom: -1px; 
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80%; 
-            height: 3px; 
-            background: var(--primary-color); 
-            border-radius: 10px;
-        }
-
-        /* 🔵 안내 문구 박스 스타일 */
-        .notice-box {
-            width: 100%;
-            padding: 20px 24px;
-            background-color: #F0F7FF; 
-            color: #4A8CFF;
-            font-size: 14px;
-            line-height: 1.6;
-            text-align: center;
-            word-break: keep-all;
-            border-bottom: 1px solid rgba(74, 140, 255, 0.1);
-            font-weight: 500;
-            animation: fadeIn 0.5s ease-out;
-        }
-        
-        .empty-message { text-align: center; color: #999; margin-top: 80px; font-size: 15px; font-weight: 400; }
-
-        .post-list { 
-            width: 100%; 
-            padding: 24px 20px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 24px; 
-            padding-bottom: 100px; 
-        }
-        
-        .post-item { 
-            padding: 0; 
-            cursor: pointer; 
-            border-radius: var(--radius-xl);
-            overflow: hidden;
-            background-color: #fff;
-            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
-            position: relative;
-        }
-        .post-item.special-bg { 
-            background-color: #fff; 
-            padding: 0; 
-            box-shadow: var(--shadow-sm);
-            border: 1px solid rgba(255,255,255,1);
-        }
-        .post-item:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-md);
-        }
-        .post-item:active { transform: scale(0.98); }
-
-        .image-row { 
-            display: flex; 
-            gap: 2px; 
-            height: 220px; 
-            overflow: hidden; 
-            margin-bottom: 0; 
-        }
-        .image-row img { 
-            height: 100%; 
-            object-fit: cover; 
-            display: block; 
-            transition: transform 0.5s;
-        }
-        .post-item:hover .image-row img { transform: scale(1.05); }
-
-        .w-30 { width: 30%; } .w-40 { width: 40%; } .w-50 { width: 50%; }
-
-        .title-box { 
-            background: #fff; 
-            padding: 24px; 
-            text-align: left; 
-            font-size: 16px; 
-            font-weight: 700; 
-            color: var(--text-main);
-            line-height: 1.4;
-        }
-        .title-box.gray-box { background: #fff; } 
-
-        /* 🔵 글쓰기 플로팅 버튼 */
-        .fab-btn {
-            position: fixed; 
-            bottom: 30px; 
-            right: 24px; 
-            width: 60px; 
-            height: 60px;
-            background: var(--primary-gradient); 
-            border-radius: 50%;
-            display: none; 
-            justify-content: center; 
-            align-items: center;
-            color: white; 
-            font-size: 32px; 
-            font-weight: 300; 
-            line-height: 1;
-            box-shadow: 0 10px 30px rgba(74, 140, 255, 0.4);
-            cursor: pointer; 
-            z-index: 999; 
-            transition: transform 0.3s;
-        }
-        .fab-btn:hover { 
-            transform: scale(1.1) rotate(90deg); 
-            box-shadow: 0 15px 35px rgba(74, 140, 255, 0.5);
-        }
-
-        /* 🔵 설문조사 링크 버튼 (이전 요청 기능 유지) */
-        .fab-survey {
-            position: fixed;
-            bottom: 105px; 
-            right: 24px;
-            width: 50px;
-            height: 50px;
-            background-color: white;
-            color: var(--text-main);
-            border: 1px solid #ddd;
-            border-radius: 30px;
-            display: none; 
-            justify-content: center; 
-            align-items: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            z-index: 999;
-            cursor: pointer;
-            text-decoration: none;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-        
-        .fab-survey .icon {
-            display: block;
-            font-size: 20px;
-            min-width: 50px;
-            text-align: center;
-        }
-        
-        .fab-survey .text {
-            display: none;
-            font-size: 13px; 
-            font-weight: 700;
-            white-space: nowrap;
-            padding-right: 15px;
-            padding-left: 5px;
-        }
-
-        .fab-survey:hover {
-            width: 142px; 
-            background-color: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-            justify-content: flex-start;
-        }
-        
-        .fab-survey:hover .icon { display: none; }
-        
-        .fab-survey:hover .text {
-            display: block;
-            width: 100%;
-            text-align: center;
-            padding: 0;
-        }
-
-        @media (min-width: 481px) {
-            .fab-btn {
-                right: auto;
-                left: 50%;
-                margin-left: 160px; 
-            }
-            .fab-survey {
-                right: auto;
-                left: 50%;
-                margin-left: 165px; 
-                transform: translateX(0);
-            }
-            .fab-survey:hover {
-                margin-left: 73px; 
-                width: 142px;
-            }
-        }
-
-        /* [Page 6 & 7] 투표 및 결과 */
-        .subtitle { 
-            font-size: 16px; 
-            color: var(--text-sub); 
-            margin-bottom: 30px; 
-            text-align: center; 
-            padding: 0 20px; 
-            word-break: keep-all; 
-            line-height: 1.5;
-        }
-        .layout-options { display: flex; justify-content: space-between; gap: 16px; width: 100%; }
-        .option-a, .option-b { flex: 1; display: flex; flex-direction: column; align-items: center; }
-        .option-label { 
-            font-size: 20px; 
-            font-weight: 800; 
-            margin-bottom: 12px; 
-            color: var(--primary-color); 
-            font-family: 'Montserrat', sans-serif;
-        }
-        
-        .option-image { 
-            width: 100%; 
-            aspect-ratio: 1/1; 
-            object-fit: cover; 
-            border-radius: 16px; 
-            margin-bottom: 20px; 
-            cursor: zoom-in; 
-            box-shadow: var(--shadow-sm); 
-            transition: transform 0.3s; 
-            background-color: var(--primary-light); 
-            border: 2px solid transparent;
-        }
-        .option-image:hover { transform: scale(1.02); border-color: var(--primary-color); }
-        
-        .select-button { 
-            width: 100%; 
-            padding: 16px 0; 
-            background-color: white; 
-            border: 2px solid var(--primary-color); 
-            border-radius: 50px; 
-            font-size: 16px; 
-            font-weight: 700; 
-            color: var(--primary-color);
-            cursor: pointer; 
-            transition: all 0.2s; 
-        }
-        .select-button:hover { 
-            background-color: var(--primary-color); 
-            color: white; 
-            box-shadow: 0 4px 15px rgba(74, 140, 255, 0.3);
-        }
-        
-        /* 🔵 투표 결과 그래프 */
-        .progress-container { 
-            width: 100%; 
-            height: 60px; 
-            display: flex; 
-            border-radius: 18px; 
-            overflow: hidden; 
-            margin-bottom: 40px; 
-            font-size: 16px; 
-            font-weight: 800; 
-            color: #fff; 
-            background-color: #E9ECEF; 
-            box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
-        }
-
-        div[style*="rgb(51, 51, 51)"] {
-            background-color: var(--primary-dark) !important;
-            background-image: linear-gradient(135deg, #366ED8 0%, #1E4F9E 100%);
-        }
-        div[style*="rgb(176, 176, 176)"] {
-            background-color: #8EB7FF !important; 
-        }
-        div[style*="rgb(85, 85, 85)"] {
-            background-color: var(--primary-color) !important;
-        }
-        
-        .progress-a, .progress-b {
-            display: flex; 
-            transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-            align-items: center;
-        }
-        
-        .progress-a.zero-vote {
-            background-color: transparent !important;
-            background-image: none !important;
-            color: #999;
-            text-shadow: none;
-            justify-content: flex-start; 
-            padding-left: 16px; 
-        }
-        .progress-b.zero-vote {
-            background-color: transparent !important;
-            background-image: none !important;
-            color: #999;
-            text-shadow: none;
-            justify-content: flex-end; 
-            padding-right: 16px; 
-        }
-
-
-        .comment-section { width: 100%; text-align: left; padding: 0 4px; margin-bottom: 30px; }
-        .comment-item { 
-            margin-bottom: 16px; 
-            padding: 20px; 
-            background-color: #FFFFFF; 
-            border-radius: 16px; 
-            border: 1px solid rgba(0,0,0,0.03);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-        } 
-        .comment-user { 
-            font-weight: 700; 
-            font-size: 14px; 
-            margin-bottom: 8px; 
-            color: var(--primary-dark);
-            display: flex; align-items: center;
-        }
-        .comment-user::before {
-            content:''; display:inline-block; width: 6px; height: 6px; background: var(--primary-color); border-radius: 50%; margin-right: 8px;
-        }
-        .comment-text { font-size: 15px; color: #444; line-height: 1.5; }
-        .comment-hr { display: none; } 
-        
-        .btn-comment { 
-            width: 100%; 
-            padding: 16px 0; 
-            background-color: var(--surface-white); 
-            color: var(--primary-color); 
-            border: 2px solid var(--primary-color); 
-            border-radius: 30px; 
-            font-size: 16px; 
-            font-weight: 700; 
-            cursor: pointer; 
-            transition: all 0.2s;
-        }
-        .btn-comment:hover {
-            background-color: var(--primary-color);
-            color: white;
-            box-shadow: 0 4px 12px rgba(74, 140, 255, 0.2);
-        }
-
-        /* 🔴 게시물 삭제 버튼 스타일 */
-        .btn-delete {
-            width: 100%;
-            padding: 16px 0;
-            background-color: var(--surface-white);
-            color: #FF4B4B; /* 빨간색 텍스트 */
-            border: 2px solid #FF4B4B; /* 빨간색 테두리 */
-            border-radius: 30px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 12px;
-            display: none; /* 기본적으로는 숨김 */
-        }
-        .btn-delete:hover {
-            background-color: #FF4B4B;
-            color: white;
-            box-shadow: 0 4px 12px rgba(255, 75, 75, 0.2);
-        }
-
-        .image-scroll-container {
-            width: 100%; overflow-x: auto; white-space: nowrap; margin-bottom: 24px; padding-bottom: 10px;
-        }
-        .image-wrapper img {
-            height: 120px; border-radius: 12px; margin-right: 12px; object-fit: cover;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        
-        .feedback-textarea {
-            width: 100%; 
-            border: 2px solid transparent; 
-            border-radius: 16px;
-            background: #F8F9FB; 
-            font-size: 16px; 
-            padding: 20px; 
-            resize: none; 
-            outline: none; 
-            font-family: inherit; 
-            margin-bottom: 30px; 
-            min-height: 140px;
-            transition: all 0.2s;
-            color: var(--text-main);
-        }
-        .feedback-textarea:focus { border-color: var(--primary-color); background: #fff; box-shadow: 0 4px 15px rgba(74, 140, 255, 0.08); }
-        .feedback-textarea::placeholder { color: #BBB; }
-        
-        .feedback-options { display: flex; flex-direction: row; gap: 12px; width: 100%; margin-bottom: 30px; }
-        .option-button {
-            flex: 1; 
-            height: 130px; 
-            border: 2px dashed #CBD5E0; 
-            border-radius: 16px; 
-            background: #FAFBFC; 
-            cursor: pointer; 
-            position: relative; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center;
-            transition: all 0.2s;
-            color: #A0AEC0;
-        }
-        .option-button:hover {
-            border-color: var(--primary-color);
-            background: #F0F7FF;
-            color: var(--primary-color);
-            transform: translateY(-2px);
-        }
-        .option-placeholder { display: flex; flex-direction: column; align-items: center; font-size: 18px; font-weight: 700; }
-        .plus { font-size: 28px; margin-top: 5px; font-weight: 300; }
-        
-        .image-upload-input { display: none; }
-
-        .share-button {
-            width: 100%; padding: 18px 0; background-color: #E2E8F0; color: #fff; border: none; border-radius: var(--radius-lg); font-size: 16px; font-weight: 700; cursor: not-allowed; margin-top: auto; transition: background 0.3s;
-        }
-        .share-button.active { 
-            background: var(--primary-color); 
-            cursor: pointer; 
-            box-shadow: 0 4px 15px rgba(74, 140, 255, 0.3); 
-        }
-        .share-button.active:hover { background: var(--primary-dark); }
-
-        .footer { 
-            margin-top: auto; 
-            padding: 50px 20px; 
-            text-align: center; 
-            background-color: transparent; 
-            color: #BBB; 
-            font-size: 11px; 
-            width: 100%; 
-        }
-        .footer-logo { font-weight: 800; font-size: 13px; color: #999; margin-bottom: 8px; letter-spacing: 0.5px; }
-
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(4px); }
-        .modal-content { margin: auto; display: block; width: 90%; max-width: 600px; max-height: 80vh; object-fit: contain; position: relative; top: 50%; transform: translateY(-50%); border-radius: 8px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        .modal-close { position: absolute; top: 20px; right: 30px; color: #fff; font-size: 40px; font-weight: 300; cursor: pointer; transition: 0.3s; }
-        
-        .comment-modal-bg { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); backdrop-filter: blur(4px); }
-        .comment-box { 
-            background-color: white; 
-            width: 90%; 
-            max-width: 400px; 
-            padding: 32px 24px; 
-            border-radius: 24px; 
-            position: relative; 
-            top: 50%; 
-            left: 50%; 
-            transform: translate(-50%, -50%); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes popIn {
-            from { opacity: 0; transform: translate(-50%, -45%) scale(0.95); }
-            to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        }
-
-        .comment-header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        .comment-title { font-size: 18px; font-weight: 700; color: var(--text-main); margin-left: auto; margin-right: auto; transform: translateX(12px); }
-        .comment-close-btn { font-size: 28px; color: #ccc; cursor: pointer; font-weight: 300; line-height: 1; }
-        .comment-close-btn:hover { color: #333; }
-
-        .comment-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; font-size: 15px; outline: none; }
-        .comment-textarea { 
-            width: 100%; 
-            height: 140px; 
-            padding: 16px; 
-            border: 2px solid transparent; 
-            border-radius: 16px; 
-            margin-bottom: 24px; 
-            font-size: 15px; 
-            outline: none; 
-            resize: none; 
-            font-family: inherit; 
-            background-color: #F8F9FB;
-        }
-        .comment-textarea:focus { border-color: var(--primary-color); background: #fff; }
-        
-        .btn-submit-comment { 
-            width: 100%; 
-            padding: 16px 0; 
-            background-color: var(--primary-color); 
-            color: white; 
-            border: none; 
-            border-radius: 12px; 
-            font-size: 16px; 
-            font-weight: 700; 
-            cursor: pointer; 
-            box-shadow: 0 4px 10px rgba(74, 140, 255, 0.3);
-            transition: 0.2s;
-        }
-        .btn-submit-comment:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
-
+        :root{
+            --primary-color:#4A8CFF; --primary-dark:#366ED8; --primary-light:#EBF3FF;
+            --bg-body:#F7F9FC; --surface-white:#FFFFFF; --surface-input:#F0F4F8;
+            --text-main:#1A1A1A; --text-sub:#757575;
+            --shadow-sm:0 4px 15px rgba(74,140,255,0.1);
+            --shadow-md:0 10px 30px rgba(74,140,255,0.15);
+            --radius-xl:24px; --radius-lg:16px;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:"Pretendard",'Noto Sans KR',sans-serif;background:var(--bg-body);color:var(--text-main);-webkit-font-smoothing:antialiased;}
+        .app-container{width:100%;max-width:480px;margin:0 auto;background:var(--surface-white);min-height:100vh;display:flex;flex-direction:column;box-shadow:0 0 60px rgba(0,0,0,0.03);}
+        .top-nav{position:sticky;top:0;height:64px;display:flex;align-items:center;padding:0 24px;background:rgba(255,255,255,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,0,0,0.03);z-index:100;}
+        .back-arrow{font-size:22px;display:none;padding:8px;cursor:pointer;margin-left:-8px;}
+        .nav-title{position:absolute;left:50%;transform:translateX(-50%);font-weight:700;display:none;}
+        .page{display:none;flex-direction:column;align-items:center;width:100%;flex:1;padding:30px 24px;justify-content:center;}
+        .page.active{display:flex;}
+        .page.no-padding-top{padding-top:0;justify-content:flex-start;background:#FAFBFC;}
+        .btn-common{background:linear-gradient(135deg,#4A8CFF 0%,#366ED8 100%);color:#fff;border:0;border-radius:16px;padding:18px 0;width:100%;font-size:17px;font-weight:700;cursor:pointer;box-shadow:0 6px 20px rgba(74,140,255,0.3);}
+        .post-list{width:100%;padding:24px 20px;display:flex;flex-direction:column;gap:24px;padding-bottom:100px;}
+        .post-item{padding:0;cursor:pointer;border-radius:24px;overflow:hidden;background:#fff;transition:transform .2s,box-shadow .2s;position:relative;}
+        .post-item.special-bg{box-shadow:var(--shadow-sm);border:1px solid rgba(255,255,255,1);}
+        .image-row{display:flex;gap:2px;height:220px;overflow:hidden;}
+        .image-row img{height:100%;object-fit:cover;display:block;transition:transform .5s;}
+        .title-box{background:#fff;padding:24px;text-align:left;font-size:16px;font-weight:700;color:var(--text-main);line-height:1.4;}
+        .empty-message{text-align:center;color:#999;margin-top:80px;font-size:15px;}
+        .btn-delete{width:100%;padding:16px 0;background:var(--surface-white);color:#FF4B4B;border:2px solid #FF4B4B;border-radius:30px;font-size:16px;font-weight:700;cursor:pointer;display:none;margin-top:12px;}
     </style>
 </head>
 <body>
 
 <div class="app-container">
-
     <nav class="top-nav">
-        <span class="back-arrow" onclick="goBack()">&#10094;</span> 
-        <span class="nav-title" id="page-title">새 게시물</span> 
+        <span class="back-arrow" onclick="goBack()">&#10094;</span>
+        <span class="nav-title" id="page-title">새 게시물</span>
     </nav>
 
-
     <section id="page-1" class="page active">
-        <h1 class="main-title-large">WELCOME<br>TO<br>WECRIT!</h1>
-        <p class="sub-text">과제 고민,<br>혼자 하고 계신가요?<br>이제는 계원인들에게 물어보세요!</p>
+        <h1 style="font-size:48px;font-weight:900;color:var(--primary-color);text-align:center;line-height:1.1;margin-bottom:20px;">WELCOME<br>TO<br>WECRIT!</h1>
+        <p style="text-align:center;color:var(--text-sub);margin-bottom:60px;">과제 고민,<br>혼자 하고 계신가요?<br>이제는 계원인들에게 물어보세요!</p>
         <button class="btn-common" onclick="goToPage('page-2')">참여하기</button>
     </section>
 
-
     <section id="page-2" class="page">
-        <div class="logo-circle" style="width:80px; height:80px; margin-bottom:30px; font-size:32px;">💬</div>
-        <h2 style="margin-bottom:40px; font-size:22px; font-weight:700; color:var(--text-main);">정보를 입력해주세요</h2>
-        <div class="input-group">
-            <label>닉네임</label>
-            <input type="text" id="input-nickname" placeholder="예: 주현">
+        <div style="width:80px;height:80px;border-radius:40px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;margin-bottom:30px;font-size:32px;color:var(--primary-color);">💬</div>
+        <h2 style="margin-bottom:40px;font-size:22px;font-weight:700;color:var(--text-main);">정보를 입력해주세요</h2>
+        <div class="input-group" style="width:100%;margin-bottom:24px;">
+            <label style="font-weight:700;color:var(--primary-dark);margin-bottom:10px;display:block;">닉네임</label>
+            <input id="input-nickname" type="text" placeholder="예: 주현" style="width:100%;height:56px;border-radius:16px;padding:0 20px;background:var(--surface-input);border:2px solid transparent;outline:none;font-size:16px;">
         </div>
-        <div class="input-group">
-            <label>학 과</label>
-            <select id="input-major">
+        <div class="input-group" style="width:100%;margin-bottom:24px;">
+            <label style="font-weight:700;color:var(--primary-dark);margin-bottom:10px;display:block;">학 과</label>
+            <select id="input-major" style="width:100%;height:56px;border-radius:16px;padding:0 20px;background:var(--surface-input);border:2px solid transparent;outline:none;font-size:16px;">
                 <option value="" disabled selected>선택해주세요</option>
                 <option value="광고·브랜드디자인과">광고·브랜드디자인과</option>
                 <option value="게임미디어과">게임미디어과</option>
                 <option value="건축디자인과">건축디자인과</option>
-                <option value="공간연출과">공간연출과</option>
                 <option value="디지털미디어디자인과">디지털미디어디자인과</option>
-                <option value="메타스페이스전공">메타스페이스전공</option>
-                <option value="미래디자인학부">미래디자인학부</option>
-                <option value="사진예술과">사진예술과</option>
-                <option value="순수미술과">순수미술과</option>
-                <option value="스마트프로덕트디자인과">스마트프로덕트디자인과</option>
                 <option value="시각디자인과">시각디자인과</option>
-                <option value="실내건축디자인과">실내건축디자인과</option>
-                <option value="스페이스아트앤테크놀로지전공">스페이스아트앤테크놀로지전공</option>
-                <option value="애니메이션과">애니메이션과</option>
-                <option value="영상디자인과">영상디자인과</option>
-                <option value="융합예술과">융합예술과</option>
-                <option value="전시콘텐츠디자인과">전시콘텐츠디자인과</option>
-                <option value="플라워디자인과">플라워디자인과</option>
-                <option value="리빙가구디자인과">리빙가구디자인과</option>
-                <option value="VR콘텐츠디자인전공">VR콘텐츠디자인전공</option>
             </select>
         </div>
         <button class="btn-common" onclick="submitUserInfo()">등 록</button>
     </section>
 
-
     <section id="page-3" class="page">
-        <h2 class="greeting"><span id="display-name">000</span>님 반가워요!👋</h2>
-        <p class="description">지금부터,<br>위크릿에서 계원인들과<br>피드백을 주고 받아 보세요!</p>
-        <div class="btn-group">
+        <h2 style="font-size:24px;font-weight:700;margin-bottom:16px;text-align:center;"> <span id="display-name">000</span>님 반가워요!👋</h2>
+        <p style="text-align:center;color:var(--text-sub);margin-bottom:50px;">지금부터,<br>위크릿에서 계원인들과<br>피드백을 주고 받아 보세요!</p>
+        <div style="width:100%;display:flex;flex-direction:column;gap:16px;">
             <button class="btn-common" onclick="goToPage('page-5')">피드백 하러 가기</button>
-            <button class="btn-common" style="background-color: #fff; background-image:none; color: var(--primary-color); border: 2px solid var(--primary-color); box-shadow:none;" onclick="goToPage('page-8')">피드백 받으러 가기</button>
+            <button class="btn-common" style="background:#fff;color:var(--primary-color);border:2px solid var(--primary-color);box-shadow:none;" onclick="goToPage('page-8')">피드백 받으러 가기</button>
         </div>
     </section>
 
     <section id="page-5" class="page no-padding-top">
-        <header class="tab-header">
-            <span class="tab-back-arrow" onclick="goBack()">&#10094;</span>
-            <div class="tab-item active" id="tab-all" onclick="switchTab('all')">전체 게시물</div>
-            <div class="tab-item" id="tab-my" onclick="switchTab('my')">나의 게시물</div>
+        <header style="width:100%;padding:0 10px;position:sticky;top:64px;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid rgba(0,0,0,0.04);z-index:10;display:flex;align-items:center;">
+            <span style="font-size:22px;padding:10px;cursor:pointer;color:var(--text-main)" onclick="goBack()">&#10094;</span>
+            <div style="flex:1;text-align:center;font-weight:800;color:var(--primary-color);">전체 게시물</div>
+            <div style="width:60px"></div>
         </header>
-        <div class="notice-box">
-            위크릿은 계원예술대학교 학생들이 편하게 피드백을<br>
-            주고받을 수 있도록 만든 서비스입니다.<br>
-            참고용으로 이용해 주시면 감사하겠습니다!
-        </div>
-        <div class="post-list">
+
+        <div style="padding:20px 24px;background:#F0F7FF;color:var(--primary-color);font-size:14px;text-align:center;border-bottom:1px solid rgba(74,140,255,0.1);">위크릿은 계원예술대학교 학생들이 편하게 피드백을 주고받을 수 있도록 만든 서비스입니다.<br>참고용으로 이용해 주세요!</div>
+
+        <div class="post-list" id="post-list">
             <div class="empty-message">등록된 피드백 요청이 없습니다.<br>첫 번째 게시물을 올려보세요!</div>
         </div>
     </section>
 
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfWmzqTsCXWlqi_cRkzjb4EKa2-WuQHKJdI8XSD1Pe5LpiXNw/viewform?usp=sharing&ouid=102902850624431058683" target="_blank" class="fab-survey" id="fab-survey">
-        <span class="icon">🔗</span>
-        <span class="text">설문조사바로가기</span>
-    </a>
-
-    <div class="fab-btn" id="fab-write" onclick="goToPage('page-8')">+</div>
-
-
-    <section id="page-6" class="page">
-        <h1 class="main-title">과제 피드백 TIME!</h1>
-        <p class="subtitle" id="vote-question">어떤 레이아웃이 더 좋아보이나요?</p>
-        <div class="layout-options">
-            <div class="option-a">
-                <span class="option-label">A</span>
-                <img src="" alt="A" class="option-image" id="vote-img-a">
-                <button class="select-button" onclick="submitVote('A')">A 투표</button>
-            </div>
-            <div class="option-b">
-                <span class="option-label">B</span>
-                <img src="" alt="B" class="option-image" id="vote-img-b">
-                <button class="select-button" onclick="submitVote('B')">B 투표</button>
-            </div>
+    <section id="page-7" class="page" style="display:none;">
+        <!-- 결과/댓글 페이지 (간략화) -->
+        <div style="width:100%;max-width:480px;">
+            <h1 style="font-size:22px;font-weight:700;">투표 결과</h1>
+            <div id="comment-list" style="margin-top:20px;"></div>
+            <button class="btn-delete" id="btn-delete-post" onclick="deleteCurrentPost()">게시물 삭제</button>
         </div>
-        <footer class="footer"><div class="footer-logo">WECRIT</div><p>Kaywon Univ. of Art & Design<br>Copyright © 2024 WECRIT. All rights reserved.</p></footer>
     </section>
 
-    <section id="page-7" class="page">
-        <h1 class="main-title">투표 결과</h1>
-        <p class="subtitle">소중한 한 표 감사합니다!</p>
-        
-        <div class="layout-options" style="margin-bottom: 20px;">
-            <div class="option-a">
-                <span class="option-label">A</span>
-                <img src="" id="result-img-a" class="option-image">
-            </div>
-            <div class="option-b">
-                <span class="option-label">B</span>
-                <img src="" id="result-img-b" class="option-image">
-            </div>
-        </div>
-        
-        <div class="progress-container">
-            <div class="progress-a" id="bar-a"><span>A</span><span id="percent-a">0%</span></div>
-            <div class="progress-b" id="bar-b"><span>B</span><span id="percent-b">0%</span></div>
-        </div>
-
-        <div class="comment-section" id="comment-list"></div>
-        <button class="btn-comment" onclick="openCommentModal()">댓글 작성</button>
-        <button class="btn-delete" id="btn-delete-post" onclick="deleteCurrentPost()">게시물 삭제</button>
-
-        <footer class="footer"><div class="footer-logo">WECRIT</div><p>Kaywon Univ. of Art & Design<br>Copyright © 2024 WECRIT. All rights reserved.</p></footer>
+    <section id="page-8" class="page" style="justify-content:flex-start;padding-top:20px;display:none;">
+        <div id="imageWrapper" style="width:100%;overflow:auto;white-space:nowrap;margin-bottom:24px;"></div>
+        <textarea id="feedbackTextarea" placeholder="받고 싶은 피드백을 적어주세요..." style="width:100%;min-height:140px;border-radius:16px;padding:20px;border:2px solid transparent;background:#F8F9FB;margin-bottom:30px;"></textarea>
+        <button class="btn-common share-button" disabled>공유하기</button>
     </section>
-
-
-    <section id="page-8" class="page" style="justify-content: flex-start; padding-top: 20px;">
-        <div class="image-scroll-container">
-            <div class="image-wrapper" id="imageWrapper"></div>
-        </div>
-        <div class="feedback-options" style="margin-bottom: 20px;">
-            <button class="option-button" id="btnOptionA" data-option="A">
-                <input type="file" class="image-upload-input" accept="image/*" id="uploadA" data-option="A">
-                <div class="option-placeholder"><span>A</span><span class="plus">+</span></div>
-            </button>
-            <button class="option-button" id="btnOptionB" data-option="B">
-                <input type="file" class="image-upload-input" accept="image/*" id="uploadB" data-option="B">
-                <div class="option-placeholder"><span>B</span><span class="plus">+</span></div>
-            </button>
-        </div>
-        <textarea class="feedback-textarea" id="feedbackTextarea" placeholder="받고 싶은 피드백을 적어주세요..." rows="4" style="margin-bottom: 30px;"></textarea>
-        <button class="share-button">공유하기</button>
-    </section>
-
-
-    <div id="comment-modal" class="comment-modal-bg">
-        <div class="comment-box">
-            <div class="comment-header">
-                <span class="comment-title">댓글 작성</span>
-                <span class="comment-close-btn" onclick="closeCommentModal()">&times;</span>
-            </div>
-            <div style="width: 100%; padding: 14px; background-color: #F8F9FA; border-radius: 12px; margin-bottom: 12px; font-size: 14px; color: #555; text-align:center;">
-                <span id="comment-user-info" style="font-weight: 700; color:var(--primary-dark);">닉네임 (학과)</span>
-            </div>
-            <textarea id="new-comment-text" class="comment-textarea" placeholder="댓글 내용을 입력하세요..."></textarea>
-            <button class="btn-submit-comment" onclick="submitComment()">등록하기</button>
-        </div>
-    </div>
-    
-    <div id="image-modal" class="modal"><span class="modal-close">&times;</span><img class="modal-content" id="modal-image"></div>
-
 </div>
 
 <script>
-/* ==========================================
-   🔴 [중요] 방금 "새 배포"로 받은 URL을 여기에 넣으세요! 🔴
-   ========================================== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymgWt3vCPuIme5vZmdXXxT8resrgrFN8YgpIDxpvwFMDS72XUQH2mJSHvp8gstg08hww/exec"; 
+/* SCRIPT_URL: 서버 스크립트 주소 */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymgWt3vCPuIme5vZmdXXxT8resrgrFN8YgpIDxpvwFMDS72XUQH2mJSHvp8gstg08hww/exec";
 
-
-/* =====================
-   1. 전역 변수 및 설정
-   ===================== */
+/* 전역 상태 */
 let historyStack = [];
 let currentUser = { nickname: "", major: "" };
-const fileData = { A: null, B: null };
 let currentPostId = null;
-let currentPostAuthor = null; 
-const voteCounts = {}; 
-
+let currentPostAuthor = null;
 let allPostsData = [];
-let currentTab = 'all'; 
+const voteCounts = {};
 
-
-/* =====================
-   1-1. 로컬 스토리지에서 사용자 정보 불러오기
-   ===================== */
-function loadUserInfo() {
-    const savedNickname = localStorage.getItem('userNickname');
-    const savedMajor = localStorage.getItem('userMajor');
-    
-    if (savedNickname && savedMajor) {
-        currentUser.nickname = savedNickname;
-        currentUser.major = savedMajor;
-        document.getElementById('display-name').innerText = savedNickname;
-        return true;
-    }
+/* 로컬스토리지에서 유저 정보 로드 */
+function loadUserInfo(){
+    const nn = localStorage.getItem('userNickname');
+    const mj = localStorage.getItem('userMajor');
+    if(nn && mj){ currentUser.nickname = nn; currentUser.major = mj; document.getElementById('display-name').innerText = nn; return true; }
     return false;
 }
+function saveUserInfo(nickname, major){ localStorage.setItem('userNickname', nickname); localStorage.setItem('userMajor', major); }
 
-function saveUserInfo(nickname, major) {
-    localStorage.setItem('userNickname', nickname);
-    localStorage.setItem('userMajor', major);
-}
-
-
-/* =====================
-   2. 페이지 이동 (SPA)
-   ===================== */
-function goToPage(pageId) {
-    const activePage = document.querySelector('.page.active');
-    if (activePage && activePage.id !== 'page-1') { historyStack.push(activePage.id); }
+/* SPA 이동 */
+function goToPage(pageId){
+    const active = document.querySelector('.page.active');
+    if(active && active.id !== pageId && active.id !== 'page-1') historyStack.push(active.id);
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(pageId).classList.add('active');
-    window.scrollTo(0, 0);
+    const page = document.getElementById(pageId);
+    if(page) page.classList.add('active');
     updateUI(pageId);
+    window.scrollTo(0,0);
 }
-
-function goBack() {
-    if (historyStack.length > 0) {
-        const prevPage = historyStack.pop();
-        if (prevPage === 'page-4') {
-            goBack();
-            return;
-        }
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(prevPage).classList.add('active');
-        window.scrollTo(0, 0);
-        updateUI(prevPage);
+function goBack(){
+    if(historyStack.length>0){
+        const prev = historyStack.pop();
+        goToPage(prev);
     } else {
         goToPage('page-3');
     }
 }
-
-function updateUI(pageId) {
+function updateUI(pageId){
     const arrow = document.querySelector('.back-arrow');
-    const fab = document.getElementById('fab-write');
-    const fabSurvey = document.getElementById('fab-survey'); // 설문조사 버튼
     const title = document.getElementById('page-title');
-
-    // page-3 (홈)에서 뒤로가기 제거 요청 반영
-    if (['page-6', 'page-7', 'page-8'].includes(pageId)) {
-        arrow.style.display = 'block';
-    } else {
-        arrow.style.display = 'none';
-    }
-
-    if (pageId === 'page-5') { 
-        fab.style.display = 'flex'; 
-        fabSurvey.style.display = 'flex'; 
-    } else { 
-        fab.style.display = 'none'; 
-        fabSurvey.style.display = 'none'; 
-    }
-    
-    if (pageId === 'page-8') { title.style.display = 'block'; } else { title.style.display = 'none'; }
+    if(['page-6','page-7','page-8'].includes(pageId)) arrow.style.display = 'block'; else arrow.style.display = 'none';
+    if(pageId==='page-8') title.style.display = 'block' ; else title.style.display = 'none';
 }
-updateUI('page-1');
 
-
-/* =====================
-   3. 투표 페이지 & 로직
-   ===================== */
-
-/* Helper: resolve image source whether string or object {data,mimeType} */
-function resolveImageSrc(img) {
-    if (!img) return null;
-    if (typeof img === 'string') return img;
-    if (img.url) return img.url;
-    if (img.data && img.mimeType) return `data:${img.mimeType};base64,${img.data}`;
+/* 유틸: 이미지 소스 해석 (문자열 또는 {data,mimeType} 형태 허용) */
+function resolveImageSrc(img){
+    if(!img) return null;
+    if(typeof img === 'string') return img;
+    if(img.url) return img.url;
+    if(img.data && img.mimeType) return `data:${img.mimeType};base64,${img.data}`;
     return null;
 }
 
-function openVotePage(postId, question, imgASrc, imgBSrc, authorNickname) {
-    // If the post was deleted from allPostsData, block opening.
-    const exists = allPostsData.some(p => p.id === postId);
-    if (!exists) {
+/* 게시물 열기 (투표/결과 페이지) */
+function openVotePage(postId, question, imgASrc, imgBSrc, authorNickname){
+    // 삭제된 게시물은 열지 않음
+    if(!allPostsData.some(p => p && p.id === postId)){
         alert('이 게시물은 이미 삭제되었거나 존재하지 않습니다.');
+        renderPosts('all');
         goToPage('page-5');
         return;
     }
 
     currentPostId = postId;
-    // 보완: authorNickname이 없으면 로컬 데이터에서 가져오기
     currentPostAuthor = authorNickname || (allPostsData.find(p => p.id === postId) || {}).nickname || null;
 
-    const questionEl = document.getElementById('vote-question');
-    if (questionEl) questionEl.innerText = question;
-
-    const imgAEl = document.getElementById('vote-img-a');
-    const imgBEl = document.getElementById('vote-img-b');
-    const optionA = document.querySelector('.option-a');
-    const optionB = document.querySelector('.option-b');
-
-    // Resolve sources
-    const srcA = resolveImageSrc(imgASrc);
-    const srcB = resolveImageSrc(imgBSrc);
-
-    // A 이미지
-    if (srcA) {
-        imgAEl.src = srcA;
-        imgAEl.setAttribute('data-full-src', srcA);
-        optionA.style.display = 'flex';
-    } else { 
-        optionA.style.display = 'none'; 
-        imgAEl.src = '';
-        imgAEl.removeAttribute('data-full-src');
-    }
-
-    // B 이미지
-    if (srcB) {
-        imgBEl.src = srcB;
-        imgBEl.setAttribute('data-full-src', srcB);
-        optionB.style.display = 'flex';
-    } else { 
-        optionB.style.display = 'none'; 
-        imgBEl.src = '';
-        imgBEl.removeAttribute('data-full-src');
-    }
-
-    const resA = document.getElementById('result-img-a');
-    const resB = document.getElementById('result-img-b');
-    resA.src = imgAEl.src || '';
-    if (imgAEl.src) resA.setAttribute('data-full-src', imgAEl.src); else resA.removeAttribute('data-full-src');
-    resB.src = imgBEl.src || '';
-    if (imgBEl.src) resB.setAttribute('data-full-src', imgBEl.src); else resB.removeAttribute('data-full-src');
-
-    const storageKey = 'voted_' + currentPostId;
-
+    // 결과 페이지로 이동 (간단히 결과/댓글 페이지를 보여주게 함)
+    loadComments(postId);
+    // show delete button only for author
     const isAuthor = currentUser.nickname && currentPostAuthor && (currentUser.nickname === currentPostAuthor);
-    
-    // 🔴 삭제 버튼 표시 로직
-    const deleteBtn = document.getElementById('btn-delete-post');
-    if (isAuthor) {
-        deleteBtn.style.display = 'block';
-    } else {
-        deleteBtn.style.display = 'none';
-    }
+    const delBtn = document.getElementById('btn-delete-post');
+    if(delBtn) delBtn.style.display = isAuthor ? 'block' : 'none';
 
-    if (localStorage.getItem(storageKey) || isAuthor) {
-        updateResultGraph();
-        loadComments(postId);
-        goToPage('page-7');
-    } else {
-        goToPage('page-6');
+    goToPage('page-7');
+}
+
+/* 댓글 로드 (간단한 형태) */
+async function loadComments(postId){
+    const commentList = document.getElementById('comment-list');
+    if(!commentList) return;
+    commentList.innerHTML = '<div style="color:#999;padding:12px;">댓글을 불러오는 중...</div>';
+    try{
+        const res = await fetch(`${SCRIPT_URL}?action=getComments&postId=${postId}`);
+        const comments = await res.json();
+        if(!Array.isArray(comments) || comments.length===0){
+            commentList.innerHTML = '<div style="color:#999;padding:12px;">아직 댓글이 없습니다.</div>';
+            return;
+        }
+        commentList.innerHTML = '';
+        comments.reverse().forEach(c=>{
+            const div = document.createElement('div');
+            div.className='comment-item';
+            div.style.cssText='margin-bottom:12px;padding:12px;background:#fff;border-radius:12px;';
+            div.innerHTML = `<div style="font-weight:700;color:#366ED8;">${c.nickname||'익명'} <span style="font-weight:400;color:#777;font-size:13px;">(${c.major||'미선택'})</span></div><div style="color:#333;margin-top:8px;">${c.text||''}</div>`;
+            commentList.appendChild(div);
+        });
+    }catch(e){
+        commentList.innerHTML = '<div style="color:#999;padding:12px;">댓글을 불러올 수 없습니다.</div>';
+        console.error('loadComments error', e);
     }
 }
 
-function submitVote(selection) {
-    if (!currentPostId) return;
+/* 게시물 추가 - 새 게시물 (클라이언트에서 즉시 보이게) */
+function addNewPostToBoard(post){
+    // post: {id, nickname, question, imgA, imgB, ...}
+    // guard: 빈 게시물은 추가하지 않음
+    const srcA = resolveImageSrc(post.imgA);
+    const srcB = resolveImageSrc(post.imgB);
+    const hasContent = (post.question && post.question.toString().trim()) || srcA || srcB;
+    if(!post || !post.id || !hasContent) return;
 
-    const storageKey = 'voted_' + currentPostId;
-    if (localStorage.getItem(storageKey)) { return; }
+    // prepend to data and render
+    allPostsData.unshift(post);
+    // keep voteCounts
+    voteCounts[post.id] = { A: parseInt(post.voteA)||0, B: parseInt(post.voteB)||0 };
+    renderPosts('all');
+}
 
-    localStorage.setItem(storageKey, 'true'); 
-    
-    if (!voteCounts[currentPostId]) voteCounts[currentPostId] = { A: 0, B: 0 };
-    voteCounts[currentPostId][selection]++;
+/* 공유(간단 처리) */
+const shareButton = document.querySelector('.share-button');
+const textarea = document.getElementById('feedbackTextarea');
+if(textarea) textarea.addEventListener('input', ()=>{ /* no-op for now */ });
 
+/* 서버에서 게시물 불러오기, 빈 레코드 제거 */
+async function loadPostsFromSheet(){
+    try{
+        const res = await fetch(SCRIPT_URL);
+        const posts = await res.json();
+        // Normalize: ensure array and filter out empty rows (no id or no content)
+        if(!Array.isArray(posts)){
+            allPostsData = [];
+            renderPosts('all');
+            return;
+        }
+        allPostsData = posts.filter(p=>{
+            if(!p || !p.id) return false;
+            const hasQuestion = p.question && p.question.toString().trim();
+            const hasImageA = !!p.imgA;
+            const hasImageB = !!p.imgB;
+            return hasQuestion || hasImageA || hasImageB;
+        });
+        // Fill voteCounts safely
+        allPostsData.forEach(p => {
+            voteCounts[p.id] = { A: parseInt(p.voteA)||0, B: parseInt(p.voteB)||0 };
+        });
+        renderPosts('all');
+    }catch(err){
+        console.error('loadPostsFromSheet error', err);
+    }
+}
+
+/* 게시물 렌더링: 항상 전체 리스트를 클린 렌더링 -> 잔여 공백 문제 해결 */
+function renderPosts(filterType){
+    const list = document.getElementById('post-list');
+    if(!list) return;
+    list.innerHTML = '';
+
+    let filtered = allPostsData.slice();
+    if(filterType === 'my'){
+        filtered = allPostsData.filter(p => p.nickname === currentUser.nickname);
+    }
+
+    // Filter again to avoid any empty entries
+    filtered = filtered.filter(p => p && p.id && ((p.question && p.question.toString().trim()) || p.imgA || p.imgB));
+
+    if(filtered.length === 0){
+        list.innerHTML = '<div class="empty-message">게시물이 없습니다.</div>';
+        return;
+    }
+
+    filtered.forEach(post => {
+        addExistingPostToBoard(post);
+    });
+}
+
+/* 기존 게시물 요소 생성 (완전한 article 요소, data-post-id 포함) */
+function addExistingPostToBoard(post){
+    if(!post || !post.id) return;
+    // guard against empty posts
+    const srcA = resolveImageSrc(post.imgA);
+    const srcB = resolveImageSrc(post.imgB);
+    const hasContent = (post.question && post.question.toString().trim()) || srcA || srcB;
+    if(!hasContent) return;
+
+    const list = document.getElementById('post-list');
+    const article = document.createElement('article');
+    article.className = 'post-item special-bg';
+    article.setAttribute('data-post-id', post.id);
+    if(post.nickname) article.dataset.author = post.nickname;
+
+    // Build images html safely (no broken img tags)
+    let imagesHtml = '';
+    if(srcA && srcB){
+        imagesHtml = `<img src="${srcA}" class="w-50" style="width:50%;height:100%;object-fit:cover;" onerror="this.style.display='none'"><img src="${srcB}" class="w-50" style="width:50%;height:100%;object-fit:cover;" onerror="this.style.display='none'>`;
+    } else if(srcA){
+        imagesHtml = `<img src="${srcA}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'>`;
+    } else if(srcB){
+        imagesHtml = `<img src="${srcB}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'>`;
+    }
+
+    const questionText = post.question ? String(post.question) : '';
+
+    article.innerHTML = `<div class="image-row" style="background:transparent;">${imagesHtml}</div><div class="title-box gray-box">${escapeHtml(questionText)}</div>`;
+
+    // Click opens vote/result page
+    article.addEventListener('click', () => openVotePage(post.id, questionText, post.imgA, post.imgB, post.nickname));
+
+    list.appendChild(article);
+}
+
+/* 게시물 삭제: 클라이언트에서 완전 제거 -> 목록을 클린 렌더링 */
+function deleteCurrentPost(){
+    if(!currentPostId){
+        alert('삭제할 게시물을 찾을 수 없습니다.');
+        return;
+    }
+    if(!confirm('정말 이 게시물을 삭제하시겠습니까?\n삭제된 내용은 복구할 수 없습니다.')) return;
+
+    const idToDelete = currentPostId;
+
+    // 1) 클라이언트에서 바로 제거 (낙관적)
+    try{
+        // remove from data
+        allPostsData = allPostsData.filter(p => p && p.id !== idToDelete);
+
+        // clear vote counts and local storage flag
+        if(voteCounts[idToDelete]) delete voteCounts[idToDelete];
+        localStorage.removeItem('voted_' + idToDelete);
+
+        // re-render the list completely (this eliminates any leftover blank cards)
+        renderPosts('all');
+
+        // reset UI areas related to the deleted post
+        const commentList = document.getElementById('comment-list');
+        if(commentList) commentList.innerHTML = '';
+        currentPostId = null;
+        currentPostAuthor = null;
+
+        // ensure we are on the list page
+        goToPage('page-5');
+    }catch(e){
+        console.warn('Client-side delete error:', e);
+    }
+
+    // 2) 서버에 삭제 요청 (비동기)
     fetch(SCRIPT_URL, {
         method: 'POST',
-        body: JSON.stringify({ 
-            action: 'vote', 
-            id: currentPostId, 
-            select: selection 
-        })
+        body: JSON.stringify({ action:'delete', id: idToDelete })
     })
-    .then(response => response.json())
+    .then(res => res.json())
     .then(data => {
-        if (data.result === 'success') {
-            console.log('투표가 서버에 저장되었습니다.');
+        if(!data || data.result !== 'success'){
+            // 서버 삭제 실패 시 사용자에게만 알리되, 클라이언트에서는 이미 제거했으므로 복원하지 않음
+            console.warn('Server delete failed:', data && data.message);
+            alert('서버에서 게시물 삭제에 실패했습니다. (하지만 화면에서는 삭제 처리되었습니다.)');
         }
     })
-    .catch(err => console.error('투표 저장 오류:', err));
-
-    updateResultGraph();
-    loadComments(currentPostId);
-    goToPage('page-7');
-    
-    const lastIdx = historyStack.length - 1;
-    if (historyStack[lastIdx] === 'page-6') { 
-        historyStack.splice(lastIdx, 1); 
-    }
+    .catch(err => {
+        console.error('Delete request error:', err);
+        alert('삭제 요청 중 네트워크 오류가 발생했습니다. (화면에서는 삭제 처리되었습니다.)');
+    });
 }
 
-/* 🔵 투표 결과 그래프 로직 개선 */
-function updateResultGraph() {
-    const counts = voteCounts[currentPostId] || { A: 0, B: 0 }; 
-    const total = counts.A + counts.B;
-    
-    let percentA = 0;
-    let percentB = 0;
-
-    const barA = document.getElementById('bar-a');
-    const barB = document.getElementById('bar-b');
-
-    // 클래스 초기화
-    barA.classList.remove('zero-vote');
-    barB.classList.remove('zero-vote');
-    // 스타일 초기화
-    barA.style.backgroundColor = '';
-    barB.style.backgroundColor = '';
-
-    if (total > 0) {
-        percentA = Math.round((counts.A / total) * 100);
-        percentB = 100 - percentA;
-        
-        document.getElementById('percent-a').innerText = percentA + '%';
-        document.getElementById('percent-b').innerText = percentB + '%';
-
-        document.getElementById('percent-a').style.display = percentA < 10 ? 'none' : 'block';
-        document.getElementById('percent-b').style.display = percentB < 10 ? 'none' : 'block';
-        
-        if (counts.A > counts.B) {
-            barA.style.backgroundColor = '#333'; 
-            barB.style.backgroundColor = '#B0B0B0'; 
-        } else if (counts.B > counts.A) {
-            barB.style.backgroundColor = '#333';
-            barA.style.backgroundColor = '#B0B0B0';
-        } else {
-            barA.style.backgroundColor = '#555'; 
-            barB.style.backgroundColor = '#555';
-        }
-        
-        barA.style.width = percentA + '%';
-        barB.style.width = percentB + '%';
-    } else {
-        // 투표가 0일 때
-        document.getElementById('percent-a').innerText = '0%';
-        document.getElementById('percent-b').innerText = '0%';
-        document.getElementById('percent-a').style.display = 'block';
-        document.getElementById('percent-b').style.display = 'block';
-        
-        barA.style.width = '50%';
-        barB.style.width = '50%';
-        
-        // 투명 배경 & 텍스트 양끝 정렬 클래스 추가
-        barA.classList.add('zero-vote');
-        barB.classList.add('zero-vote');
-        
-        barA.style.backgroundColor = 'transparent';
-        barB.style.backgroundColor = 'transparent';
-    }
+/* 유틸: 안전한 HTML 이스케이프 (XSS 방지 최소) */
+function escapeHtml(str){
+    if(!str) return '';
+    return String(str).replace(/[&<>"']/g, function(m){
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
+    });
 }
 
-
-/* =====================
-   4. 사용자 정보 및 기본 기능
-   ===================== */
-function submitUserInfo() {
-    const nickname = document.getElementById('input-nickname').value;
+/* 사용자 등록 */
+function submitUserInfo(){
+    const nickname = document.getElementById('input-nickname').value.trim();
     const major = document.getElementById('input-major').value;
-    if (!nickname) { alert("닉네임을 입력해주세요!"); return; }
-    if (!major) { alert("학과를 선택해주세요!"); return; }
-       
-    currentUser.nickname = nickname;
-    currentUser.major = major;
-    saveUserInfo(nickname, major); 
+    if(!nickname){ alert('닉네임을 입력해주세요!'); return; }
+    if(!major){ alert('학과를 선택해주세요!'); return; }
+    currentUser.nickname = nickname; currentUser.major = major;
+    saveUserInfo(nickname, major);
     document.getElementById('display-name').innerText = nickname;
     goToPage('page-3');
 }
 
-const modal = document.getElementById("image-modal");
-const modalImg = document.getElementById("modal-image");
-const closeBtn = document.querySelector(".modal-close");
-
-document.addEventListener('click', function(e) {
-    if(e.target.classList.contains('option-image')) {
-        modal.style.display = "block"; 
-        modalImg.src = e.target.getAttribute('data-full-src'); 
-    }
-});
-
-closeBtn.onclick = function() { modal.style.display = "none"; }
-window.onclick = function(event) { if (event.target == modal) { modal.style.display = "none"; } }
-
-function openCommentModal() {
-    const userInfoEl = document.getElementById('comment-user-info');
-    userInfoEl.innerText = `${currentUser.nickname} (${currentUser.major})`;
-    document.getElementById('comment-modal').style.display = 'block'; 
-}
-
-function closeCommentModal() { 
-    document.getElementById('comment-modal').style.display = 'none'; 
-}
-
-function submitComment() {
-    const textInput = document.getElementById('new-comment-text');
-    const text = textInput.value.trim();
-    
-    if (text === "") { 
-        alert("댓글 내용을 입력해주세요!"); 
-        return; 
-    }
-    
-    if (!currentPostId) {
-        alert("게시물 정보를 찾을 수 없습니다.");
-        return;
-    }
-    
-    const nickname = currentUser.nickname || "익명";
-    const major = currentUser.major || "미선택";
-    
-    const commentList = document.getElementById('comment-list');
-    const newCommentDiv = document.createElement('div');
-    newCommentDiv.classList.add('comment-item');
-    newCommentDiv.innerHTML = `<div class="comment-user">${nickname} <span style="font-weight:400; font-size:13px; color:#777;">(${major})</span></div><div class="comment-text">${text}</div><hr class="comment-hr">`;
-    commentList.prepend(newCommentDiv);
-    
-    fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-            action: 'comment',
-            postId: currentPostId,
-            nickname: nickname,
-            major: major,
-            text: text
-        })
-    })
-    .then(response => response.json())
-    .then(result => {
-        if (result.result === 'success') {
-            console.log('댓글이 서버에 저장되었습니다.');
-        } else {
-            console.error('댓글 저장 실패:', result.message);
-        }
-    })
-    .catch(error => {
-        console.error('댓글 저장 오류:', error);
-    });
-
-    textInput.value = "";
-    closeCommentModal();
-}
-
-async function loadComments(postId) {
-    try {
-        const response = await fetch(`${SCRIPT_URL}?action=getComments&postId=${postId}`);
-        const comments = await response.json();
-        
-        console.log(`댓글 ${comments.length}개 로드됨:`, comments);
-        
-        const commentList = document.getElementById('comment-list');
-        commentList.innerHTML = '';
-        
-        if (comments.length === 0) {
-            commentList.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">아직 댓글이 없습니다.</div>';
-            return;
-        }
-        
-        comments.reverse().forEach(comment => {
-            const commentDiv = document.createElement('div');
-            commentDiv.classList.add('comment-item');
-            const displayMajor = comment.major || '미선택';
-            commentDiv.innerHTML = `
-                <div class="comment-user">${comment.nickname || '익명'} <span style="font-weight:400; font-size:13px; color:#777;">(${displayMajor})</span></div>
-                <div class="comment-text">${comment.text || ''}</div>
-                <hr class="comment-hr">
-            `;
-            commentList.appendChild(commentDiv);
-        });
-        
-    } catch (error) {
-        console.error('댓글 로딩 오류:', error);
-        const commentList = document.getElementById('comment-list');
-        commentList.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">댓글을 불러올 수 없습니다.</div>';
-    }
-}
-
-
-/* =====================
-   5. 게시물 작성 & 구글 전송
-   ===================== */
-const textarea = document.getElementById('feedbackTextarea');
-const shareButton = document.querySelector('.share-button');
-const imageWrapper = document.getElementById('imageWrapper');
-
-textarea.addEventListener('focus', () => { textarea.rows = 8; });
-textarea.addEventListener('blur', () => { if (textarea.value.trim() === '') { textarea.rows = 4; } });
-
-const optionButtons = document.querySelectorAll('.option-button');
-const uploadInputs = document.querySelectorAll('.image-upload-input');
-
-optionButtons.forEach(button => {
-    button.addEventListener('click', (e) => {
-        const option = button.getAttribute('data-option');
-        if (fileData[option]) {
-            alert('이미지가 이미 등록되었습니다. 삭제 후 다시 시도해주세요.');
-            return;
-        }
-        document.getElementById(`upload${option}`).click();
-    });
-});
-
-uploadInputs.forEach(input => {
-    input.addEventListener('change', (event) => {
-        const file = event.target.files[0];
-        const option = event.target.getAttribute('data-option');
-        
-        if (file && !fileData[option]) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const base64String = e.target.result.split(',')[1]; 
-                const mimeType = file.type;
-                fileData[option] = { data: base64String, mimeType: mimeType };
-
-                const previewDiv = document.createElement('div');
-                previewDiv.className = 'preview-item';
-                previewDiv.dataset.optionRef = option;
-                previewDiv.style.cssText = "position:relative; display:inline-block;";
-
-                const mainImg = document.createElement('img');
-                mainImg.src = e.target.result;
-                
-                const trashBtn = document.createElement('button');
-                trashBtn.className = 'delete-img-btn';
-                trashBtn.innerHTML = '🗑️';
-                trashBtn.style.cssText = "position:absolute; bottom:5px; right:5px; border:none; background:rgba(0,0,0,0.5); color:white; border-radius:50%; width:25px; height:25px; cursor:pointer;";
-                
-                trashBtn.onclick = (evt) => {
-                    evt.stopPropagation();
-                    if (confirm('사진을 삭제하시겠습니까?')) {
-                        imageWrapper.removeChild(previewDiv);
-                        fileData[option] = null;
-                        document.getElementById(`upload${option}`).value = '';
-                        document.getElementById(`btnOption${option}`).classList.remove('disabled');
-                        checkFormValidity();
-                    }
-                };
-
-                previewDiv.appendChild(mainImg);
-                previewDiv.appendChild(trashBtn);
-                imageWrapper.appendChild(previewDiv);
-                document.getElementById(`btnOption${option}`).classList.add('disabled');
-                checkFormValidity();
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-});
-
-function checkFormValidity() {
-    const isTextareaFilled = textarea.value.trim().length > 0;
-    const isOptionImageUploaded = fileData.A !== null || fileData.B !== null;
-    if (isTextareaFilled && isOptionImageUploaded) {
-        shareButton.classList.add('active');
-        shareButton.disabled = false;
-    } else {
-        shareButton.classList.remove('active');
-        shareButton.disabled = true;
-    }
-}
-textarea.addEventListener('input', checkFormValidity);
-
-function addNewPostToBoard(postId, question, imgA, imgB, authorNickname) {
-    const list = document.querySelector('#page-5 .post-list');
-    
-    if (currentTab === 'my' && authorNickname !== currentUser.nickname) {
-        return;
-    }
-    
-    const emptyMsg = list.querySelector('.empty-message');
-    if (emptyMsg) emptyMsg.remove();
-
-    const article = document.createElement('article');
-    article.className = 'post-item special-bg'; 
-    article.setAttribute('data-post-id', postId);
-    if (authorNickname) {
-        article.dataset.author = authorNickname;
-    }
-    
-    article.onclick = function() { 
-        openVotePage(postId, question, imgA, imgB, authorNickname); 
-    }; 
-
-    let imagesHtml = '';
-    const srcA = imgA ? resolveImageSrc(imgA) : null;
-    const srcB = imgB ? resolveImageSrc(imgB) : null;
-
-    if (srcA && srcB) {
-        imagesHtml = `<img src="${srcA}" class="w-50"><img src="${srcB}" class="w-50">`;
-    } else if (srcA) {
-        imagesHtml = `<img src="${srcA}" style="width:100%; height:100%; object-fit:cover;">`;
-    } else if (srcB) {
-        imagesHtml = `<img src="${srcB}" style="width:100%; height:100%; object-fit:cover;">`;
-    }
-
-    article.innerHTML = `<div class="image-row">${imagesHtml}</div><div class="title-box gray-box">${question}</div>`;
-    list.prepend(article);
-}
-
-shareButton.addEventListener('click', () => {
-    if (!shareButton.classList.contains('active')) return;
-
-    const originalText = shareButton.innerText;
-    shareButton.innerText = "업로드 중...";
-    shareButton.disabled = true;
-
-    const newPostId = 'post_' + Date.now();
-    const authorNick = currentUser.nickname || "익명";
-    
-    const newPostData = {
-        id: newPostId,
-        nickname: authorNick,
-        major: currentUser.major || "미선택",
-        question: textarea.value,
-        imgA: fileData.A ? { data: fileData.A.data, mimeType: fileData.A.mimeType } : null,
-        imgB: fileData.B ? { data: fileData.B.data, mimeType: fileData.B.mimeType } : null,
-        voteA: 0,
-        voteB: 0
-    };
-    // Add locally
-    allPostsData.unshift(newPostData);
-
-    addNewPostToBoard(newPostId, textarea.value, fileData.A, fileData.B, authorNick);
-    voteCounts[newPostId] = { A: 0, B: 0 };
-
-    const payload = {
-        id: newPostId,
-        nickname: currentUser.nickname || "익명",
-        major: currentUser.major || "미선택",
-        question: textarea.value,
-        imageA: fileData.A,
-        imageB: fileData.B
-    };
-
-    imageWrapper.innerHTML = '';
-    textarea.value = '';
-    fileData.A = null; 
-    fileData.B = null;
-    document.getElementById('btnOptionA').classList.remove('disabled');
-    document.getElementById('btnOptionB').classList.remove('disabled');
-    checkFormValidity();
-
-    shareButton.innerText = originalText;
-    shareButton.disabled = false;
-    
-    alert('게시물이 성공적으로 공유되었습니다!');
-    goToPage('page-5');
-
-    fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.result !== 'success') { console.log('Server warning: ' + data.message); }
-    })
-    .catch(error => { console.error('Error:', error); });
-});
-
-
-/* =====================
-   6. 게시물 불러오기 & 탭 필터링
-   ===================== */
-async function loadPostsFromSheet() {
-    try {
-        const response = await fetch(SCRIPT_URL);
-        const posts = await response.json();
-        
-        allPostsData = posts; 
-        console.log('불러온 게시물:', allPostsData);
-        
-        allPostsData.forEach(post => {
-             voteCounts[post.id] = {
-                A: parseInt(post.voteA) || 0,
-                B: parseInt(post.voteB) || 0
-            };
-        });
-
-        renderPosts('all'); 
-        
-    } catch (error) {
-        console.error('게시물 로딩 오류:', error);
-    }
-}
-
-function switchTab(tabName) {
-    currentTab = tabName;
-    
-    const tabAll = document.getElementById('tab-all');
-    const tabMy = document.getElementById('tab-my');
-    
-    if (tabName === 'all') {
-        tabAll.classList.add('active');
-        tabMy.classList.remove('active');
-    } else {
-        tabAll.classList.remove('active');
-        tabMy.classList.add('active');
-    }
-    
-    renderPosts(tabName);
-}
-
-function renderPosts(filterType) {
-    const list = document.querySelector('#page-5 .post-list');
-    list.innerHTML = ''; 
-    
-    let filteredPosts = allPostsData;
-    
-    if (filterType === 'my') {
-        filteredPosts = allPostsData.filter(post => post.nickname === currentUser.nickname);
-    }
-    
-    if (filteredPosts.length === 0) {
-        list.innerHTML = '<div class="empty-message">게시물이 없습니다.</div>';
-        return;
-    }
-    
-    filteredPosts.forEach(post => {
-        const imgA = post.imgA || null;
-        const imgB = post.imgB || null;
-        addExistingPostToBoard(post.id, post.question, imgA, imgB, post.nickname);
-    });
-}
-
-
-function addExistingPostToBoard(postId, question, imgA, imgB, authorNickname) {
-    const list = document.querySelector('#page-5 .post-list');
-    
-    const article = document.createElement('article');
-    article.className = 'post-item special-bg';
-    article.setAttribute('data-post-id', postId);
-    if (authorNickname) {
-        article.dataset.author = authorNickname;
-    }
-    
-    article.onclick = function() { 
-        openVotePage(postId, question, imgA, imgB, authorNickname); 
-    };
-
-    let imagesHtml = '';
-    const srcA = resolveImageSrc(imgA);
-    const srcB = resolveImageSrc(imgB);
-
-    if (srcA && srcB) {
-        imagesHtml = `<img src="${srcA}" class="w-50" onerror="this.style.display='none'"><img src="${srcB}" class="w-50" onerror="this.style.display='none'">`;
-    } else if (srcA) {
-        imagesHtml = `<img src="${srcA}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">`;
-    } else if (srcB) {
-        imagesHtml = `<img src="${srcB}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">`;
-    }
-
-    article.innerHTML = `<div class="image-row">${imagesHtml}</div><div class="title-box gray-box">${question}</div>`;
-    list.appendChild(article);
-}
-
-/* 🔴 게시물 삭제 함수 */
-function deleteCurrentPost() {
-    if (!currentPostId) return;
-    
-    if (!confirm("정말 이 게시물을 삭제하시겠습니까?\n삭제된 내용은 복구할 수 없습니다.")) {
-        return;
-    }
-
-    // Save id to delete for server call
-    const idToDelete = currentPostId;
-
-    // 낙관적 삭제: 클라이언트에서 완전 제거
-    try {
-        // 1) 로컬 데이터에서 삭제
-        allPostsData = allPostsData.filter(p => p.id !== idToDelete);
-        
-        // 2) 투표/로컬 저장소 정리
-        delete voteCounts[idToDelete];
-        localStorage.removeItem('voted_' + idToDelete);
-
-        // 3) DOM에서 해당 게시물(모든 위치)을 완전히 제거
-        const nodes = document.querySelectorAll(`[data-post-id="${idToDelete}"]`);
-        nodes.forEach(n => n.remove());
-
-        // 4) 목록을 현재 탭 기준으로 재렌더링해서 잔여 공백 제거
-        renderPosts(currentTab || 'all');
-
-        // 5) 댓글 영역, 이미지, 결과 초기화 (page-6/page-7)
-        try {
-            document.getElementById('comment-list').innerHTML = '';
-            document.getElementById('vote-img-a').src = '';
-            document.getElementById('vote-img-a').removeAttribute('data-full-src');
-            document.getElementById('vote-img-b').src = '';
-            document.getElementById('vote-img-b').removeAttribute('data-full-src');
-            document.getElementById('result-img-a').src = '';
-            document.getElementById('result-img-a').removeAttribute('data-full-src');
-            document.getElementById('result-img-b').src = '';
-            document.getElementById('result-img-b').removeAttribute('data-full-src');
-            document.getElementById('vote-question').innerText = '';
-            document.getElementById('percent-a').innerText = '0%';
-            document.getElementById('percent-b').innerText = '0%';
-            document.getElementById('bar-a').style.width = '50%';
-            document.getElementById('bar-b').style.width = '50%';
-            document.getElementById('bar-a').classList.add('zero-vote');
-            document.getElementById('bar-b').classList.add('zero-vote');
-        } catch (err) {
-            console.warn('UI 초기화 중 오류:', err);
-        }
-
-        // 6) 현재 선택된 게시물 초기화
-        currentPostId = null;
-        currentPostAuthor = null;
-
-        // 7) 목록 페이지로 이동 (강제)
-        goToPage('page-5');
-    } catch (err) {
-        console.warn('클라이언트 삭제 중 오류:', err);
-    }
-
-    // 서버에도 삭제 요청 전송 (백엔드에서 실제 삭제 필요)
-    fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({ 
-            action: 'delete', 
-            id: idToDelete 
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.result === 'success') {
-            console.log('서버에서 게시물 삭제 완료');
-        } else {
-            // 서버에서 삭제 실패한 경우 사용자에게 알림
-            alert('서버에서 게시물 삭제에 실패했습니다: ' + (data.message || '알 수 없는 오류'));
-            // (선택) 실패 시 재요청이나 복원 로직을 추가할 수 있습니다.
-        }
-    })
-    .catch(error => {
-        console.error('Delete Error:', error);
-        alert('삭제 요청 중 오류가 발생했습니다. 네트워크 상태를 확인하세요.');
-    });
-}
-
+/* 초기화: 로드 후 상태 반영 */
 window.addEventListener('DOMContentLoaded', () => {
-    if (loadUserInfo()) {
-        goToPage('page-3');
-    }
+    if(loadUserInfo()) goToPage('page-3');
     loadPostsFromSheet();
 });
 </script>
