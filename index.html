@@ -1615,6 +1615,7 @@ function deleteCurrentPost() {
     })
     .then(response => response.json())
     .then(data => {
+        if (data.result === 'success') {
             alert('게시물이 삭제되었습니다.');
             
             // 🔴 [Fix] ID 타입 불일치 방지 (문자열 변환 비교)
