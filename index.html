@@ -1620,48 +1620,53 @@ function deleteCurrentPost() {
     if (!confirm("정말 이 게시물을 삭제하시겠습니까?\n삭제된 내용은 복구할 수 없습니다.")) {
         return;
     }
-    
+
+    // Save id to delete for server call
+    const idToDelete = currentPostId;
+
     // 낙관적 삭제: 클라이언트에서 완전 제거
     try {
         // 1) 로컬 데이터에서 삭제
-        allPostsData = allPostsData.filter(p => p.id !== currentPostId);
+        allPostsData = allPostsData.filter(p => p.id !== idToDelete);
         
         // 2) 투표/로컬 저장소 정리
-        delete voteCounts[currentPostId];
-        localStorage.removeItem('voted_' + currentPostId);
+        delete voteCounts[idToDelete];
+        localStorage.removeItem('voted_' + idToDelete);
 
         // 3) DOM에서 해당 게시물(모든 위치)을 완전히 제거
-        const nodes = document.querySelectorAll(`[data-post-id="${currentPostId}"]`);
+        const nodes = document.querySelectorAll(`[data-post-id="${idToDelete}"]`);
         nodes.forEach(n => n.remove());
 
-        // 4) 댓글 영역, 이미지, 결과 초기화 (page-6/page-7)
-        document.getElementById('comment-list').innerHTML = '';
-        const vA = document.getElementById('vote-img-a');
-        const vB = document.getElementById('vote-img-b');
-        const rA = document.getElementById('result-img-a');
-        const rB = document.getElementById('result-img-b');
-        if (vA) { vA.src = ''; vA.removeAttribute('data-full-src'); }
-        if (vB) { vB.src = ''; vB.removeAttribute('data-full-src'); }
-        if (rA) { rA.src = ''; rA.removeAttribute('data-full-src'); }
-        if (rB) { rB.src = ''; rB.removeAttribute('data-full-src'); }
+        // 4) 목록을 현재 탭 기준으로 재렌더링해서 잔여 공백 제거
+        renderPosts(currentTab || 'all');
 
-        document.getElementById('vote-question').innerText = '';
-        document.getElementById('percent-a').innerText = '0%';
-        document.getElementById('percent-b').innerText = '0%';
-        const barA = document.getElementById('bar-a');
-        const barB = document.getElementById('bar-b');
-        if (barA && barB) {
-            barA.style.width = '50%';
-            barB.style.width = '50%';
-            barA.classList.add('zero-vote');
-            barB.classList.add('zero-vote');
+        // 5) 댓글 영역, 이미지, 결과 초기화 (page-6/page-7)
+        try {
+            document.getElementById('comment-list').innerHTML = '';
+            document.getElementById('vote-img-a').src = '';
+            document.getElementById('vote-img-a').removeAttribute('data-full-src');
+            document.getElementById('vote-img-b').src = '';
+            document.getElementById('vote-img-b').removeAttribute('data-full-src');
+            document.getElementById('result-img-a').src = '';
+            document.getElementById('result-img-a').removeAttribute('data-full-src');
+            document.getElementById('result-img-b').src = '';
+            document.getElementById('result-img-b').removeAttribute('data-full-src');
+            document.getElementById('vote-question').innerText = '';
+            document.getElementById('percent-a').innerText = '0%';
+            document.getElementById('percent-b').innerText = '0%';
+            document.getElementById('bar-a').style.width = '50%';
+            document.getElementById('bar-b').style.width = '50%';
+            document.getElementById('bar-a').classList.add('zero-vote');
+            document.getElementById('bar-b').classList.add('zero-vote');
+        } catch (err) {
+            console.warn('UI 초기화 중 오류:', err);
         }
 
-        // 5) 현재 선택된 게시물 초기화
+        // 6) 현재 선택된 게시물 초기화
         currentPostId = null;
         currentPostAuthor = null;
 
-        // 6) 목록 페이지로 이동 (강제)
+        // 7) 목록 페이지로 이동 (강제)
         goToPage('page-5');
     } catch (err) {
         console.warn('클라이언트 삭제 중 오류:', err);
@@ -1672,7 +1677,7 @@ function deleteCurrentPost() {
         method: 'POST',
         body: JSON.stringify({ 
             action: 'delete', 
-            id: currentPostId 
+            id: idToDelete 
         })
     })
     .then(response => response.json())
