@@ -109,7 +109,6 @@
         }
 
         .page.active { display: flex; }
-        /* 🔵 [수정] 상단 여백 제거를 위해 padding-top 확실히 0으로 */
         .page.no-padding-top { padding-top: 0 !important; justify-content: flex-start; background-color: #FAFBFC; } 
 
         /* 버튼 공통 */
@@ -244,7 +243,7 @@
             padding: 0 10px; 
             border-bottom: 1px solid rgba(0,0,0,0.04); 
             position: sticky; 
-            top: 0; /* 🔵 맨 위로 고정 */
+            top: 0; 
             z-index: 10; 
         }
         
@@ -370,7 +369,7 @@
         }
         .title-box.gray-box { background: #fff; } 
 
-        /* 🔵 글쓰기 플로팅 버튼 (연필 모양 유지) */
+        /* 글쓰기 플로팅 버튼 */
         .fab-btn {
             position: fixed; 
             bottom: 30px; 
@@ -552,7 +551,7 @@
             box-shadow: 0 4px 15px rgba(74, 140, 255, 0.3);
         }
         
-        /* 🔵 투표 결과 그래프 */
+        /* 투표 결과 그래프 */
         .progress-container { 
             width: 100%; 
             height: 60px; 
@@ -640,7 +639,7 @@
             border-radius: 16px; 
             border: 1px solid rgba(0,0,0,0.03);
             box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            position: relative; /* 답글 컨테이너 위치 기준 */
+            position: relative;
         } 
         .comment-user { 
             font-weight: 700; 
@@ -655,7 +654,7 @@
         .comment-text { font-size: 15px; color: #444; line-height: 1.5; }
         .comment-hr { display: none; } 
         
-        /* 🔵 [추가] 답글 버튼 스타일 */
+        /* 답글 버튼 스타일 */
         .btn-reply-action {
             margin-top: 10px;
             font-size: 13px;
@@ -668,9 +667,9 @@
         }
         .btn-reply-action:hover { color: var(--primary-color); text-decoration: underline; }
 
-        /* 🔵 [추가] 답글 입력폼 */
+        /* 답글 입력폼 */
         .reply-input-box {
-            display: none; /* 기본 숨김 */
+            display: none; 
             margin-top: 12px;
             padding-top: 12px;
             border-top: 1px dashed #eee;
@@ -695,13 +694,13 @@
             cursor: pointer;
         }
 
-        /* 🔵 [추가] 대댓글(답글) 아이템 스타일 */
+        /* 대댓글(답글) 아이템 스타일 */
         .reply-item {
             margin-top: 10px;
             padding: 12px;
-            background-color: #F0F7FF; /* 연한 파란 배경 */
+            background-color: #F0F7FF;
             border-radius: 12px;
-            margin-left: 20px; /* 들여쓰기 */
+            margin-left: 20px;
             border-left: 3px solid var(--primary-color);
         }
         .reply-user {
@@ -1069,7 +1068,7 @@
 /* ==========================================
    🔴 [중요] 방금 "새 배포"로 받은 URL을 여기에 넣으세요! 🔴
    ========================================== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymgWt3vCPuIme5vZmdXXxT8resrgrFN8YgpIDxpvwFMDS72XUQH2mJSHvp8gstg08hww/exec"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyiNlk-2IZ_wGtLb77bRUaUmlsHY0-NeFIHqgY8RVhc3NtFuFElhi1fuJbtSB19XGOQvg/exec"; 
 
 
 /* =====================
@@ -1222,8 +1221,6 @@ function openVotePage(postId, question, imgASrc, imgBSrc, authorNickname) {
     resB.src = imgBEl.src; 
     resB.setAttribute('data-full-src', imgBEl.src);
 
-    const storageKey = 'voted_' + currentPostId;
-
     const isAuthor = currentUser.nickname && currentPostAuthor && (currentUser.nickname === currentPostAuthor);
 
     // 🔴 작성자일 경우 삭제 버튼 표시
@@ -1234,7 +1231,11 @@ function openVotePage(postId, question, imgASrc, imgBSrc, authorNickname) {
         deleteBtn.style.display = 'none';
     }
 
-    if (localStorage.getItem(storageKey) || isAuthor) {
+    // 🔴 투표 여부 확인 로직 개선 (정확한 키 확인)
+    const storageKey = 'voted_' + currentPostId;
+    const hasVoted = localStorage.getItem(storageKey);
+
+    if (isAuthor || hasVoted) {
         updateResultGraph();
         loadComments(postId);
         goToPage('page-7');
@@ -1430,10 +1431,23 @@ function submitComment() {
     const nickname = currentUser.nickname || "익명";
     const major = currentUser.major || "미선택";
     
+    // UI 우선 업데이트 (부모 댓글)
     const commentList = document.getElementById('comment-list');
     const newCommentDiv = document.createElement('div');
     newCommentDiv.classList.add('comment-item');
-    newCommentDiv.innerHTML = `<div class="comment-user">${nickname} <span style="font-weight:400; font-size:13px; color:#777;">(${major})</span></div><div class="comment-text">${text}</div><hr class="comment-hr">`;
+    // 임시 ID (실제로는 로딩 시 서버 ID 사용)
+    const tempId = 'temp_' + Date.now();
+    
+    newCommentDiv.innerHTML = `
+        <div class="comment-user">${nickname} <span style="font-weight:400; font-size:13px; color:#777;">(${major})</span></div>
+        <div class="comment-text">${text}</div>
+        <button class="btn-reply-action" onclick="toggleReplyForm('${tempId}')">답글 달기</button>
+        <div class="reply-input-box" id="reply-form-${tempId}">
+            <input type="text" id="reply-input-${tempId}" placeholder="답글을 입력하세요...">
+            <button onclick="submitReply('${tempId}')">등록</button>
+        </div>
+        <div class="reply-list" id="reply-list-${tempId}"></div>
+    `;
     commentList.prepend(newCommentDiv);
     
     fetch(SCRIPT_URL, {
@@ -1449,7 +1463,8 @@ function submitComment() {
     .then(response => response.json())
     .then(result => {
         if (result.result === 'success') {
-            console.log('댓글이 서버에 저장되었습니다.');
+            console.log('댓글 저장 성공');
+            // 정확한 ID 매핑을 위해 필요 시 재로딩 권장하나, 여기서는 UI 유지
         } else {
             console.error('댓글 저장 실패:', result.message);
         }
@@ -1462,45 +1477,60 @@ function submitComment() {
     closeCommentModal();
 }
 
-// 🔵 [수정] 댓글 로딩 + 답글 버튼/기능 추가
+// 🔵 [수정] 댓글 및 답글 로딩 함수
 async function loadComments(postId) {
     try {
         const response = await fetch(`${SCRIPT_URL}?action=getComments&postId=${postId}`);
-        const comments = await response.json();
+        const allComments = await response.json();
         
         const commentList = document.getElementById('comment-list');
         commentList.innerHTML = '';
         
-        if (comments.length === 0) {
+        if (allComments.length === 0) {
             commentList.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">아직 댓글이 없습니다.</div>';
             return;
         }
         
-        // 역순 표시 (최신순)
-        comments.reverse().forEach((comment, index) => {
+        const parentComments = allComments.filter(c => !c.parentId);
+        const childComments = allComments.filter(c => c.parentId);
+
+        parentComments.reverse().forEach((comment) => {
+            const replies = childComments.filter(r => r.parentId === comment.id);
+
             const commentDiv = document.createElement('div');
             commentDiv.classList.add('comment-item');
             
-            // 1. 댓글 본문
             let html = `
                 <div class="comment-user">${comment.nickname || '익명'} <span style="font-weight:400; font-size:13px; color:#777;">(${comment.major || '미선택'})</span></div>
                 <div class="comment-text">${comment.text || ''}</div>
-                <button class="btn-reply-action" onclick="toggleReplyForm(${index})">답글 달기</button>
-                <div class="reply-input-box" id="reply-form-${index}">
-                    <input type="text" id="reply-input-${index}" placeholder="답글을 입력하세요...">
-                    <button onclick="submitReply(${index}, '${comment.nickname || '익명'}')">등록</button>
+                <button class="btn-reply-action" onclick="toggleReplyForm('${comment.id}')">답글 달기</button>
+                
+                <div class="reply-input-box" id="reply-form-${comment.id}">
+                    <input type="text" id="reply-input-${comment.id}" placeholder="답글을 입력하세요...">
+                    <button onclick="submitReply('${comment.id}')">등록</button>
                 </div>
-                <div class="reply-list" id="reply-list-${index}">
-                    </div>
+
+                <div class="reply-list" id="reply-list-${comment.id}">
             `;
+            
+            replies.forEach(reply => {
+                html += `
+                    <div class="reply-item">
+                        <div class="reply-user">↳ ${reply.nickname} <span style="font-size:11px; color:#999;">(${reply.major})</span></div>
+                        <div class="reply-text">${reply.text}</div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`; 
+            
             commentDiv.innerHTML = html;
             commentList.appendChild(commentDiv);
         });
         
     } catch (error) {
         console.error('댓글 로딩 오류:', error);
-        const commentList = document.getElementById('comment-list');
-        commentList.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">댓글을 불러올 수 없습니다.</div>';
+        document.getElementById('comment-list').innerHTML = '<div style="text-align:center; color:#999; padding:20px;">댓글을 불러올 수 없습니다.</div>';
     }
 }
 
@@ -1514,26 +1544,50 @@ function toggleReplyForm(index) {
     }
 }
 
-// 🔵 [추가] 답글 등록 (UI 처리만, 서버 연동은 댓글과 동일 구조로 가정)
-function submitReply(index, parentAuthor) {
-    const input = document.getElementById(`reply-input-${index}`);
+// 🟢 [수정됨] 답글 서버 전송 기능 추가
+function submitReply(parentId) {
+    const input = document.getElementById(`reply-input-${parentId}`);
     const text = input.value.trim();
+    
     if (!text) { alert('답글 내용을 입력해주세요.'); return; }
+    if (!currentPostId) { alert('게시물 정보 오류'); return; }
 
-    const replyList = document.getElementById(`reply-list-${index}`);
+    const nickname = currentUser.nickname || "익명";
+    const major = currentUser.major || "미선택";
+
+    const replyList = document.getElementById(`reply-list-${parentId}`);
     const replyItem = document.createElement('div');
     replyItem.classList.add('reply-item');
     replyItem.innerHTML = `
-        <div class="reply-user">↳ ${currentUser.nickname}</div>
+        <div class="reply-user">↳ ${nickname} <span style="font-size:11px; color:#999;">(${major})</span></div>
         <div class="reply-text">${text}</div>
     `;
     replyList.appendChild(replyItem);
 
-    // 서버 전송 (일반 댓글로 저장하되, 부모 정보 포함 - 여기서는 UI만 구현)
-    // 실제로는 DB 구조 변경 필요하지만, 요청에 따라 기능 UI 구현에 집중
-    
     input.value = '';
-    toggleReplyForm(index); // 닫기
+    toggleReplyForm(parentId);
+
+    // 🟢 서버에 답글 전송
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            action: 'reply', // 백엔드에서 이 액션을 처리해야 함
+            postId: currentPostId,
+            parentId: parentId, // 부모 댓글 ID 전송
+            nickname: nickname,
+            major: major,
+            text: text
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.result === 'success') {
+            console.log('답글 저장 성공');
+        } else {
+            console.error('답글 저장 실패:', data.message);
+        }
+    })
+    .catch(err => console.error('Error:', err));
 }
 
 
