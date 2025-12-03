@@ -9,23 +9,25 @@
 
     <style>
         /* ====================
-           디자인 시스템 (Design System)
+           1. 디자인 시스템 (Design System)
            - Main Color: #4A8CFF (Energetic Blue)
            ==================== */
         
         :root {
-            --primary-color: #4A8CFF;        
+            --primary-color: #4A8CFF;       
             --primary-dark: #366ED8;        
-            --primary-light: #EBF3FF;        
+            --primary-light: #EBF3FF;       
             --primary-gradient: linear-gradient(135deg, #4A8CFF 0%, #366ED8 100%);
             
             --bg-body: #F7F9FC;             
-            --surface-white: #FFFFFF;        
-            --surface-input: #F0F4F8;        
+            --surface-white: #FFFFFF;       
+            --surface-input: #F0F4F8;       
             
             --text-main: #1A1A1A;
             --text-sub: #757575;
             
+            --danger-color: #FF4B4B; /* 🔴 삭제 버튼 색상 */
+
             --shadow-sm: 0 4px 15px rgba(74, 140, 255, 0.1);
             --shadow-md: 0 10px 30px rgba(74, 140, 255, 0.15);
             
@@ -64,7 +66,7 @@
             height: 64px;
             display: flex;
             align-items: center;
-            padding: 0 24px;
+            padding: 0 10px; 
             z-index: 100;
             background-color: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
@@ -248,10 +250,10 @@
         
         .tab-back-arrow {
             font-size: 22px;
-            padding: 10px;
+            padding: 10px; 
             cursor: pointer;
             color: var(--text-main);
-            margin-right: 5px;
+            margin-right: 5px; 
             transition: color 0.2s;
         }
         .tab-back-arrow:hover { color: var(--primary-color); }
@@ -284,7 +286,7 @@
             border-radius: 10px;
         }
 
-        /* 안내 문구 박스 스타일 */
+        /* 안내 문구 박스 */
         .notice-box {
             width: 100%;
             padding: 20px 24px;
@@ -298,13 +300,16 @@
             font-weight: 500;
             animation: fadeIn 0.5s ease-out;
         }
+        
         /* 4번째 줄 링크 스타일 */
         .notice-link-line {
             display: block;
             margin-top: 8px;
             font-weight: 700;
             color: #366ED8;
+            text-decoration: none;
         }
+        .notice-link-line:hover { text-decoration: underline; }
         
         .empty-message { text-align: center; color: #999; margin-top: 80px; font-size: 15px; font-weight: 400; }
 
@@ -320,9 +325,9 @@
         .post-item { 
             padding: 0; 
             cursor: pointer; 
-            border-radius: var(--radius-xl); 
-            overflow: hidden; 
-            background-color: #fff; 
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            background-color: #fff;
             transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
             position: relative;
         }
@@ -361,12 +366,12 @@
             text-align: left; 
             font-size: 16px; 
             font-weight: 700; 
-            color: var(--text-main); 
+            color: var(--text-main);
             line-height: 1.4;
         }
         .title-box.gray-box { background: #fff; } 
 
-        /* 글쓰기 플로팅 버튼 */
+        /* 글쓰기 플로팅 버튼 (연필 모양) */
         .fab-btn {
             position: fixed; 
             bottom: 30px; 
@@ -398,7 +403,7 @@
         
         .fab-btn .text {
             display: none;
-            font-size: 14px; 
+            font-size: 15px; 
             font-weight: 700;
             white-space: nowrap;
             padding-right: 20px;
@@ -451,7 +456,7 @@
         
         .fab-survey .text {
             display: none;
-            font-size: 14px; 
+            font-size: 13px; 
             font-weight: 700;
             white-space: nowrap;
             padding-right: 15px;
@@ -564,12 +569,12 @@
             position: relative; 
         }
         
-        /* 🔴 [수정] A 막대: flex-start로 변경 */
+        /* A 막대 */
         .progress-a {
             height: 100%;
             display: flex; 
             align-items: center;
-            justify-content: flex-start; /* 왼쪽 정렬 */
+            justify-content: flex-start; 
             padding: 0 16px;
             transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
@@ -580,7 +585,7 @@
             border-radius: 18px 0 0 18px; 
         }
 
-        /* 🔴 [유지] B 막대: flex-end (오른쪽 정렬) */
+        /* B 막대 */
         .progress-b {
             height: 100%;
             width: 100%; 
@@ -598,14 +603,14 @@
         }
 
         /* JS 인라인 스타일 오버라이드 (색상) */
-        div[style*="rgb(51, 51, 51)"] { /* #333 - 이긴 쪽 */
+        div[style*="rgb(51, 51, 51)"] { 
             background-color: var(--primary-dark) !important;
             background-image: linear-gradient(135deg, #366ED8 0%, #1E4F9E 100%);
         }
-        div[style*="rgb(176, 176, 176)"] { /* #B0B0B0 - 진 쪽 */
+        div[style*="rgb(176, 176, 176)"] { 
             background-color: #8EB7FF !important; 
         }
-        div[style*="rgb(85, 85, 85)"] { /* #555 - 비김 */
+        div[style*="rgb(85, 85, 85)"] { 
             background-color: var(--primary-color) !important;
         }
         
@@ -615,7 +620,7 @@
             background-image: none !important;
             color: #999;
             text-shadow: none;
-            justify-content: flex-start; /* 왼쪽 끝 */
+            justify-content: flex-start; 
             padding-left: 16px; 
         }
         .progress-b.zero-vote {
@@ -623,7 +628,7 @@
             background-image: none !important;
             color: #999;
             text-shadow: none;
-            justify-content: flex-end; /* 오른쪽 끝 */
+            justify-content: flex-end; 
             padding-right: 16px; 
         }
 
@@ -636,6 +641,7 @@
             border-radius: 16px; 
             border: 1px solid rgba(0,0,0,0.03);
             box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            position: relative; 
         } 
         .comment-user { 
             font-weight: 700; 
@@ -649,6 +655,66 @@
         }
         .comment-text { font-size: 15px; color: #444; line-height: 1.5; }
         .comment-hr { display: none; } 
+        
+        /* 답글 버튼 스타일 */
+        .btn-reply-action {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #999;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            font-weight: 500;
+        }
+        .btn-reply-action:hover { color: var(--primary-color); text-decoration: underline; }
+
+        /* 답글 입력폼 */
+        .reply-input-box {
+            display: none; 
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed #eee;
+        }
+        .reply-input-box input {
+            width: 75%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+        }
+        .reply-input-box button {
+            width: 20%;
+            margin-left: 2%;
+            padding: 8px 0;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        /* 대댓글(답글) 아이템 스타일 */
+        .reply-item {
+            margin-top: 10px;
+            padding: 12px;
+            background-color: #F0F7FF; 
+            border-radius: 12px;
+            margin-left: 20px; 
+            border-left: 3px solid var(--primary-color);
+        }
+        .reply-user {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+        .reply-text {
+            font-size: 13px;
+            color: #555;
+        }
         
         .btn-comment { 
             width: 100%; 
@@ -666,6 +732,27 @@
             background-color: var(--primary-color);
             color: white;
             box-shadow: 0 4px 12px rgba(74, 140, 255, 0.2);
+        }
+
+        /* 게시물 삭제 버튼 스타일 */
+        .btn-delete {
+            width: 100%;
+            padding: 16px 0;
+            background-color: var(--surface-white);
+            color: var(--danger-color); 
+            border: 2px solid var(--danger-color); 
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 12px; 
+            display: none; 
+        }
+        .btn-delete:hover {
+            background-color: var(--danger-color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 75, 75, 0.2);
         }
 
         .image-scroll-container {
@@ -827,32 +914,29 @@
         <h2 style="margin-bottom:40px; font-size:22px; font-weight:700; color:var(--text-main);">정보를 입력해주세요</h2>
         <div class="input-group">
             <label>닉네임</label>
-            <input type="text" id="input-nickname" placeholder="예: 당근이">
+            <input type="text" id="input-nickname" placeholder="예: 주현">
         </div>
         <div class="input-group">
             <label>학 과</label>
             <select id="input-major">
                 <option value="" disabled selected>선택해주세요</option>
-                <option value="광고·브랜드디자인과">광고·브랜드디자인과</option>
-                <option value="게임미디어과">게임미디어과</option>
-                <option value="건축디자인과">건축디자인과</option>
                 <option value="공간연출과">공간연출과</option>
-                <option value="디지털미디어디자인과">디지털미디어디자인과</option>
-                <option value="메타스페이스전공">메타스페이스전공</option>
-                <option value="미래디자인학부">미래디자인학부</option>
                 <option value="사진예술과">사진예술과</option>
                 <option value="순수미술과">순수미술과</option>
-                <option value="스마트프로덕트디자인과">스마트프로덕트디자인과</option>
+                <option value="융합예술과">융합예술과</option>
+                <option value="광고·브랜드디자인과">광고·브랜드디자인과</option>
                 <option value="시각디자인과">시각디자인과</option>
-                <option value="실내건축디자인과">실내건축디자인과</option>
-                <option value="스페이스아트앤테크놀로지전공">스페이스아트앤테크놀로지전공</option>
+                <option value="게임미디어과">게임미디어과</option>
+                <option value="디지털미디어디자인과">디지털미디어디자인과</option>
                 <option value="애니메이션과">애니메이션과</option>
                 <option value="영상디자인과">영상디자인과</option>
-                <option value="융합예술과">융합예술과</option>
-                <option value="전시콘텐츠디자인과">전시콘텐츠디자인과</option>
-                <option value="플라워디자인과">플라워디자인과</option>
                 <option value="리빙가구디자인과">리빙가구디자인과</option>
-                <option value="VR콘텐츠디자인전공">VR콘텐츠디자인전공</option>
+                <option value="스마트프로덕트디자인과">스마트프로덕트디자인과</option>
+                <option value="플라워디자인과">플라워디자인과</option>
+                <option value="건축디자인과">건축디자인과</option>
+                <option value="실내건축디자인과">실내건축디자인과</option>
+                <option value="전시콘텐츠디자인과">전시콘텐츠디자인과</option>
+                <option value="미래디자인학부">미래디자인학부</option>
             </select>
         </div>
         <button class="btn-common" onclick="submitUserInfo()">등 록</button>
@@ -879,8 +963,8 @@
             주고받을 수 있도록 만든 서비스입니다.<br>
             참고용으로 이용해 주시면 감사하겠습니다!<br>
             <div class="notice-link-line">
-            
-    
+                서비스 이용 설문조사 부탁드립니다 🙇‍♀️ 감사합니다 ! 
+                <a href="#" target="_blank" style="text-decoration: underline; color: inherit;">링크</a>
             </div>
         </div>
         <div class="post-list">
@@ -888,9 +972,9 @@
         </div>
     </section>
 
-    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfWmzqTsCXWlqi_cRkzjb4EKa2-WuQHKJdI8XSD1Pe5LpiXNw/viewform?usp=sharing&ouid=102902850624431058683" target="_blank" class="fab-survey" id="fab-survey">
-        <span class="icon">📄</span>
-        <span class="text">설문조사 하러가기</span>
+    <a href="#" target="_blank" class="fab-survey" id="fab-survey">
+        <span class="icon">🔗</span>
+        <span class="text">설문조사바로가기</span>
     </a>
 
     <div class="fab-btn" id="fab-write" onclick="goToPage('page-8')">
@@ -939,6 +1023,8 @@
 
         <div class="comment-section" id="comment-list"></div>
         <button class="btn-comment" onclick="openCommentModal()">댓글 작성</button>
+        <button id="btn-delete-post" class="btn-delete" onclick="deleteCurrentPost()">게시물 삭제</button>
+        
         <footer class="footer"><div class="footer-logo">WECRIT</div><p>Kaywon Univ. of Art & Design<br>Copyright © 2024 WECRIT. All rights reserved.</p></footer>
     </section>
 
@@ -1052,19 +1138,20 @@ function goBack() {
 }
 
 function updateUI(pageId) {
-    const topNav = document.querySelector('.top-nav'); // 🔴 [수정] 상단바 요소 가져오기
     const arrow = document.querySelector('.back-arrow');
     const fab = document.getElementById('fab-write');
     const fabSurvey = document.getElementById('fab-survey'); 
     const title = document.getElementById('page-title');
-
-    // 🔴 [수정] 페이지 5(게시판 목록)일 때만 상단 네비게이션 바 숨김 처리
+    
+    // 상단바 제어
+    const topNav = document.querySelector('.top-nav');
     if (pageId === 'page-5') {
-        topNav.style.display = 'none';
+        topNav.style.display = 'none'; 
     } else {
-        topNav.style.display = 'flex';
+        topNav.style.display = 'flex'; 
     }
 
+    // 뒤로가기 버튼 제어
     if (['page-6', 'page-7', 'page-8'].includes(pageId)) {
         arrow.style.display = 'block';
     } else {
@@ -1073,10 +1160,10 @@ function updateUI(pageId) {
 
     if (pageId === 'page-5') { 
         fab.style.display = 'flex'; 
-        fabSurvey.style.display = 'flex'; 
+        if (fabSurvey) fabSurvey.style.display = 'flex'; 
     } else { 
         fab.style.display = 'none'; 
-        fabSurvey.style.display = 'none'; 
+        if (fabSurvey) fabSurvey.style.display = 'none'; 
     }
     
     if (pageId === 'page-8') { title.style.display = 'block'; } else { title.style.display = 'none'; }
@@ -1089,7 +1176,7 @@ updateUI('page-1');
    ===================== */
 function openVotePage(postId, question, imgASrc, imgBSrc, authorNickname) {
     currentPostId = postId;
-    currentPostAuthor = authorNickname || null;
+    currentPostAuthor = authorNickname || null; 
 
     const questionEl = document.getElementById('vote-question');
     if (questionEl) questionEl.innerText = question;
@@ -1136,25 +1223,57 @@ function openVotePage(postId, question, imgASrc, imgBSrc, authorNickname) {
     resB.src = imgBEl.src; 
     resB.setAttribute('data-full-src', imgBEl.src);
 
-    /* 🔴 [수정] 작성자와 투표자를 구분하여 페이지 이동 처리 */
     const storageKey = 'voted_' + currentPostId;
-    
-    // 1. 내가 작성자인지 확인
-    const isAuthor = currentUser.nickname && currentPostAuthor && (currentUser.nickname === currentPostAuthor);
-    
-    // 2. 내가 이미 투표했는지 확인
-    const hasVoted = localStorage.getItem(storageKey);
 
-    // 작성자이거나, 이미 투표했다면 -> 결과 페이지(7)
-    if (isAuthor || hasVoted) {
+    const isAuthor = currentUser.nickname && currentPostAuthor && (currentUser.nickname === currentPostAuthor);
+
+    // 🔴 작성자일 경우 삭제 버튼 표시
+    const deleteBtn = document.getElementById('btn-delete-post');
+    if (isAuthor) {
+        deleteBtn.style.display = 'block';
+    } else {
+        deleteBtn.style.display = 'none';
+    }
+
+    if (localStorage.getItem(storageKey)) {
         updateResultGraph();
         loadComments(postId);
         goToPage('page-7');
-    } 
-    // 작성자가 아니고, 투표도 안 했다면 -> 투표 페이지(6)
-    else {
+    } else {
         goToPage('page-6');
     }
+}
+
+// 🔴 게시물 삭제 함수
+function deleteCurrentPost() {
+    if (!confirm('정말로 이 게시물을 삭제하시겠습니까?\n삭제된 게시물은 복구할 수 없습니다.')) return;
+
+    // 1. 서버에 삭제 요청
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ 
+            action: 'delete', 
+            id: currentPostId,
+            nickname: currentUser.nickname 
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.result === 'success') {
+            console.log('Server: Post deleted');
+        } else {
+            console.log('Server message:', data.message);
+        }
+    })
+    .catch(err => console.error('Delete error:', err));
+
+    // 2. 로컬 UI 업데이트
+    alert('게시물이 삭제되었습니다.');
+    
+    allPostsData = allPostsData.filter(p => p.id !== currentPostId);
+    
+    renderPosts(currentTab);
+    goToPage('page-5');
 }
 
 function submitVote(selection) {
@@ -1194,7 +1313,7 @@ function submitVote(selection) {
     }
 }
 
-/* 🔵 [수정] 투표 결과 그래프 로직 개선 */
+/* 🔵 투표 결과 그래프 로직 */
 function updateResultGraph() {
     const counts = voteCounts[currentPostId] || { A: 0, B: 0 }; 
     const total = counts.A + counts.B;
@@ -1222,15 +1341,16 @@ function updateResultGraph() {
         document.getElementById('percent-a').style.display = percentA < 10 ? 'none' : 'block';
         document.getElementById('percent-b').style.display = percentB < 10 ? 'none' : 'block';
         
+        // 🔴 [수정] JS에서 직접 파란색 테마 색상을 주입
         if (counts.A > counts.B) {
-            barA.style.backgroundColor = '#333'; 
-            barB.style.backgroundColor = '#B0B0B0'; 
+            barA.style.backgroundColor = '#366ED8'; 
+            barB.style.backgroundColor = '#8EB7FF'; 
         } else if (counts.B > counts.A) {
-            barB.style.backgroundColor = '#333';
-            barA.style.backgroundColor = '#B0B0B0';
+            barB.style.backgroundColor = '#366ED8'; 
+            barA.style.backgroundColor = '#8EB7FF'; 
         } else {
-            barA.style.backgroundColor = '#555'; 
-            barB.style.backgroundColor = '#555';
+            barA.style.backgroundColor = '#4A8CFF'; 
+            barB.style.backgroundColor = '#4A8CFF'; 
         }
         
         barA.style.width = percentA + '%';
@@ -1245,7 +1365,6 @@ function updateResultGraph() {
         barA.style.width = '50%';
         barB.style.width = '50%';
         
-        // 투명 배경 & 텍스트 양끝 정렬 클래스 추가
         barA.classList.add('zero-vote');
         barB.classList.add('zero-vote');
         
@@ -1313,10 +1432,8 @@ function submitComment() {
     const major = currentUser.major || "미선택";
     
     const commentList = document.getElementById('comment-list');
-    const newCommentDiv = document.createElement('div');
-    newCommentDiv.classList.add('comment-item');
-    newCommentDiv.innerHTML = `<div class="comment-user">${nickname} <span style="font-weight:400; font-size:13px; color:#777;">(${major})</span></div><div class="comment-text">${text}</div><hr class="comment-hr">`;
-    commentList.prepend(newCommentDiv);
+    // DOM에 즉시 추가 (새로고침 전)
+    // 실제 로드는 loadComments에서 처리됨
     
     fetch(SCRIPT_URL, {
         method: 'POST',
@@ -1325,13 +1442,15 @@ function submitComment() {
             postId: currentPostId,
             nickname: nickname,
             major: major,
-            text: text
+            text: text,
+            parentId: '' // 🔴 일반 댓글은 parentId 없음
         })
     })
     .then(response => response.json())
     .then(result => {
         if (result.result === 'success') {
-            console.log('댓글이 서버에 저장되었습니다.');
+            console.log('댓글 저장 성공');
+            loadComments(currentPostId); // 🔴 저장 후 목록 다시 로드 (ID등 동기화)
         } else {
             console.error('댓글 저장 실패:', result.message);
         }
@@ -1344,38 +1463,139 @@ function submitComment() {
     closeCommentModal();
 }
 
+// 🔵 [수정] 댓글 로딩 + 계층형 답글 구조 구현
 async function loadComments(postId) {
     try {
         const response = await fetch(`${SCRIPT_URL}?action=getComments&postId=${postId}`);
-        const comments = await response.json();
-        
-        console.log(`댓글 ${comments.length}개 로드됨:`, comments);
+        const allComments = await response.json();
         
         const commentList = document.getElementById('comment-list');
         commentList.innerHTML = '';
         
-        if (comments.length === 0) {
+        if (allComments.length === 0) {
             commentList.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">아직 댓글이 없습니다.</div>';
             return;
         }
+
+        // 1. 부모 댓글(root)과 자식 댓글(reply) 분리
+        // parentId가 없거나 비어있으면 부모, 있으면 자식
+        const roots = [];
+        const replies = [];
+
+        allComments.forEach(c => {
+            // timestamp나 id가 있다고 가정 (구글 시트에서 받아옴)
+            // 없으면 임시로 index나 기타 값 사용해야 함.
+            // 여기서는 서버가 'time'이나 'id'를 준다고 가정.
+            if (!c.parentId) {
+                roots.push(c);
+            } else {
+                replies.push(c);
+            }
+        });
+
+        // 2. 부모 댓글 먼저 렌더링 (최신순? 보통 댓글은 과거순이거나 최신순)
+        // 일단 기존 로직대로 역순(최신순)으로 뿌리되, 답글은 그 밑에 달려야 함.
+        // 여기서는 "작성 순서"대로 뿌리는게 답글 구조상 더 자연스러울 수 있음.
+        // 하지만 기존 UI가 역순이었으므로 역순 유지하되, 답글은 해당 부모 밑에.
         
-        comments.reverse().forEach(comment => {
+        roots.reverse().forEach((comment, index) => {
+            // 부모 댓글의 고유 ID (답글 달 때 참조용)
+            // 서버에서 id를 안주면 time을 사용
+            const commentId = comment.id || comment.time || ('local-' + index);
+            
             const commentDiv = document.createElement('div');
             commentDiv.classList.add('comment-item');
-            const displayMajor = comment.major || '미선택';
-            commentDiv.innerHTML = `
-                <div class="comment-user">${comment.nickname || '익명'} <span style="font-weight:400; font-size:13px; color:#777;">(${displayMajor})</span></div>
+            commentDiv.id = `comment-box-${commentId}`;
+
+            let html = `
+                <div class="comment-user">${comment.nickname || '익명'} <span style="font-weight:400; font-size:13px; color:#777;">(${comment.major || '미선택'})</span></div>
                 <div class="comment-text">${comment.text || ''}</div>
-                <hr class="comment-hr">
+                <button class="btn-reply-action" onclick="toggleReplyForm('${commentId}')">답글 달기</button>
+                
+                <div class="reply-input-box" id="reply-form-${commentId}">
+                    <input type="text" id="reply-input-${commentId}" placeholder="답글을 입력하세요...">
+                    <button onclick="submitReply('${commentId}')">등록</button>
+                </div>
+
+                <div class="reply-list" id="reply-list-${commentId}">
+                    </div>
             `;
+            commentDiv.innerHTML = html;
             commentList.appendChild(commentDiv);
+        });
+
+        // 3. 자식 댓글(답글) 렌더링 및 부모 밑에 부착
+        // 답글은 보통 작성 순서(오래된 순)대로 달림 -> reverse 안함 (혹은 정책에 따름)
+        replies.forEach(reply => {
+            const parentId = reply.parentId;
+            const parentContainer = document.getElementById(`reply-list-${parentId}`);
+            
+            if (parentContainer) {
+                const replyItem = document.createElement('div');
+                replyItem.classList.add('reply-item');
+                replyItem.innerHTML = `
+                    <div class="reply-user">↳ ${reply.nickname || '익명'}</div>
+                    <div class="reply-text">${reply.text || ''}</div>
+                `;
+                parentContainer.appendChild(replyItem);
+            }
         });
         
     } catch (error) {
         console.error('댓글 로딩 오류:', error);
-        const commentList = document.getElementById('comment-list');
-        commentList.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">댓글을 불러올 수 없습니다.</div>';
     }
+}
+
+// 🔵 [추가] 답글 입력창 토글
+function toggleReplyForm(commentId) {
+    const form = document.getElementById(`reply-form-${commentId}`);
+    if (form.style.display === 'block') {
+        form.style.display = 'none';
+    } else {
+        form.style.display = 'block';
+    }
+}
+
+// 🔵 [추가] 답글 등록 (구글 시트 연동)
+function submitReply(parentId) {
+    const input = document.getElementById(`reply-input-${parentId}`);
+    const text = input.value.trim();
+    
+    if (!text) { 
+        alert('답글 내용을 입력해주세요.'); 
+        return; 
+    }
+
+    const nickname = currentUser.nickname || "익명";
+    const major = currentUser.major || "미선택";
+
+    // 서버 전송
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            action: 'comment', // 댓글과 동일 액션
+            postId: currentPostId,
+            nickname: nickname,
+            major: major,
+            text: text,
+            parentId: parentId // 🔴 부모 ID 포함
+        })
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.result === 'success') {
+            console.log('답글 저장 성공');
+            loadComments(currentPostId); // 🔴 화면 갱신 (답글 표시)
+        } else {
+            alert('답글 저장 실패: ' + result.message);
+        }
+    })
+    .catch(error => {
+        console.error('답글 저장 오류:', error);
+    });
+    
+    input.value = ''; // 입력창 초기화
+    toggleReplyForm(parentId); // 입력창 닫기
 }
 
 
@@ -1425,7 +1645,7 @@ uploadInputs.forEach(input => {
                 
                 const trashBtn = document.createElement('button');
                 trashBtn.className = 'delete-img-btn';
-                trashBtn.innerHTML = '✕';
+                trashBtn.innerHTML = '🗑️';
                 trashBtn.style.cssText = "position:absolute; bottom:5px; right:5px; border:none; background:rgba(0,0,0,0.5); color:white; border-radius:50%; width:25px; height:25px; cursor:pointer;";
                 
                 trashBtn.onclick = (evt) => {
