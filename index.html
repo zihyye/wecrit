@@ -1176,6 +1176,15 @@ function openVotePage(postId, question, imgASrc, imgBSrc, authorNickname) {
     currentPostId = postId;
     currentPostAuthor = authorNickname || null; 
 
+    // 로그인 정보 확인 (오류 방지)
+    if (!currentUser.nickname) {
+        if (!loadUserInfo()) {
+            alert('로그인 정보가 없습니다. 다시 로그인해주세요.');
+            goToPage('page-2');
+            return;
+        }
+    }
+
     const questionEl = document.getElementById('vote-question');
     if (questionEl) questionEl.innerText = question;
 
@@ -1221,7 +1230,8 @@ function openVotePage(postId, question, imgASrc, imgBSrc, authorNickname) {
     resB.src = imgBEl.src; 
     resB.setAttribute('data-full-src', imgBEl.src);
 
-    const isAuthor = currentUser.nickname && currentPostAuthor && (currentUser.nickname === currentPostAuthor);
+    // 작성자 본인인지 확인
+    const isAuthor = (currentUser.nickname === currentPostAuthor);
 
     // 🔴 작성자일 경우 삭제 버튼 표시
     const deleteBtn = document.getElementById('btn-delete-post');
@@ -1231,15 +1241,17 @@ function openVotePage(postId, question, imgASrc, imgBSrc, authorNickname) {
         deleteBtn.style.display = 'none';
     }
 
-    // 🔴 투표 여부 확인 로직 개선 (정확한 키 확인)
+    // 🔴 투표 여부 확인 (LocalStorage Key를 명확하게)
     const storageKey = 'voted_' + currentPostId;
     const hasVoted = localStorage.getItem(storageKey);
 
+    // 작성자이거나, 이미 투표한 경우 -> 결과 페이지(Page 7)
     if (isAuthor || hasVoted) {
         updateResultGraph();
         loadComments(postId);
         goToPage('page-7');
     } else {
+        // 투표하지 않았고 작성자도 아님 -> 투표 페이지(Page 6)
         goToPage('page-6');
     }
 }
@@ -1435,7 +1447,7 @@ function submitComment() {
     const commentList = document.getElementById('comment-list');
     const newCommentDiv = document.createElement('div');
     newCommentDiv.classList.add('comment-item');
-    // 임시 ID (실제로는 로딩 시 서버 ID 사용)
+    // 임시 ID 사용 (새로고침 전까지는 답글 기능 제한적일 수 있으나 UI 반응성 위해)
     const tempId = 'temp_' + Date.now();
     
     newCommentDiv.innerHTML = `
@@ -1464,7 +1476,7 @@ function submitComment() {
     .then(result => {
         if (result.result === 'success') {
             console.log('댓글 저장 성공');
-            // 정확한 ID 매핑을 위해 필요 시 재로딩 권장하나, 여기서는 UI 유지
+            // 정확한 ID 매핑을 위해 필요 시 재로딩할 수 있으나, 여기서는 UI 유지
         } else {
             console.error('댓글 저장 실패:', result.message);
         }
@@ -1477,7 +1489,7 @@ function submitComment() {
     closeCommentModal();
 }
 
-// 🔵 [수정] 댓글 및 답글 로딩 함수
+// 🟢 [수정됨] 댓글 및 답글 로딩 함수 (계층 구조 반영)
 async function loadComments(postId) {
     try {
         const response = await fetch(`${SCRIPT_URL}?action=getComments&postId=${postId}`);
@@ -1535,8 +1547,8 @@ async function loadComments(postId) {
 }
 
 // 🔵 [추가] 답글 입력창 토글
-function toggleReplyForm(index) {
-    const form = document.getElementById(`reply-form-${index}`);
+function toggleReplyForm(id) {
+    const form = document.getElementById(`reply-form-${id}`);
     if (form.style.display === 'block') {
         form.style.display = 'none';
     } else {
@@ -1544,7 +1556,7 @@ function toggleReplyForm(index) {
     }
 }
 
-// 🟢 [수정됨] 답글 서버 전송 기능 추가
+// 🟢 [수정됨] 답글 서버 전송 기능 추가 (새로고침 시 유지되도록)
 function submitReply(parentId) {
     const input = document.getElementById(`reply-input-${parentId}`);
     const text = input.value.trim();
@@ -1555,6 +1567,7 @@ function submitReply(parentId) {
     const nickname = currentUser.nickname || "익명";
     const major = currentUser.major || "미선택";
 
+    // 1. UI 즉시 반영
     const replyList = document.getElementById(`reply-list-${parentId}`);
     const replyItem = document.createElement('div');
     replyItem.classList.add('reply-item');
@@ -1567,13 +1580,13 @@ function submitReply(parentId) {
     input.value = '';
     toggleReplyForm(parentId);
 
-    // 🟢 서버에 답글 전송
+    // 2. 서버 전송 (이 부분이 없어서 사라졌던 것임)
     fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({
-            action: 'reply', // 백엔드에서 이 액션을 처리해야 함
+            action: 'reply',
             postId: currentPostId,
-            parentId: parentId, // 부모 댓글 ID 전송
+            parentId: parentId, // 부모 댓글 ID
             nickname: nickname,
             major: major,
             text: text
