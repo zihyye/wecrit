@@ -1230,8 +1230,8 @@ function openVotePage(postId, question, imgASrc, imgBSrc, authorNickname) {
     resB.src = imgBEl.src; 
     resB.setAttribute('data-full-src', imgBEl.src);
 
-    // 작성자 본인인지 확인
-    const isAuthor = (currentUser.nickname === currentPostAuthor);
+    // 🟢 [수정됨] 작성자 본인인지 확인 (정보가 유효할 때만)
+    const isAuthor = currentUser.nickname && currentPostAuthor && (currentUser.nickname === currentPostAuthor);
 
     // 🔴 작성자일 경우 삭제 버튼 표시
     const deleteBtn = document.getElementById('btn-delete-post');
