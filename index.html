@@ -872,10 +872,10 @@
         <header class="tab-header">
             <span class="tab-back-arrow" onclick="goBack()">&#10094;</span>
             <div class="tab-item active" id="tab-all" onclick="switchTab('all')">전체 게시물</div>
-            <div class="tab-item" id="tab-my" onclick="switchTab('my')">나의 게시물</div>
+            <div class="tab-item" id="tab-my" onclick="switchTab('my')">내가 쓴 글</div>
         </header>
         <div class="notice-box">
-            위크릿은 계원예술대학교 학생들이 가볍게 피드백을<br>
+            위크릿은 계원예술대학교 학생들이 편하게 피드백을<br>
             주고받을 수 있도록 만든 서비스입니다.<br>
             참고용으로 이용해 주시면 감사하겠습니다!<br>
             <div class="notice-link-line">
@@ -984,7 +984,7 @@
 /* ==========================================
    🔴 [중요] 방금 "새 배포"로 받은 URL을 여기에 넣으세요! 🔴
    ========================================== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymgWt3vCPuIme5vZmdXXxT8resrgrFN8YgpIDxpvwFMDS72XUQH2mJSHvp8gstg08hww/exec"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQGDdIDnBUtm5jsofrkIZkHuZqw94-rWPbQs-SzbFTeLoaZF911GNwV8Vrj8OTHnzcrQ/exec"; 
 
 
 /* =====================
@@ -1501,6 +1501,7 @@ shareButton.addEventListener('click', () => {
     const newPostId = 'post_' + Date.now();
     const authorNick = currentUser.nickname || "익명";
     
+    // 🔴 [속도 개선] 업로드할 데이터를 로컬 스토리지에 먼저 저장 (새로고침 시 사라짐 방지)
     const newPostData = {
         id: newPostId,
         nickname: authorNick,
@@ -1509,8 +1510,15 @@ shareButton.addEventListener('click', () => {
         imgA: fileData.A ? { data: fileData.A.data, mimeType: fileData.A.mimeType } : null,
         imgB: fileData.B ? { data: fileData.B.data, mimeType: fileData.B.mimeType } : null,
         voteA: 0,
-        voteB: 0
+        voteB: 0,
+        timestamp: Date.now() // 타임스탬프 추가
     };
+
+    // 로컬 스토리지에 임시 게시물 추가
+    const existingTempPosts = JSON.parse(localStorage.getItem('wecrit_pending_posts') || '[]');
+    existingTempPosts.unshift(newPostData);
+    localStorage.setItem('wecrit_pending_posts', JSON.stringify(existingTempPosts));
+
     allPostsData.unshift(newPostData);
 
     addNewPostToBoard(newPostId, textarea.value, fileData.A, fileData.B, authorNick);
@@ -1556,10 +1564,30 @@ shareButton.addEventListener('click', () => {
    ===================== */
 async function loadPostsFromSheet() {
     try {
-        const response = await fetch(SCRIPT_URL);
+        // 🔴 [속도 개선] 캐시 방지를 위해 타임스탬프 추가 (?t=...)
+        const response = await fetch(`${SCRIPT_URL}?t=${Date.now()}`);
         const posts = await response.json();
         
-        allPostsData = posts; 
+        // 🔴 [속도 개선] 로컬 스토리지에 있는 임시 게시물과 서버 게시물 합치기
+        let localPosts = JSON.parse(localStorage.getItem('wecrit_pending_posts') || '[]');
+        
+        // 서버에 이미 올라간 게시물이 있다면 로컬 스토리지에서 제거 (ID 기준)
+        // 또한 1시간 이상 지난 임시 게시물은 청소
+        const oneHour = 60 * 60 * 1000;
+        const serverIds = new Set(posts.map(p => p.id));
+        
+        localPosts = localPosts.filter(p => {
+            const isTooOld = (Date.now() - (p.timestamp || 0)) > oneHour;
+            const isOnServer = serverIds.has(p.id);
+            return !isOnServer && !isTooOld;
+        });
+        
+        // 정리된 로컬 데이터를 다시 저장
+        localStorage.setItem('wecrit_pending_posts', JSON.stringify(localPosts));
+        
+        // 최종 데이터 = (아직 서버에 안 뜬 내 게시물) + (서버 게시물)
+        allPostsData = [...localPosts, ...posts]; 
+        
         console.log('불러온 게시물:', allPostsData);
         
         allPostsData.forEach(post => {
@@ -1630,8 +1658,20 @@ function addExistingPostToBoard(postId, question, imgA, imgB, authorNickname) {
     };
 
     let imagesHtml = '';
-    const srcA = imgA;
-    const srcB = imgB;
+    
+    // 🔴 [속도 개선] imgA/imgB가 문자열(URL)인지 객체(Base64)인지 구분하여 처리
+    let srcA = null;
+    let srcB = null;
+
+    if (imgA) {
+        if (typeof imgA === 'string') srcA = imgA;
+        else if (imgA.data) srcA = `data:${imgA.mimeType};base64,${imgA.data}`;
+    }
+    
+    if (imgB) {
+        if (typeof imgB === 'string') srcB = imgB;
+        else if (imgB.data) srcB = `data:${imgB.mimeType};base64,${imgB.data}`;
+    }
 
     if (srcA && srcB) {
         imagesHtml = `<img src="${srcA}" class="w-50" onerror="this.style.display='none'"><img src="${srcB}" class="w-50" onerror="this.style.display='none'">`;
