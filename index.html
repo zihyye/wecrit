@@ -353,6 +353,22 @@
         }
         .post-item:hover .image-row img { transform: scale(1.05); }
 
+        /* [NEW] 투표 참여 숫자 배지 스타일 */
+        .post-vote-badge {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            backdrop-filter: blur(4px);
+            z-index: 5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
         .w-30 { width: 30%; } .w-40 { width: 40%; } .w-50 { width: 50%; }
 
         .title-box { 
@@ -398,7 +414,6 @@
         
         .fab-btn .text {
             display: none;
-            /* 🔴 [수정] 15px -> 14px로 통일 */
             font-size: 14px; 
             font-weight: 700;
             white-space: nowrap;
@@ -452,7 +467,6 @@
         
         .fab-survey .text {
             display: none;
-            /* 🔴 [수정] 13px -> 14px로 통일 */
             font-size: 14px; 
             font-weight: 700;
             white-space: nowrap;
@@ -872,7 +886,7 @@
         <header class="tab-header">
             <span class="tab-back-arrow" onclick="goBack()">&#10094;</span>
             <div class="tab-item active" id="tab-all" onclick="switchTab('all')">전체 게시물</div>
-            <div class="tab-item" id="tab-my" onclick="switchTab('my')">나의 게시물</div>
+            <div class="tab-item" id="tab-my" onclick="switchTab('my')">내가 쓴 글</div>
         </header>
         <div class="notice-box">
             위크릿은 계원예술대학교 학생들이 편하게 피드백을<br>
@@ -984,7 +998,7 @@
 /* ==========================================
    🔴 [중요] 방금 "새 배포"로 받은 URL을 여기에 넣으세요! 🔴
    ========================================== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQGDdIDnBUtm5jsofrkIZkHuZqw94-rWPbQs-SzbFTeLoaZF911GNwV8Vrj8OTHnzcrQ/exec"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymgWt3vCPuIme5vZmdXXxT8resrgrFN8YgpIDxpvwFMDS72XUQH2mJSHvp8gstg08hww/exec"; 
 
 
 /* =====================
@@ -1487,7 +1501,18 @@ function addNewPostToBoard(postId, question, imgA, imgB, authorNickname) {
         imagesHtml = `<img src="${srcB}" style="width:100%; height:100%; object-fit:cover;">`;
     }
 
-    article.innerHTML = `<div class="image-row">${imagesHtml}</div><div class="title-box gray-box">${question}</div>`;
+    // [NEW] 방금 쓴 글은 참여자가 0명이므로 '0명 참여'로 표시
+    article.innerHTML = `
+        <div style="position: relative;">
+            <div class="image-row">
+                ${imagesHtml}
+            </div>
+            <div class="post-vote-badge">🗳️ 0명 참여</div>
+        </div>
+        <div class="title-box gray-box">
+            ${question}
+        </div>
+    `;
     list.prepend(article);
 }
 
@@ -1611,12 +1636,17 @@ function renderPosts(filterType) {
     filteredPosts.forEach(post => {
         const imgA = post.imgA || null;
         const imgB = post.imgB || null;
-        addExistingPostToBoard(post.id, post.question, imgA, imgB, post.nickname);
+        
+        // [NEW] 투표 합계 계산
+        const totalVotes = (parseInt(post.voteA) || 0) + (parseInt(post.voteB) || 0);
+
+        // [NEW] 인자 전달
+        addExistingPostToBoard(post.id, post.question, imgA, imgB, post.nickname, totalVotes);
     });
 }
 
 
-function addExistingPostToBoard(postId, question, imgA, imgB, authorNickname) {
+function addExistingPostToBoard(postId, question, imgA, imgB, authorNickname, totalVotes) {
     const list = document.querySelector('#page-5 .post-list');
     
     const article = document.createElement('article');
@@ -1641,7 +1671,19 @@ function addExistingPostToBoard(postId, question, imgA, imgB, authorNickname) {
         imagesHtml = `<img src="${srcB}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">`;
     }
 
-    article.innerHTML = `<div class="image-row">${imagesHtml}</div><div class="title-box gray-box">${question}</div>`;
+    // [NEW] innerHTML 수정: 이미지 위에 투표 배지 추가
+    article.innerHTML = `
+        <div style="position: relative;">
+            <div class="image-row">
+                ${imagesHtml}
+            </div>
+            <div class="post-vote-badge">🗳️ ${totalVotes || 0}명 참여</div>
+        </div>
+        <div class="title-box gray-box">
+            ${question}
+        </div>
+    `;
+
     list.appendChild(article);
 }
 
