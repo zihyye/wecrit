@@ -893,7 +893,7 @@
             주고받을 수 있도록 만든 서비스입니다.<br>
             참고용으로 이용해 주시면 감사하겠습니다!<br>
             <div class="notice-link-line">
-           
+            
     
             </div>
         </div>
@@ -933,7 +933,7 @@
 
     <section id="page-7" class="page">
         <h1 class="main-title">투표 결과</h1>
-        <p class="subtitle">소중한 한 표 감사합니다!</p>
+        <p class="subtitle" id="result-question">소중한 한 표 감사합니다!</p>
         
         <div class="layout-options" style="margin-bottom: 20px;">
             <div class="option-a">
@@ -1108,6 +1108,10 @@ function openVotePage(postId, question, imgASrc, imgBSrc, authorNickname) {
     const questionEl = document.getElementById('vote-question');
     if (questionEl) questionEl.innerText = question;
 
+    // [수정] 결과 페이지(page-7)의 텍스트도 질문 내용으로 업데이트
+    const resultQuestionEl = document.getElementById('result-question');
+    if (resultQuestionEl) resultQuestionEl.innerText = question;
+
     const imgAEl = document.getElementById('vote-img-a');
     const imgBEl = document.getElementById('vote-img-b');
     const optionA = document.querySelector('.option-a');
@@ -1269,7 +1273,7 @@ function submitUserInfo() {
     const major = document.getElementById('input-major').value;
     if (!nickname) { alert("닉네임을 입력해주세요!"); return; }
     if (!major) { alert("학과를 선택해주세요!"); return; }
-      
+       
     currentUser.nickname = nickname;
     currentUser.major = major;
     saveUserInfo(nickname, major); 
