@@ -12,29 +12,29 @@
            1. 디자인 시스템 (Design System)
            - Main Color: #4A8CFF (Energetic Blue)
            ==================== */
-       
+        
         :root {
             --primary-color: #4A8CFF;      
             --primary-dark: #366ED8;        
             --primary-light: #EBF3FF;      
             --primary-gradient: linear-gradient(135deg, #4A8CFF 0%, #366ED8 100%);
-           
+            
             --bg-body: #F7F9FC;            
             --surface-white: #FFFFFF;      
             --surface-input: #F0F4F8;      
-           
+            
             --text-main: #1A1A1A;
             --text-sub: #757575;
-           
+            
             --shadow-sm: 0 4px 15px rgba(74, 140, 255, 0.1);
             --shadow-md: 0 10px 30px rgba(74, 140, 255, 0.15);
-           
+            
             --radius-xl: 24px;
             --radius-lg: 16px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-       
+        
         body {
             font-family: "Pretendard", 'Noto Sans KR', -apple-system, sans-serif;
             background-color: var(--bg-body);
@@ -166,7 +166,7 @@
             box-shadow: inset 0 0 0 4px #FFFFFF, 0 8px 20px rgba(74, 140, 255, 0.15);
             font-size: 40px;
         }
-       
+        
         .input-group {
             width: 100%;
             display: flex;
@@ -245,7 +245,7 @@
             top: 0; /* 상단 여백 제거를 위해 0으로 설정 */
             z-index: 10;
         }
-       
+        
         .tab-back-arrow {
             font-size: 22px;
             padding: 10px;
@@ -305,7 +305,7 @@
             font-weight: 700;
             color: #366ED8;
         }
-       
+        
         .empty-message { text-align: center; color: #999; margin-top: 80px; font-size: 15px; font-weight: 400; }
 
         .post-list {
@@ -316,7 +316,7 @@
             gap: 24px;
             padding-bottom: 100px;
         }
-       
+        
         .post-item {
             padding: 0;
             cursor: pointer;
@@ -404,14 +404,14 @@
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             overflow: hidden;
         }
-       
+        
         .fab-btn .icon {
             display: block;
             font-size: 26px;
             min-width: 60px;
             text-align: center;
         }
-       
+        
         .fab-btn .text {
             display: none;
             font-size: 14px;
@@ -457,14 +457,14 @@
             overflow: hidden;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-       
+        
         .fab-survey .icon {
             display: block;
             font-size: 20px;
             min-width: 50px;
             text-align: center;
         }
-       
+        
         .fab-survey .text {
             display: none;
             font-size: 14px;
@@ -531,7 +531,7 @@
             color: var(--primary-color);
             font-family: 'Montserrat', sans-serif;
         }
-       
+        
         .option-image {
             width: 100%;
             aspect-ratio: 1/1;
@@ -545,7 +545,7 @@
             border: 2px solid transparent;
         }
         .option-image:hover { transform: scale(1.02); border-color: var(--primary-color); }
-       
+        
         .select-button {
             width: 100%;
             padding: 16px 0;
@@ -563,7 +563,7 @@
             color: white;
             box-shadow: 0 4px 15px rgba(74, 140, 255, 0.3);
         }
-       
+        
         /* 🔵 투표 결과 그래프 */
         .progress-container {
             width: 100%;
@@ -579,7 +579,7 @@
             box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
             position: relative;
         }
-       
+        
         .progress-a {
             height: 100%;
             display: flex;
@@ -622,7 +622,7 @@
         div[style*="rgb(85, 85, 85)"] { /* #555 - 비김 */
             background-color: var(--primary-color) !important;
         }
-       
+        
         /* 투표 0일때 텍스트 처리 */
         .progress-a.zero-vote {
             background-color: transparent !important;
@@ -663,7 +663,7 @@
         }
         .comment-text { font-size: 15px; color: #444; line-height: 1.5; }
         .comment-hr { display: none; }
-       
+        
         .btn-comment {
             width: 100%;
             padding: 16px 0;
@@ -689,7 +689,7 @@
             height: 120px; border-radius: 12px; margin-right: 12px; object-fit: cover;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-       
+        
         .feedback-textarea {
             width: 100%;
             border: 2px solid transparent;
@@ -707,7 +707,7 @@
         }
         .feedback-textarea:focus { border-color: var(--primary-color); background: #fff; box-shadow: 0 4px 15px rgba(74, 140, 255, 0.08); }
         .feedback-textarea::placeholder { color: #BBB; }
-       
+        
         .feedback-options { display: flex; flex-direction: row; gap: 12px; width: 100%; margin-bottom: 30px; }
         .option-button {
             flex: 1;
@@ -731,7 +731,7 @@
         }
         .option-placeholder { display: flex; flex-direction: column; align-items: center; font-size: 18px; font-weight: 700; }
         .plus { font-size: 28px; margin-top: 5px; font-weight: 300; }
-       
+        
         .image-upload-input { display: none; }
 
         .share-button {
@@ -758,7 +758,7 @@
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(4px); }
         .modal-content { margin: auto; display: block; width: 90%; max-width: 600px; max-height: 80vh; object-fit: contain; position: relative; top: 50%; transform: translateY(-50%); border-radius: 8px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .modal-close { position: absolute; top: 20px; right: 30px; color: #fff; font-size: 40px; font-weight: 300; cursor: pointer; transition: 0.3s; }
-       
+        
         .comment-modal-bg { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); backdrop-filter: blur(4px); }
         .comment-box {
             background-color: white;
@@ -801,7 +801,7 @@
             background-color: #F8F9FB;
         }
         .comment-textarea:focus { border-color: var(--primary-color); background: #fff; }
-       
+        
         .btn-submit-comment {
             width: 100%;
             padding: 16px 0;
@@ -893,7 +893,7 @@
             주고받을 수 있도록 만든 서비스입니다.<br>
             참고용으로 이용해 주시면 감사하겠습니다!<br>
             <div class="notice-link-line">
-           
+            
    
             </div>
         </div>
@@ -934,7 +934,7 @@
     <section id="page-7" class="page">
         <h1 class="main-title">투표 결과</h1>
         <p class="subtitle" id="result-question">소중한 한 표 감사합니다!</p>
-       
+        
         <div class="layout-options" style="margin-bottom: 20px;">
             <div class="option-a">
                 <span class="option-label">A</span>
@@ -945,7 +945,7 @@
                 <img src="" id="result-img-b" class="option-image">
             </div>
         </div>
-       
+        
         <div class="progress-container">
             <div class="progress-a" id="bar-a"><span>A</span><span id="percent-a">0%</span></div>
             <div class="progress-b" id="bar-b"><span>B</span><span id="percent-b">0%</span></div>
@@ -989,16 +989,16 @@
             <button class="btn-submit-comment" onclick="submitComment()">등록하기</button>
         </div>
     </div>
-   
+    
     <div id="image-modal" class="modal"><span class="modal-close">&times;</span><img class="modal-content" id="modal-image"></div>
 
 </div>
 
 <script>
 /* ==========================================
-   🔴 [중요] 방금 "새 배포"로 받은 URL을 여기에 넣으세요! 🔴
+   🔴 [중요] 새로 배포한 웹 앱 URL을 여기에 넣어주세요! 🔴
    ========================================== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymgWt3vCPuIme5vZmdXXxT8resrgrFN8YgpIDxpvwFMDS72XUQH2mJSHvp8gstg08hww/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzbYDgaeMvmZYR9hs8tVhefdnhpoIo2B0OtksnCmMBmjLYVc5S8hVqUmc3p_dwFQ0pLBQ/exec";
 
 
 /* =====================
@@ -1016,41 +1016,37 @@ let currentTab = 'all';
 
 
 /* =====================
-   1-1. 로컬 스토리지에서 사용자 정보 불러오기 & 방문 카운트 전송
+   [NEW] 사용자 활동 추적 함수 (통계용)
+   ===================== */
+function trackUserActivity(type) {
+    if (!currentUser.nickname) return;
+    
+    // 서버 전송 (비동기)
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            action: 'trackActivity',
+            nickname: currentUser.nickname,
+            type: type
+        })
+    }).catch(err => console.error('Activity track error:', err));
+}
+
+
+/* =====================
+   1-1. 로컬 스토리지에서 사용자 정보 불러오기
    ===================== */
 function loadUserInfo() {
     const savedNickname = localStorage.getItem('userNickname');
     const savedMajor = localStorage.getItem('userMajor');
-   
+    
     if (savedNickname && savedMajor) {
         currentUser.nickname = savedNickname;
         currentUser.major = savedMajor;
         document.getElementById('display-name').innerText = savedNickname;
-
-        // [NEW] 하루에 한 번만 방문 통계 보내기 (로컬 스토리지 활용)
-        const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-        const lastVisitDate = localStorage.getItem('lastVisitDate');
-
-        if (lastVisitDate !== today) {
-            sendVisitCount(savedNickname);
-            localStorage.setItem('lastVisitDate', today);
-        }
-
         return true;
     }
     return false;
-}
-
-// [NEW] 방문 카운트 전송 함수
-function sendVisitCount(nickname) {
-    if(!nickname) return;
-    fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({
-            action: 'visit',
-            nickname: nickname
-        })
-    }).then(res => console.log("방문 카운트 전송 완료"));
 }
 
 function saveUserInfo(nickname, major) {
@@ -1088,13 +1084,12 @@ function goBack() {
 }
 
 function updateUI(pageId) {
-    const topNav = document.querySelector('.top-nav'); // 🔴 [수정] 상단바 요소 가져오기
+    const topNav = document.querySelector('.top-nav');
     const arrow = document.querySelector('.back-arrow');
     const fab = document.getElementById('fab-write');
     const fabSurvey = document.getElementById('fab-survey');
     const title = document.getElementById('page-title');
 
-    // 🔴 [수정] 페이지 5(게시판 목록)일 때만 상단 네비게이션 바 숨김 처리
     if (pageId === 'page-5') {
         topNav.style.display = 'none';
     } else {
@@ -1114,7 +1109,7 @@ function updateUI(pageId) {
         fab.style.display = 'none';
         fabSurvey.style.display = 'none';
     }
-   
+    
     if (pageId === 'page-8') { title.style.display = 'block'; } else { title.style.display = 'none'; }
 }
 updateUI('page-1');
@@ -1130,7 +1125,6 @@ function openVotePage(postId, question, imgASrc, imgBSrc, authorNickname) {
     const questionEl = document.getElementById('vote-question');
     if (questionEl) questionEl.innerText = question;
 
-    // [수정] 결과 페이지(page-7)의 텍스트도 질문 내용으로 업데이트
     const resultQuestionEl = document.getElementById('result-question');
     if (resultQuestionEl) resultQuestionEl.innerText = question;
 
@@ -1142,7 +1136,7 @@ function openVotePage(postId, question, imgASrc, imgBSrc, authorNickname) {
     // A 이미지
     if (imgASrc) {
         const src = typeof imgASrc === 'string' ? imgASrc :
-                    (imgASrc.url || (imgASrc.data ? `data:${imgASrc.mimeType};base64,${imgASrc.data}` : null));
+                   (imgASrc.url || (imgASrc.data ? `data:${imgASrc.mimeType};base64,${imgASrc.data}` : null));
         if (src) {
             imgAEl.src = src;
             imgAEl.setAttribute('data-full-src', src);
@@ -1157,7 +1151,7 @@ function openVotePage(postId, question, imgASrc, imgBSrc, authorNickname) {
     // B 이미지
     if (imgBSrc) {
         const src = typeof imgBSrc === 'string' ? imgBSrc :
-                    (imgBSrc.url || (imgBSrc.data ? `data:${imgBSrc.mimeType};base64,${imgBSrc.data}` : null));
+                   (imgBSrc.url || (imgBSrc.data ? `data:${imgBSrc.mimeType};base64,${imgBSrc.data}` : null));
         if (src) {
             imgBEl.src = src;
             imgBEl.setAttribute('data-full-src', src);
@@ -1196,24 +1190,25 @@ function submitVote(selection) {
     if (localStorage.getItem(storageKey)) { return; }
 
     localStorage.setItem(storageKey, 'true');
-   
+    
     if (!voteCounts[currentPostId]) voteCounts[currentPostId] = { A: 0, B: 0 };
     voteCounts[currentPostId][selection]++;
 
-    // [NEW] 투표 시 내 닉네임 함께 전송 (사용자 통계용)
+    // 🔴 [NEW] 투표 활동 추적
+    trackUserActivity('vote');
+
     fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({
             action: 'vote',
             id: currentPostId,
-            select: selection,
-            nickname: currentUser.nickname // 통계를 위해 추가
+            select: selection
         })
     })
     .then(response => response.json())
     .then(data => {
         if (data.result === 'success') {
-            console.log('투표 및 통계가 서버에 저장되었습니다.');
+            console.log('투표가 서버에 저장되었습니다.');
         }
     })
     .catch(err => console.error('투표 저장 오류:', err));
@@ -1221,41 +1216,38 @@ function submitVote(selection) {
     updateResultGraph();
     loadComments(currentPostId);
     goToPage('page-7');
-   
+    
     const lastIdx = historyStack.length - 1;
     if (historyStack[lastIdx] === 'page-6') {
         historyStack.splice(lastIdx, 1);
     }
 }
 
-/* 🔵 [수정] 투표 결과 그래프 로직 개선 */
 function updateResultGraph() {
     const counts = voteCounts[currentPostId] || { A: 0, B: 0 };
     const total = counts.A + counts.B;
-   
+    
     let percentA = 0;
     let percentB = 0;
 
     const barA = document.getElementById('bar-a');
     const barB = document.getElementById('bar-b');
 
-    // 클래스 초기화
     barA.classList.remove('zero-vote');
     barB.classList.remove('zero-vote');
-    // 스타일 초기화
     barA.style.backgroundColor = '';
     barB.style.backgroundColor = '';
 
     if (total > 0) {
         percentA = Math.round((counts.A / total) * 100);
         percentB = 100 - percentA;
-       
+        
         document.getElementById('percent-a').innerText = percentA + '%';
         document.getElementById('percent-b').innerText = percentB + '%';
 
         document.getElementById('percent-a').style.display = percentA < 10 ? 'none' : 'block';
         document.getElementById('percent-b').style.display = percentB < 10 ? 'none' : 'block';
-       
+        
         if (counts.A > counts.B) {
             barA.style.backgroundColor = '#333';
             barB.style.backgroundColor = '#B0B0B0';
@@ -1266,23 +1258,21 @@ function updateResultGraph() {
             barA.style.backgroundColor = '#555';
             barB.style.backgroundColor = '#555';
         }
-       
+        
         barA.style.width = percentA + '%';
         barB.style.width = percentB + '%';
     } else {
-        // [수정] 투표가 0일 때
         document.getElementById('percent-a').innerText = '0%';
         document.getElementById('percent-b').innerText = '0%';
         document.getElementById('percent-a').style.display = 'block';
         document.getElementById('percent-b').style.display = 'block';
-       
+        
         barA.style.width = '50%';
         barB.style.width = '50%';
-       
-        // 투명 배경 & 텍스트 양끝 정렬 클래스 추가
+        
         barA.classList.add('zero-vote');
         barB.classList.add('zero-vote');
-       
+        
         barA.style.backgroundColor = 'transparent';
         barB.style.backgroundColor = 'transparent';
     }
@@ -1297,15 +1287,14 @@ function submitUserInfo() {
     const major = document.getElementById('input-major').value;
     if (!nickname) { alert("닉네임을 입력해주세요!"); return; }
     if (!major) { alert("학과를 선택해주세요!"); return; }
-       
+        
     currentUser.nickname = nickname;
     currentUser.major = major;
     saveUserInfo(nickname, major);
     document.getElementById('display-name').innerText = nickname;
-   
-    // [NEW] 온보딩 완료 시 첫 방문 통계 전송
-    sendVisitCount(nickname);
-    localStorage.setItem('lastVisitDate', new Date().toISOString().slice(0, 10));
+    
+    // 🔴 [NEW] 방문 활동 추적
+    trackUserActivity('visit');
 
     goToPage('page-3');
 }
@@ -1337,26 +1326,29 @@ function closeCommentModal() {
 function submitComment() {
     const textInput = document.getElementById('new-comment-text');
     const text = textInput.value.trim();
-   
+    
     if (text === "") {
         alert("댓글 내용을 입력해주세요!");
         return;
     }
-   
+    
     if (!currentPostId) {
         alert("게시물 정보를 찾을 수 없습니다.");
         return;
     }
-   
+    
     const nickname = currentUser.nickname || "익명";
     const major = currentUser.major || "미선택";
-   
+    
     const commentList = document.getElementById('comment-list');
     const newCommentDiv = document.createElement('div');
     newCommentDiv.classList.add('comment-item');
     newCommentDiv.innerHTML = `<div class="comment-user">${nickname} <span style="font-weight:400; font-size:13px; color:#777;">(${major})</span></div><div class="comment-text">${text}</div><hr class="comment-hr">`;
     commentList.prepend(newCommentDiv);
-   
+
+    // 🔴 [NEW] 댓글 활동 추적
+    trackUserActivity('comment');
+    
     fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({
@@ -1387,17 +1379,17 @@ async function loadComments(postId) {
     try {
         const response = await fetch(`${SCRIPT_URL}?action=getComments&postId=${postId}`);
         const comments = await response.json();
-       
+        
         console.log(`댓글 ${comments.length}개 로드됨:`, comments);
-       
+        
         const commentList = document.getElementById('comment-list');
         commentList.innerHTML = '';
-       
+        
         if (comments.length === 0) {
             commentList.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">아직 댓글이 없습니다.</div>';
             return;
         }
-       
+        
         comments.reverse().forEach(comment => {
             const commentDiv = document.createElement('div');
             commentDiv.classList.add('comment-item');
@@ -1409,7 +1401,7 @@ async function loadComments(postId) {
             `;
             commentList.appendChild(commentDiv);
         });
-       
+        
     } catch (error) {
         console.error('댓글 로딩 오류:', error);
         const commentList = document.getElementById('comment-list');
@@ -1446,7 +1438,7 @@ uploadInputs.forEach(input => {
     input.addEventListener('change', (event) => {
         const file = event.target.files[0];
         const option = event.target.getAttribute('data-option');
-       
+        
         if (file && !fileData[option]) {
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -1461,12 +1453,12 @@ uploadInputs.forEach(input => {
 
                 const mainImg = document.createElement('img');
                 mainImg.src = e.target.result;
-               
+                
                 const trashBtn = document.createElement('button');
                 trashBtn.className = 'delete-img-btn';
                 trashBtn.innerHTML = '✕';
                 trashBtn.style.cssText = "position:absolute; bottom:5px; right:5px; border:none; background:rgba(0,0,0,0.5); color:white; border-radius:50%; width:25px; height:25px; cursor:pointer;";
-               
+                
                 trashBtn.onclick = (evt) => {
                     evt.stopPropagation();
                     if (confirm('사진을 삭제하시겠습니까?')) {
@@ -1504,11 +1496,11 @@ textarea.addEventListener('input', checkFormValidity);
 
 function addNewPostToBoard(postId, question, imgA, imgB, authorNickname) {
     const list = document.querySelector('#page-5 .post-list');
-   
+    
     if (currentTab === 'my' && authorNickname !== currentUser.nickname) {
         return;
     }
-   
+    
     const emptyMsg = list.querySelector('.empty-message');
     if (emptyMsg) emptyMsg.remove();
 
@@ -1517,7 +1509,7 @@ function addNewPostToBoard(postId, question, imgA, imgB, authorNickname) {
     if (authorNickname) {
         article.dataset.author = authorNickname;
     }
-   
+    
     article.onclick = function() {
         openVotePage(postId, question, imgA, imgB, authorNickname);
     };
@@ -1534,7 +1526,6 @@ function addNewPostToBoard(postId, question, imgA, imgB, authorNickname) {
         imagesHtml = `<img src="${srcB}" style="width:100%; height:100%; object-fit:cover;">`;
     }
 
-    // [NEW] 방금 쓴 글은 참여자가 0명이므로 '0명 참여'로 표시
     article.innerHTML = `
         <div style="position: relative;">
             <div class="image-row">
@@ -1558,7 +1549,7 @@ shareButton.addEventListener('click', () => {
 
     const newPostId = 'post_' + Date.now();
     const authorNick = currentUser.nickname || "익명";
-   
+    
     const newPostData = {
         id: newPostId,
         nickname: authorNick,
@@ -1573,6 +1564,9 @@ shareButton.addEventListener('click', () => {
 
     addNewPostToBoard(newPostId, textarea.value, fileData.A, fileData.B, authorNick);
     voteCounts[newPostId] = { A: 0, B: 0 };
+
+    // 🔴 [NEW] 게시글 작성 활동 추적
+    trackUserActivity('post');
 
     const payload = {
         id: newPostId,
@@ -1593,7 +1587,7 @@ shareButton.addEventListener('click', () => {
 
     shareButton.innerText = originalText;
     shareButton.disabled = false;
-   
+    
     alert('게시물이 성공적으로 공유되었습니다!');
     goToPage('page-5');
 
@@ -1616,10 +1610,10 @@ async function loadPostsFromSheet() {
     try {
         const response = await fetch(SCRIPT_URL);
         const posts = await response.json();
-       
+        
         allPostsData = posts;
         console.log('불러온 게시물:', allPostsData);
-       
+        
         allPostsData.forEach(post => {
              voteCounts[post.id] = {
                 A: parseInt(post.voteA) || 0,
@@ -1628,7 +1622,7 @@ async function loadPostsFromSheet() {
         });
 
         renderPosts('all');
-       
+        
     } catch (error) {
         console.error('게시물 로딩 오류:', error);
     }
@@ -1636,10 +1630,10 @@ async function loadPostsFromSheet() {
 
 function switchTab(tabName) {
     currentTab = tabName;
-   
+    
     const tabAll = document.getElementById('tab-all');
     const tabMy = document.getElementById('tab-my');
-   
+    
     if (tabName === 'all') {
         tabAll.classList.add('active');
         tabMy.classList.remove('active');
@@ -1647,33 +1641,31 @@ function switchTab(tabName) {
         tabAll.classList.remove('active');
         tabMy.classList.add('active');
     }
-   
+    
     renderPosts(tabName);
 }
 
 function renderPosts(filterType) {
     const list = document.querySelector('#page-5 .post-list');
     list.innerHTML = '';
-   
+    
     let filteredPosts = allPostsData;
-   
+    
     if (filterType === 'my') {
         filteredPosts = allPostsData.filter(post => post.nickname === currentUser.nickname);
     }
-   
+    
     if (filteredPosts.length === 0) {
         list.innerHTML = '<div class="empty-message">게시물이 없습니다.</div>';
         return;
     }
-   
+    
     filteredPosts.forEach(post => {
         const imgA = post.imgA || null;
         const imgB = post.imgB || null;
-       
-        // [NEW] 투표 합계 계산
+        
         const totalVotes = (parseInt(post.voteA) || 0) + (parseInt(post.voteB) || 0);
 
-        // [NEW] 인자 전달
         addExistingPostToBoard(post.id, post.question, imgA, imgB, post.nickname, totalVotes);
     });
 }
@@ -1681,13 +1673,13 @@ function renderPosts(filterType) {
 
 function addExistingPostToBoard(postId, question, imgA, imgB, authorNickname, totalVotes) {
     const list = document.querySelector('#page-5 .post-list');
-   
+    
     const article = document.createElement('article');
     article.className = 'post-item special-bg';
     if (authorNickname) {
         article.dataset.author = authorNickname;
     }
-   
+    
     article.onclick = function() {
         openVotePage(postId, question, imgA, imgB, authorNickname);
     };
@@ -1704,7 +1696,6 @@ function addExistingPostToBoard(postId, question, imgA, imgB, authorNickname, to
         imagesHtml = `<img src="${srcB}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">`;
     }
 
-    // [NEW] innerHTML 수정: 이미지 위에 투표 배지 추가
     article.innerHTML = `
         <div style="position: relative;">
             <div class="image-row">
@@ -1722,6 +1713,8 @@ function addExistingPostToBoard(postId, question, imgA, imgB, authorNickname, to
 
 window.addEventListener('DOMContentLoaded', () => {
     if (loadUserInfo()) {
+        // 🔴 [NEW] 이미 정보가 있어 자동 로그인된 경우도 방문 기록 전송
+        trackUserActivity('visit');
         goToPage('page-3');
     }
     loadPostsFromSheet();
