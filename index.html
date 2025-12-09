@@ -12,29 +12,29 @@
            1. 디자인 시스템 (Design System)
            - Main Color: #4A8CFF (Energetic Blue)
            ==================== */
-        
+       
         :root {
-            --primary-color: #4A8CFF;       
+            --primary-color: #4A8CFF;      
             --primary-dark: #366ED8;        
-            --primary-light: #EBF3FF;       
+            --primary-light: #EBF3FF;      
             --primary-gradient: linear-gradient(135deg, #4A8CFF 0%, #366ED8 100%);
-            
-            --bg-body: #F7F9FC;             
-            --surface-white: #FFFFFF;       
-            --surface-input: #F0F4F8;       
-            
+           
+            --bg-body: #F7F9FC;            
+            --surface-white: #FFFFFF;      
+            --surface-input: #F0F4F8;      
+           
             --text-main: #1A1A1A;
             --text-sub: #757575;
-            
+           
             --shadow-sm: 0 4px 15px rgba(74, 140, 255, 0.1);
             --shadow-md: 0 10px 30px rgba(74, 140, 255, 0.15);
-            
+           
             --radius-xl: 24px;
             --radius-lg: 16px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+       
         body {
             font-family: "Pretendard", 'Noto Sans KR', -apple-system, sans-serif;
             background-color: var(--bg-body);
@@ -53,7 +53,7 @@
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
-            box-shadow: 0 0 60px rgba(0,0,0,0.03); 
+            box-shadow: 0 0 60px rgba(0,0,0,0.03);
         }
 
         /* 상단 네비게이션 바 */
@@ -78,13 +78,13 @@
             font-weight: 700;
             font-size: 17px;
             color: var(--text-main);
-            display: none; 
+            display: none;
         }
 
         .back-arrow {
             font-size: 22px;
             cursor: pointer;
-            display: none; 
+            display: none;
             padding: 8px;
             color: var(--text-main);
             margin-left: -8px;
@@ -108,7 +108,7 @@
         }
 
         .page.active { display: flex; }
-        .page.no-padding-top { padding-top: 0; justify-content: flex-start; background-color: #FAFBFC; } 
+        .page.no-padding-top { padding-top: 0; justify-content: flex-start; background-color: #FAFBFC; }
 
         /* 버튼 공통 */
         .btn-common {
@@ -126,72 +126,72 @@
             transition: all 0.3s ease;
             box-shadow: 0 6px 20px rgba(74, 140, 255, 0.3);
         }
-        .btn-common:hover { 
+        .btn-common:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 25px rgba(74, 140, 255, 0.45);
         }
         .btn-common:active { transform: scale(0.98); }
 
         /* [Page 1] 메인 */
-        .main-title-large { 
-            font-size: 48px; 
-            font-weight: 900; 
-            line-height: 1.1; 
-            margin-bottom: 20px; 
-            text-align: center; 
+        .main-title-large {
+            font-size: 48px;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            text-align: center;
             color: var(--primary-color);
             letter-spacing: -1.5px;
             text-shadow: 0 10px 30px rgba(74, 140, 255, 0.15);
         }
-        .sub-text { 
-            font-size: 16px; 
-            color: var(--text-sub); 
-            line-height: 1.6; 
-            margin-bottom: 60px; 
-            text-align: center; 
+        .sub-text {
+            font-size: 16px;
+            color: var(--text-sub);
+            line-height: 1.6;
+            margin-bottom: 60px;
+            text-align: center;
             font-weight: 500;
         }
 
         /* [Page 2] 입력 폼 */
-        .logo-circle { 
-            width: 100px; 
-            height: 100px; 
+        .logo-circle {
+            width: 100px;
+            height: 100px;
             background: var(--primary-light);
             border-radius: 40px;
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            margin-bottom: 30px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
             color: var(--primary-color);
             box-shadow: inset 0 0 0 4px #FFFFFF, 0 8px 20px rgba(74, 140, 255, 0.15);
             font-size: 40px;
         }
-        
-        .input-group { 
-            width: 100%; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: flex-start;
-            margin-bottom: 24px; 
-        }
-        .input-group label { 
+       
+        .input-group {
             width: 100%;
-            font-weight: 700; 
-            font-size: 14px; 
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+        .input-group label {
+            width: 100%;
+            font-weight: 700;
+            font-size: 14px;
             color: var(--primary-dark);
             margin-bottom: 10px;
             padding-left: 4px;
         }
-        .input-group input, .input-group select { 
-            width: 100%; 
-            height: 56px; 
-            border: 2px solid transparent; 
-            border-radius: var(--radius-lg); 
-            padding: 0 20px; 
-            font-size: 16px; 
-            background-color: var(--surface-input); 
+        .input-group input, .input-group select {
+            width: 100%;
+            height: 56px;
+            border: 2px solid transparent;
+            border-radius: var(--radius-lg);
+            padding: 0 20px;
+            font-size: 16px;
+            background-color: var(--surface-input);
             color: var(--text-main);
-            outline: none; 
+            outline: none;
             transition: all 0.2s ease;
             font-weight: 500;
         }
@@ -200,52 +200,52 @@
             border-color: var(--primary-color);
             box-shadow: 0 0 0 4px rgba(74, 140, 255, 0.1);
         }
-        .input-group select { 
-            appearance: none; 
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234A8CFF' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); 
-            background-repeat: no-repeat; 
-            background-position: right 20px center; 
-            background-size: 16px; 
+        .input-group select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234A8CFF' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 20px center;
+            background-size: 16px;
         }
 
         /* [Page 3] 홈 */
-        .greeting { 
-            font-size: 24px; 
-            font-weight: 700; 
-            margin-bottom: 16px; 
-            text-align: center; 
+        .greeting {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-align: center;
             color: var(--text-main);
         }
         .greeting span { color: var(--primary-color); }
-        .description { 
-            font-size: 16px; 
-            line-height: 1.6; 
-            margin-bottom: 50px; 
-            text-align: center; 
+        .description {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 50px;
+            text-align: center;
             color: var(--text-sub);
         }
-        .btn-group { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 16px; 
-            width: 100%; 
-            align-items: center; 
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+            align-items: center;
         }
 
         /* [Page 5] 게시판 목록 (탭) */
-        .tab-header { 
-            width: 100%; 
-            background: rgba(255,255,255,0.95); 
+        .tab-header {
+            width: 100%;
+            background: rgba(255,255,255,0.95);
             backdrop-filter: blur(10px);
-            display: flex; 
-            align-items: center; 
-            padding: 0 10px; 
-            border-bottom: 1px solid rgba(0,0,0,0.04); 
-            position: sticky; 
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+            position: sticky;
             top: 0; /* 상단 여백 제거를 위해 0으로 설정 */
-            z-index: 10; 
+            z-index: 10;
         }
-        
+       
         .tab-back-arrow {
             font-size: 22px;
             padding: 10px;
@@ -256,31 +256,31 @@
         }
         .tab-back-arrow:hover { color: var(--primary-color); }
 
-        .tab-item { 
-            flex: 1; 
-            padding: 16px 0; 
+        .tab-item {
+            flex: 1;
+            padding: 16px 0;
             margin: 0;
-            color: var(--text-sub); 
-            cursor: pointer; 
-            position: relative; 
+            color: var(--text-sub);
+            cursor: pointer;
+            position: relative;
             font-size: 15px;
             font-weight: 600;
             transition: color 0.3s;
             text-align: center;
         }
-        .tab-item.active { 
-            color: var(--primary-color); 
-            font-weight: 800; 
+        .tab-item.active {
+            color: var(--primary-color);
+            font-weight: 800;
         }
-        .tab-item.active::after { 
-            content: ''; 
-            position: absolute; 
-            bottom: -1px; 
+        .tab-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
             left: 50%;
             transform: translateX(-50%);
-            width: 80%; 
-            height: 3px; 
-            background: var(--primary-color); 
+            width: 80%;
+            height: 3px;
+            background: var(--primary-color);
             border-radius: 10px;
         }
 
@@ -288,7 +288,7 @@
         .notice-box {
             width: 100%;
             padding: 20px 24px;
-            background-color: #F0F7FF; 
+            background-color: #F0F7FF;
             color: #4A8CFF;
             font-size: 14px;
             line-height: 1.6;
@@ -305,30 +305,30 @@
             font-weight: 700;
             color: #366ED8;
         }
-        
+       
         .empty-message { text-align: center; color: #999; margin-top: 80px; font-size: 15px; font-weight: 400; }
 
-        .post-list { 
-            width: 100%; 
-            padding: 24px 20px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 24px; 
-            padding-bottom: 100px; 
+        .post-list {
+            width: 100%;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            padding-bottom: 100px;
         }
-        
-        .post-item { 
-            padding: 0; 
-            cursor: pointer; 
+       
+        .post-item {
+            padding: 0;
+            cursor: pointer;
             border-radius: var(--radius-xl);
             overflow: hidden;
             background-color: #fff;
             transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
             position: relative;
         }
-        .post-item.special-bg { 
-            background-color: #fff; 
-            padding: 0; 
+        .post-item.special-bg {
+            background-color: #fff;
+            padding: 0;
             box-shadow: var(--shadow-sm);
             border: 1px solid rgba(255,255,255,1);
         }
@@ -338,17 +338,17 @@
         }
         .post-item:active { transform: scale(0.98); }
 
-        .image-row { 
-            display: flex; 
-            gap: 2px; 
-            height: 220px; 
-            overflow: hidden; 
-            margin-bottom: 0; 
+        .image-row {
+            display: flex;
+            gap: 2px;
+            height: 220px;
+            overflow: hidden;
+            margin-bottom: 0;
         }
-        .image-row img { 
-            height: 100%; 
-            object-fit: cover; 
-            display: block; 
+        .image-row img {
+            height: 100%;
+            object-fit: cover;
+            display: block;
             transition: transform 0.5s;
         }
         .post-item:hover .image-row img { transform: scale(1.05); }
@@ -371,66 +371,66 @@
 
         .w-30 { width: 30%; } .w-40 { width: 40%; } .w-50 { width: 50%; }
 
-        .title-box { 
-            background: #fff; 
-            padding: 24px; 
-            text-align: left; 
-            font-size: 16px; 
-            font-weight: 700; 
+        .title-box {
+            background: #fff;
+            padding: 24px;
+            text-align: left;
+            font-size: 16px;
+            font-weight: 700;
             color: var(--text-main);
             line-height: 1.4;
         }
-        .title-box.gray-box { background: #fff; } 
+        .title-box.gray-box { background: #fff; }
 
         /* 글쓰기 플로팅 버튼 */
         .fab-btn {
-            position: fixed; 
-            bottom: 30px; 
-            right: 24px; 
-            width: 60px; 
+            position: fixed;
+            bottom: 30px;
+            right: 24px;
+            width: 60px;
             height: 60px;
-            background: var(--primary-gradient); 
+            background: var(--primary-gradient);
             border-radius: 50%;
-            display: none; 
-            justify-content: center; 
+            display: none;
+            justify-content: center;
             align-items: center;
-            color: white; 
-            font-size: 24px; 
-            font-weight: 300; 
+            color: white;
+            font-size: 24px;
+            font-weight: 300;
             line-height: 1;
             box-shadow: 0 10px 30px rgba(74, 140, 255, 0.4);
-            cursor: pointer; 
-            z-index: 999; 
+            cursor: pointer;
+            z-index: 999;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             overflow: hidden;
         }
-        
+       
         .fab-btn .icon {
             display: block;
             font-size: 26px;
             min-width: 60px;
             text-align: center;
         }
-        
+       
         .fab-btn .text {
             display: none;
-            font-size: 14px; 
+            font-size: 14px;
             font-weight: 700;
             white-space: nowrap;
             padding-right: 5px;
             padding-left: 5px;
         }
 
-        .fab-btn:hover { 
-            width: 140px; 
-            transform: translateY(-3px); 
+        .fab-btn:hover {
+            width: 140px;
+            transform: translateY(-3px);
             box-shadow: 0 15px 35px rgba(74, 140, 255, 0.5);
             border-radius: 30px;
             justify-content: flex-start;
         }
         .fab-btn:hover .icon { display: none; }
-        .fab-btn:hover .text { 
-            display: block; 
+        .fab-btn:hover .text {
+            display: block;
             width: 100%;
             text-align: center;
             padding: 0;
@@ -439,7 +439,7 @@
         /* 설문조사 링크 버튼 */
         .fab-survey {
             position: fixed;
-            bottom: 105px; 
+            bottom: 105px;
             right: 24px;
             width: 50px;
             height: 50px;
@@ -447,8 +447,8 @@
             color: var(--text-main);
             border: 1px solid #ddd;
             border-radius: 30px;
-            display: none; 
-            justify-content: center; 
+            display: none;
+            justify-content: center;
             align-items: center;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             z-index: 999;
@@ -457,17 +457,17 @@
             overflow: hidden;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-        
+       
         .fab-survey .icon {
             display: block;
             font-size: 20px;
             min-width: 50px;
             text-align: center;
         }
-        
+       
         .fab-survey .text {
             display: none;
-            font-size: 14px; 
+            font-size: 14px;
             font-weight: 700;
             white-space: nowrap;
             padding-right: 5px;
@@ -475,7 +475,7 @@
         }
 
         .fab-survey:hover {
-            width: 142px; 
+            width: 142px;
             background-color: var(--primary-color);
             color: white;
             border-color: var(--primary-color);
@@ -493,122 +493,122 @@
             .fab-btn {
                 right: auto;
                 left: 50%;
-                margin-left: 160px; 
+                margin-left: 160px;
                 transform: translateX(0);
             }
             .fab-btn:hover {
-                margin-left: 80px; 
+                margin-left: 80px;
                 width: 140px;
             }
             .fab-survey {
                 right: auto;
                 left: 50%;
-                margin-left: 165px; 
+                margin-left: 165px;
                 transform: translateX(0);
             }
             .fab-survey:hover {
-                margin-left: 73px; 
+                margin-left: 73px;
                 width: 142px;
             }
         }
 
         /* [Page 6 & 7] 투표 및 결과 */
-        .subtitle { 
-            font-size: 16px; 
-            color: var(--text-sub); 
-            margin-bottom: 30px; 
-            text-align: center; 
-            padding: 0 20px; 
-            word-break: keep-all; 
+        .subtitle {
+            font-size: 16px;
+            color: var(--text-sub);
+            margin-bottom: 30px;
+            text-align: center;
+            padding: 0 20px;
+            word-break: keep-all;
             line-height: 1.5;
         }
         .layout-options { display: flex; justify-content: space-between; gap: 16px; width: 100%; }
         .option-a, .option-b { flex: 1; display: flex; flex-direction: column; align-items: center; }
-        .option-label { 
-            font-size: 20px; 
-            font-weight: 800; 
-            margin-bottom: 12px; 
-            color: var(--primary-color); 
+        .option-label {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: var(--primary-color);
             font-family: 'Montserrat', sans-serif;
         }
-        
-        .option-image { 
-            width: 100%; 
-            aspect-ratio: 1/1; 
-            object-fit: cover; 
-            border-radius: 16px; 
-            margin-bottom: 20px; 
-            cursor: zoom-in; 
-            box-shadow: var(--shadow-sm); 
-            transition: transform 0.3s; 
-            background-color: var(--primary-light); 
+       
+        .option-image {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            cursor: zoom-in;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s;
+            background-color: var(--primary-light);
             border: 2px solid transparent;
         }
         .option-image:hover { transform: scale(1.02); border-color: var(--primary-color); }
-        
-        .select-button { 
-            width: 100%; 
-            padding: 16px 0; 
-            background-color: white; 
-            border: 2px solid var(--primary-color); 
-            border-radius: 50px; 
-            font-size: 16px; 
-            font-weight: 700; 
+       
+        .select-button {
+            width: 100%;
+            padding: 16px 0;
+            background-color: white;
+            border: 2px solid var(--primary-color);
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
             color: var(--primary-color);
-            cursor: pointer; 
-            transition: all 0.2s; 
+            cursor: pointer;
+            transition: all 0.2s;
         }
-        .select-button:hover { 
-            background-color: var(--primary-color); 
-            color: white; 
+        .select-button:hover {
+            background-color: var(--primary-color);
+            color: white;
             box-shadow: 0 4px 15px rgba(74, 140, 255, 0.3);
         }
-        
+       
         /* 🔵 투표 결과 그래프 */
-        .progress-container { 
-            width: 100%; 
-            height: 60px; 
-            display: flex; 
-            border-radius: 18px; 
-            overflow: hidden; 
-            margin-bottom: 40px; 
-            font-size: 16px; 
-            font-weight: 800; 
-            color: #fff; 
-            background-color: #E9ECEF; 
+        .progress-container {
+            width: 100%;
+            height: 60px;
+            display: flex;
+            border-radius: 18px;
+            overflow: hidden;
+            margin-bottom: 40px;
+            font-size: 16px;
+            font-weight: 800;
+            color: #fff;
+            background-color: #E9ECEF;
             box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
-            position: relative; 
+            position: relative;
         }
-        
+       
         .progress-a {
             height: 100%;
-            display: flex; 
+            display: flex;
             align-items: center;
-            justify-content: flex-start; 
+            justify-content: flex-start;
             padding: 0 16px;
             transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-            position: absolute; 
-            left: 0; 
+            position: absolute;
+            left: 0;
             top: 0;
-            z-index: 2; 
-            border-radius: 18px 0 0 18px; 
+            z-index: 2;
+            border-radius: 18px 0 0 18px;
         }
 
         .progress-b {
             height: 100%;
-            width: 100%; 
-            display: flex; 
+            width: 100%;
+            display: flex;
             align-items: center;
-            justify-content: flex-end; 
+            justify-content: flex-end;
             padding: 0 16px;
-            transition: all 1s cubic-bezier(0.22, 1, 0.36, 1); 
+            transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-            position: absolute; 
-            right: 0; 
+            position: absolute;
+            right: 0;
             top: 0;
-            z-index: 1; 
-            border-radius: 0 18px 18px 0; 
+            z-index: 1;
+            border-radius: 0 18px 18px 0;
         }
 
         /* JS 인라인 스타일 오버라이드 (색상) */
@@ -617,20 +617,20 @@
             background-image: linear-gradient(135deg, #366ED8 0%, #1E4F9E 100%);
         }
         div[style*="rgb(176, 176, 176)"] { /* #B0B0B0 - 진 쪽 */
-            background-color: #8EB7FF !important; 
+            background-color: #8EB7FF !important;
         }
         div[style*="rgb(85, 85, 85)"] { /* #555 - 비김 */
             background-color: var(--primary-color) !important;
         }
-        
+       
         /* 투표 0일때 텍스트 처리 */
         .progress-a.zero-vote {
             background-color: transparent !important;
             background-image: none !important;
             color: #999;
             text-shadow: none;
-            justify-content: flex-start; 
-            padding-left: 16px; 
+            justify-content: flex-start;
+            padding-left: 16px;
         }
         .progress-b.zero-vote {
             background-color: transparent !important;
@@ -638,23 +638,23 @@
             color: #999;
             text-shadow: none;
             justify-content: flex-end;
-            padding-right: 16px; 
+            padding-right: 16px;
         }
 
 
         .comment-section { width: 100%; text-align: left; padding: 0 4px; margin-bottom: 30px; }
-        .comment-item { 
-            margin-bottom: 16px; 
-            padding: 20px; 
-            background-color: #FFFFFF; 
-            border-radius: 16px; 
+        .comment-item {
+            margin-bottom: 16px;
+            padding: 20px;
+            background-color: #FFFFFF;
+            border-radius: 16px;
             border: 1px solid rgba(0,0,0,0.03);
             box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-        } 
-        .comment-user { 
-            font-weight: 700; 
-            font-size: 14px; 
-            margin-bottom: 8px; 
+        }
+        .comment-user {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 8px;
             color: var(--primary-dark);
             display: flex; align-items: center;
         }
@@ -662,18 +662,18 @@
             content:''; display:inline-block; width: 6px; height: 6px; background: var(--primary-color); border-radius: 50%; margin-right: 8px;
         }
         .comment-text { font-size: 15px; color: #444; line-height: 1.5; }
-        .comment-hr { display: none; } 
-        
-        .btn-comment { 
-            width: 100%; 
-            padding: 16px 0; 
-            background-color: var(--surface-white); 
-            color: var(--primary-color); 
-            border: 2px solid var(--primary-color); 
-            border-radius: 30px; 
-            font-size: 16px; 
-            font-weight: 700; 
-            cursor: pointer; 
+        .comment-hr { display: none; }
+       
+        .btn-comment {
+            width: 100%;
+            padding: 16px 0;
+            background-color: var(--surface-white);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
             transition: all 0.2s;
         }
         .btn-comment:hover {
@@ -689,36 +689,36 @@
             height: 120px; border-radius: 12px; margin-right: 12px; object-fit: cover;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-        
+       
         .feedback-textarea {
-            width: 100%; 
-            border: 2px solid transparent; 
+            width: 100%;
+            border: 2px solid transparent;
             border-radius: 16px;
-            background: #F8F9FB; 
-            font-size: 16px; 
-            padding: 20px; 
-            resize: none; 
-            outline: none; 
-            font-family: inherit; 
-            margin-bottom: 30px; 
+            background: #F8F9FB;
+            font-size: 16px;
+            padding: 20px;
+            resize: none;
+            outline: none;
+            font-family: inherit;
+            margin-bottom: 30px;
             min-height: 140px;
             transition: all 0.2s;
             color: var(--text-main);
         }
         .feedback-textarea:focus { border-color: var(--primary-color); background: #fff; box-shadow: 0 4px 15px rgba(74, 140, 255, 0.08); }
         .feedback-textarea::placeholder { color: #BBB; }
-        
+       
         .feedback-options { display: flex; flex-direction: row; gap: 12px; width: 100%; margin-bottom: 30px; }
         .option-button {
-            flex: 1; 
-            height: 130px; 
-            border: 2px dashed #CBD5E0; 
-            border-radius: 16px; 
-            background: #FAFBFC; 
-            cursor: pointer; 
-            position: relative; 
-            display: flex; 
-            justify-content: center; 
+            flex: 1;
+            height: 130px;
+            border: 2px dashed #CBD5E0;
+            border-radius: 16px;
+            background: #FAFBFC;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            justify-content: center;
             align-items: center;
             transition: all 0.2s;
             color: #A0AEC0;
@@ -731,48 +731,48 @@
         }
         .option-placeholder { display: flex; flex-direction: column; align-items: center; font-size: 18px; font-weight: 700; }
         .plus { font-size: 28px; margin-top: 5px; font-weight: 300; }
-        
+       
         .image-upload-input { display: none; }
 
         .share-button {
             width: 100%; padding: 18px 0; background-color: #E2E8F0; color: #fff; border: none; border-radius: var(--radius-lg); font-size: 16px; font-weight: 700; cursor: not-allowed; margin-top: auto; transition: background 0.3s;
         }
-        .share-button.active { 
-            background: var(--primary-color); 
-            cursor: pointer; 
-            box-shadow: 0 4px 15px rgba(74, 140, 255, 0.3); 
+        .share-button.active {
+            background: var(--primary-color);
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(74, 140, 255, 0.3);
         }
         .share-button.active:hover { background: var(--primary-dark); }
 
-        .footer { 
-            margin-top: auto; 
-            padding: 50px 20px; 
-            text-align: center; 
-            background-color: transparent; 
-            color: #BBB; 
-            font-size: 11px; 
-            width: 100%; 
+        .footer {
+            margin-top: auto;
+            padding: 50px 20px;
+            text-align: center;
+            background-color: transparent;
+            color: #BBB;
+            font-size: 11px;
+            width: 100%;
         }
         .footer-logo { font-weight: 800; font-size: 13px; color: #999; margin-bottom: 8px; letter-spacing: 0.5px; }
 
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(4px); }
         .modal-content { margin: auto; display: block; width: 90%; max-width: 600px; max-height: 80vh; object-fit: contain; position: relative; top: 50%; transform: translateY(-50%); border-radius: 8px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .modal-close { position: absolute; top: 20px; right: 30px; color: #fff; font-size: 40px; font-weight: 300; cursor: pointer; transition: 0.3s; }
-        
+       
         .comment-modal-bg { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); backdrop-filter: blur(4px); }
-        .comment-box { 
-            background-color: white; 
-            width: 90%; 
-            max-width: 400px; 
-            padding: 32px 24px; 
-            border-radius: 24px; 
-            position: relative; 
-            top: 50%; 
-            left: 50%; 
-            transform: translate(-50%, -50%); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
+        .comment-box {
+            background-color: white;
+            width: 90%;
+            max-width: 400px;
+            padding: 32px 24px;
+            border-radius: 24px;
+            position: relative;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             box-shadow: 0 15px 40px rgba(0,0,0,0.15);
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
@@ -787,31 +787,31 @@
         .comment-close-btn:hover { color: #333; }
 
         .comment-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; font-size: 15px; outline: none; }
-        .comment-textarea { 
-            width: 100%; 
-            height: 140px; 
-            padding: 16px; 
-            border: 2px solid transparent; 
-            border-radius: 16px; 
-            margin-bottom: 24px; 
-            font-size: 15px; 
-            outline: none; 
-            resize: none; 
-            font-family: inherit; 
+        .comment-textarea {
+            width: 100%;
+            height: 140px;
+            padding: 16px;
+            border: 2px solid transparent;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            font-size: 15px;
+            outline: none;
+            resize: none;
+            font-family: inherit;
             background-color: #F8F9FB;
         }
         .comment-textarea:focus { border-color: var(--primary-color); background: #fff; }
-        
-        .btn-submit-comment { 
-            width: 100%; 
-            padding: 16px 0; 
-            background-color: var(--primary-color); 
-            color: white; 
-            border: none; 
-            border-radius: 12px; 
-            font-size: 16px; 
-            font-weight: 700; 
-            cursor: pointer; 
+       
+        .btn-submit-comment {
+            width: 100%;
+            padding: 16px 0;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
             box-shadow: 0 4px 10px rgba(74, 140, 255, 0.3);
             transition: 0.2s;
         }
@@ -824,8 +824,8 @@
 <div class="app-container">
 
     <nav class="top-nav">
-        <span class="back-arrow" onclick="goBack()">&#10094;</span> 
-        <span class="nav-title" id="page-title">새 게시물</span> 
+        <span class="back-arrow" onclick="goBack()">&#10094;</span>
+        <span class="nav-title" id="page-title">새 게시물</span>
     </nav>
 
 
@@ -893,8 +893,8 @@
             주고받을 수 있도록 만든 서비스입니다.<br>
             참고용으로 이용해 주시면 감사하겠습니다!<br>
             <div class="notice-link-line">
-            
-    
+           
+   
             </div>
         </div>
         <div class="post-list">
@@ -934,7 +934,7 @@
     <section id="page-7" class="page">
         <h1 class="main-title">투표 결과</h1>
         <p class="subtitle" id="result-question">소중한 한 표 감사합니다!</p>
-        
+       
         <div class="layout-options" style="margin-bottom: 20px;">
             <div class="option-a">
                 <span class="option-label">A</span>
@@ -945,7 +945,7 @@
                 <img src="" id="result-img-b" class="option-image">
             </div>
         </div>
-        
+       
         <div class="progress-container">
             <div class="progress-a" id="bar-a"><span>A</span><span id="percent-a">0%</span></div>
             <div class="progress-b" id="bar-b"><span>B</span><span id="percent-b">0%</span></div>
@@ -989,7 +989,7 @@
             <button class="btn-submit-comment" onclick="submitComment()">등록하기</button>
         </div>
     </div>
-    
+   
     <div id="image-modal" class="modal"><span class="modal-close">&times;</span><img class="modal-content" id="modal-image"></div>
 
 </div>
@@ -998,7 +998,7 @@
 /* ==========================================
    🔴 [중요] 방금 "새 배포"로 받은 URL을 여기에 넣으세요! 🔴
    ========================================== */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymgWt3vCPuIme5vZmdXXxT8resrgrFN8YgpIDxpvwFMDS72XUQH2mJSHvp8gstg08hww/exec"; 
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbymgWt3vCPuIme5vZmdXXxT8resrgrFN8YgpIDxpvwFMDS72XUQH2mJSHvp8gstg08hww/exec";
 
 
 /* =====================
@@ -1008,27 +1008,49 @@ let historyStack = [];
 let currentUser = { nickname: "", major: "" };
 const fileData = { A: null, B: null };
 let currentPostId = null;
-let currentPostAuthor = null; 
-const voteCounts = {}; 
+let currentPostAuthor = null;
+const voteCounts = {};
 
 let allPostsData = [];
-let currentTab = 'all'; 
+let currentTab = 'all';
 
 
 /* =====================
-   1-1. 로컬 스토리지에서 사용자 정보 불러오기
+   1-1. 로컬 스토리지에서 사용자 정보 불러오기 & 방문 카운트 전송
    ===================== */
 function loadUserInfo() {
     const savedNickname = localStorage.getItem('userNickname');
     const savedMajor = localStorage.getItem('userMajor');
-    
+   
     if (savedNickname && savedMajor) {
         currentUser.nickname = savedNickname;
         currentUser.major = savedMajor;
         document.getElementById('display-name').innerText = savedNickname;
+
+        // [NEW] 하루에 한 번만 방문 통계 보내기 (로컬 스토리지 활용)
+        const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+        const lastVisitDate = localStorage.getItem('lastVisitDate');
+
+        if (lastVisitDate !== today) {
+            sendVisitCount(savedNickname);
+            localStorage.setItem('lastVisitDate', today);
+        }
+
         return true;
     }
     return false;
+}
+
+// [NEW] 방문 카운트 전송 함수
+function sendVisitCount(nickname) {
+    if(!nickname) return;
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({
+            action: 'visit',
+            nickname: nickname
+        })
+    }).then(res => console.log("방문 카운트 전송 완료"));
 }
 
 function saveUserInfo(nickname, major) {
@@ -1069,7 +1091,7 @@ function updateUI(pageId) {
     const topNav = document.querySelector('.top-nav'); // 🔴 [수정] 상단바 요소 가져오기
     const arrow = document.querySelector('.back-arrow');
     const fab = document.getElementById('fab-write');
-    const fabSurvey = document.getElementById('fab-survey'); 
+    const fabSurvey = document.getElementById('fab-survey');
     const title = document.getElementById('page-title');
 
     // 🔴 [수정] 페이지 5(게시판 목록)일 때만 상단 네비게이션 바 숨김 처리
@@ -1085,14 +1107,14 @@ function updateUI(pageId) {
         arrow.style.display = 'none';
     }
 
-    if (pageId === 'page-5') { 
-        fab.style.display = 'flex'; 
-        fabSurvey.style.display = 'flex'; 
-    } else { 
-        fab.style.display = 'none'; 
-        fabSurvey.style.display = 'none'; 
+    if (pageId === 'page-5') {
+        fab.style.display = 'flex';
+        fabSurvey.style.display = 'flex';
+    } else {
+        fab.style.display = 'none';
+        fabSurvey.style.display = 'none';
     }
-    
+   
     if (pageId === 'page-8') { title.style.display = 'block'; } else { title.style.display = 'none'; }
 }
 updateUI('page-1');
@@ -1119,8 +1141,8 @@ function openVotePage(postId, question, imgASrc, imgBSrc, authorNickname) {
 
     // A 이미지
     if (imgASrc) {
-        const src = typeof imgASrc === 'string' ? imgASrc : 
-                   (imgASrc.url || (imgASrc.data ? `data:${imgASrc.mimeType};base64,${imgASrc.data}` : null));
+        const src = typeof imgASrc === 'string' ? imgASrc :
+                    (imgASrc.url || (imgASrc.data ? `data:${imgASrc.mimeType};base64,${imgASrc.data}` : null));
         if (src) {
             imgAEl.src = src;
             imgAEl.setAttribute('data-full-src', src);
@@ -1128,14 +1150,14 @@ function openVotePage(postId, question, imgASrc, imgBSrc, authorNickname) {
         } else {
             optionA.style.display = 'none';
         }
-    } else { 
-        optionA.style.display = 'none'; 
+    } else {
+        optionA.style.display = 'none';
     }
 
     // B 이미지
     if (imgBSrc) {
-        const src = typeof imgBSrc === 'string' ? imgBSrc : 
-                   (imgBSrc.url || (imgBSrc.data ? `data:${imgBSrc.mimeType};base64,${imgBSrc.data}` : null));
+        const src = typeof imgBSrc === 'string' ? imgBSrc :
+                    (imgBSrc.url || (imgBSrc.data ? `data:${imgBSrc.mimeType};base64,${imgBSrc.data}` : null));
         if (src) {
             imgBEl.src = src;
             imgBEl.setAttribute('data-full-src', src);
@@ -1143,15 +1165,15 @@ function openVotePage(postId, question, imgASrc, imgBSrc, authorNickname) {
         } else {
             optionB.style.display = 'none';
         }
-    } else { 
-        optionB.style.display = 'none'; 
+    } else {
+        optionB.style.display = 'none';
     }
 
     const resA = document.getElementById('result-img-a');
     const resB = document.getElementById('result-img-b');
-    resA.src = imgAEl.src; 
+    resA.src = imgAEl.src;
     resA.setAttribute('data-full-src', imgAEl.src);
-    resB.src = imgBEl.src; 
+    resB.src = imgBEl.src;
     resB.setAttribute('data-full-src', imgBEl.src);
 
     const storageKey = 'voted_' + currentPostId;
@@ -1173,23 +1195,25 @@ function submitVote(selection) {
     const storageKey = 'voted_' + currentPostId;
     if (localStorage.getItem(storageKey)) { return; }
 
-    localStorage.setItem(storageKey, 'true'); 
-    
+    localStorage.setItem(storageKey, 'true');
+   
     if (!voteCounts[currentPostId]) voteCounts[currentPostId] = { A: 0, B: 0 };
     voteCounts[currentPostId][selection]++;
 
+    // [NEW] 투표 시 내 닉네임 함께 전송 (사용자 통계용)
     fetch(SCRIPT_URL, {
         method: 'POST',
-        body: JSON.stringify({ 
-            action: 'vote', 
-            id: currentPostId, 
-            select: selection 
+        body: JSON.stringify({
+            action: 'vote',
+            id: currentPostId,
+            select: selection,
+            nickname: currentUser.nickname // 통계를 위해 추가
         })
     })
     .then(response => response.json())
     .then(data => {
         if (data.result === 'success') {
-            console.log('투표가 서버에 저장되었습니다.');
+            console.log('투표 및 통계가 서버에 저장되었습니다.');
         }
     })
     .catch(err => console.error('투표 저장 오류:', err));
@@ -1197,18 +1221,18 @@ function submitVote(selection) {
     updateResultGraph();
     loadComments(currentPostId);
     goToPage('page-7');
-    
+   
     const lastIdx = historyStack.length - 1;
-    if (historyStack[lastIdx] === 'page-6') { 
-        historyStack.splice(lastIdx, 1); 
+    if (historyStack[lastIdx] === 'page-6') {
+        historyStack.splice(lastIdx, 1);
     }
 }
 
 /* 🔵 [수정] 투표 결과 그래프 로직 개선 */
 function updateResultGraph() {
-    const counts = voteCounts[currentPostId] || { A: 0, B: 0 }; 
+    const counts = voteCounts[currentPostId] || { A: 0, B: 0 };
     const total = counts.A + counts.B;
-    
+   
     let percentA = 0;
     let percentB = 0;
 
@@ -1225,24 +1249,24 @@ function updateResultGraph() {
     if (total > 0) {
         percentA = Math.round((counts.A / total) * 100);
         percentB = 100 - percentA;
-        
+       
         document.getElementById('percent-a').innerText = percentA + '%';
         document.getElementById('percent-b').innerText = percentB + '%';
 
         document.getElementById('percent-a').style.display = percentA < 10 ? 'none' : 'block';
         document.getElementById('percent-b').style.display = percentB < 10 ? 'none' : 'block';
-        
+       
         if (counts.A > counts.B) {
-            barA.style.backgroundColor = '#333'; 
-            barB.style.backgroundColor = '#B0B0B0'; 
+            barA.style.backgroundColor = '#333';
+            barB.style.backgroundColor = '#B0B0B0';
         } else if (counts.B > counts.A) {
             barB.style.backgroundColor = '#333';
             barA.style.backgroundColor = '#B0B0B0';
         } else {
-            barA.style.backgroundColor = '#555'; 
+            barA.style.backgroundColor = '#555';
             barB.style.backgroundColor = '#555';
         }
-        
+       
         barA.style.width = percentA + '%';
         barB.style.width = percentB + '%';
     } else {
@@ -1251,14 +1275,14 @@ function updateResultGraph() {
         document.getElementById('percent-b').innerText = '0%';
         document.getElementById('percent-a').style.display = 'block';
         document.getElementById('percent-b').style.display = 'block';
-        
+       
         barA.style.width = '50%';
         barB.style.width = '50%';
-        
+       
         // 투명 배경 & 텍스트 양끝 정렬 클래스 추가
         barA.classList.add('zero-vote');
         barB.classList.add('zero-vote');
-        
+       
         barA.style.backgroundColor = 'transparent';
         barB.style.backgroundColor = 'transparent';
     }
@@ -1276,8 +1300,13 @@ function submitUserInfo() {
        
     currentUser.nickname = nickname;
     currentUser.major = major;
-    saveUserInfo(nickname, major); 
+    saveUserInfo(nickname, major);
     document.getElementById('display-name').innerText = nickname;
+   
+    // [NEW] 온보딩 완료 시 첫 방문 통계 전송
+    sendVisitCount(nickname);
+    localStorage.setItem('lastVisitDate', new Date().toISOString().slice(0, 10));
+
     goToPage('page-3');
 }
 
@@ -1287,8 +1316,8 @@ const closeBtn = document.querySelector(".modal-close");
 
 document.addEventListener('click', function(e) {
     if(e.target.classList.contains('option-image')) {
-        modal.style.display = "block"; 
-        modalImg.src = e.target.getAttribute('data-full-src'); 
+        modal.style.display = "block";
+        modalImg.src = e.target.getAttribute('data-full-src');
     }
 });
 
@@ -1298,36 +1327,36 @@ window.onclick = function(event) { if (event.target == modal) { modal.style.disp
 function openCommentModal() {
     const userInfoEl = document.getElementById('comment-user-info');
     userInfoEl.innerText = `${currentUser.nickname} (${currentUser.major})`;
-    document.getElementById('comment-modal').style.display = 'block'; 
+    document.getElementById('comment-modal').style.display = 'block';
 }
 
-function closeCommentModal() { 
-    document.getElementById('comment-modal').style.display = 'none'; 
+function closeCommentModal() {
+    document.getElementById('comment-modal').style.display = 'none';
 }
 
 function submitComment() {
     const textInput = document.getElementById('new-comment-text');
     const text = textInput.value.trim();
-    
-    if (text === "") { 
-        alert("댓글 내용을 입력해주세요!"); 
-        return; 
+   
+    if (text === "") {
+        alert("댓글 내용을 입력해주세요!");
+        return;
     }
-    
+   
     if (!currentPostId) {
         alert("게시물 정보를 찾을 수 없습니다.");
         return;
     }
-    
+   
     const nickname = currentUser.nickname || "익명";
     const major = currentUser.major || "미선택";
-    
+   
     const commentList = document.getElementById('comment-list');
     const newCommentDiv = document.createElement('div');
     newCommentDiv.classList.add('comment-item');
     newCommentDiv.innerHTML = `<div class="comment-user">${nickname} <span style="font-weight:400; font-size:13px; color:#777;">(${major})</span></div><div class="comment-text">${text}</div><hr class="comment-hr">`;
     commentList.prepend(newCommentDiv);
-    
+   
     fetch(SCRIPT_URL, {
         method: 'POST',
         body: JSON.stringify({
@@ -1358,17 +1387,17 @@ async function loadComments(postId) {
     try {
         const response = await fetch(`${SCRIPT_URL}?action=getComments&postId=${postId}`);
         const comments = await response.json();
-        
+       
         console.log(`댓글 ${comments.length}개 로드됨:`, comments);
-        
+       
         const commentList = document.getElementById('comment-list');
         commentList.innerHTML = '';
-        
+       
         if (comments.length === 0) {
             commentList.innerHTML = '<div style="text-align:center; color:#999; padding:20px;">아직 댓글이 없습니다.</div>';
             return;
         }
-        
+       
         comments.reverse().forEach(comment => {
             const commentDiv = document.createElement('div');
             commentDiv.classList.add('comment-item');
@@ -1380,7 +1409,7 @@ async function loadComments(postId) {
             `;
             commentList.appendChild(commentDiv);
         });
-        
+       
     } catch (error) {
         console.error('댓글 로딩 오류:', error);
         const commentList = document.getElementById('comment-list');
@@ -1417,11 +1446,11 @@ uploadInputs.forEach(input => {
     input.addEventListener('change', (event) => {
         const file = event.target.files[0];
         const option = event.target.getAttribute('data-option');
-        
+       
         if (file && !fileData[option]) {
             const reader = new FileReader();
             reader.onload = (e) => {
-                const base64String = e.target.result.split(',')[1]; 
+                const base64String = e.target.result.split(',')[1];
                 const mimeType = file.type;
                 fileData[option] = { data: base64String, mimeType: mimeType };
 
@@ -1432,12 +1461,12 @@ uploadInputs.forEach(input => {
 
                 const mainImg = document.createElement('img');
                 mainImg.src = e.target.result;
-                
+               
                 const trashBtn = document.createElement('button');
                 trashBtn.className = 'delete-img-btn';
                 trashBtn.innerHTML = '✕';
                 trashBtn.style.cssText = "position:absolute; bottom:5px; right:5px; border:none; background:rgba(0,0,0,0.5); color:white; border-radius:50%; width:25px; height:25px; cursor:pointer;";
-                
+               
                 trashBtn.onclick = (evt) => {
                     evt.stopPropagation();
                     if (confirm('사진을 삭제하시겠습니까?')) {
@@ -1475,23 +1504,23 @@ textarea.addEventListener('input', checkFormValidity);
 
 function addNewPostToBoard(postId, question, imgA, imgB, authorNickname) {
     const list = document.querySelector('#page-5 .post-list');
-    
+   
     if (currentTab === 'my' && authorNickname !== currentUser.nickname) {
         return;
     }
-    
+   
     const emptyMsg = list.querySelector('.empty-message');
     if (emptyMsg) emptyMsg.remove();
 
     const article = document.createElement('article');
-    article.className = 'post-item special-bg'; 
+    article.className = 'post-item special-bg';
     if (authorNickname) {
         article.dataset.author = authorNickname;
     }
-    
-    article.onclick = function() { 
-        openVotePage(postId, question, imgA, imgB, authorNickname); 
-    }; 
+   
+    article.onclick = function() {
+        openVotePage(postId, question, imgA, imgB, authorNickname);
+    };
 
     let imagesHtml = '';
     const srcA = imgA ? `data:${imgA.mimeType};base64,${imgA.data}` : null;
@@ -1529,7 +1558,7 @@ shareButton.addEventListener('click', () => {
 
     const newPostId = 'post_' + Date.now();
     const authorNick = currentUser.nickname || "익명";
-    
+   
     const newPostData = {
         id: newPostId,
         nickname: authorNick,
@@ -1556,7 +1585,7 @@ shareButton.addEventListener('click', () => {
 
     imageWrapper.innerHTML = '';
     textarea.value = '';
-    fileData.A = null; 
+    fileData.A = null;
     fileData.B = null;
     document.getElementById('btnOptionA').classList.remove('disabled');
     document.getElementById('btnOptionB').classList.remove('disabled');
@@ -1564,7 +1593,7 @@ shareButton.addEventListener('click', () => {
 
     shareButton.innerText = originalText;
     shareButton.disabled = false;
-    
+   
     alert('게시물이 성공적으로 공유되었습니다!');
     goToPage('page-5');
 
@@ -1587,10 +1616,10 @@ async function loadPostsFromSheet() {
     try {
         const response = await fetch(SCRIPT_URL);
         const posts = await response.json();
-        
-        allPostsData = posts; 
+       
+        allPostsData = posts;
         console.log('불러온 게시물:', allPostsData);
-        
+       
         allPostsData.forEach(post => {
              voteCounts[post.id] = {
                 A: parseInt(post.voteA) || 0,
@@ -1598,8 +1627,8 @@ async function loadPostsFromSheet() {
             };
         });
 
-        renderPosts('all'); 
-        
+        renderPosts('all');
+       
     } catch (error) {
         console.error('게시물 로딩 오류:', error);
     }
@@ -1607,10 +1636,10 @@ async function loadPostsFromSheet() {
 
 function switchTab(tabName) {
     currentTab = tabName;
-    
+   
     const tabAll = document.getElementById('tab-all');
     const tabMy = document.getElementById('tab-my');
-    
+   
     if (tabName === 'all') {
         tabAll.classList.add('active');
         tabMy.classList.remove('active');
@@ -1618,29 +1647,29 @@ function switchTab(tabName) {
         tabAll.classList.remove('active');
         tabMy.classList.add('active');
     }
-    
+   
     renderPosts(tabName);
 }
 
 function renderPosts(filterType) {
     const list = document.querySelector('#page-5 .post-list');
-    list.innerHTML = ''; 
-    
+    list.innerHTML = '';
+   
     let filteredPosts = allPostsData;
-    
+   
     if (filterType === 'my') {
         filteredPosts = allPostsData.filter(post => post.nickname === currentUser.nickname);
     }
-    
+   
     if (filteredPosts.length === 0) {
         list.innerHTML = '<div class="empty-message">게시물이 없습니다.</div>';
         return;
     }
-    
+   
     filteredPosts.forEach(post => {
         const imgA = post.imgA || null;
         const imgB = post.imgB || null;
-        
+       
         // [NEW] 투표 합계 계산
         const totalVotes = (parseInt(post.voteA) || 0) + (parseInt(post.voteB) || 0);
 
@@ -1652,15 +1681,15 @@ function renderPosts(filterType) {
 
 function addExistingPostToBoard(postId, question, imgA, imgB, authorNickname, totalVotes) {
     const list = document.querySelector('#page-5 .post-list');
-    
+   
     const article = document.createElement('article');
     article.className = 'post-item special-bg';
     if (authorNickname) {
         article.dataset.author = authorNickname;
     }
-    
-    article.onclick = function() { 
-        openVotePage(postId, question, imgA, imgB, authorNickname); 
+   
+    article.onclick = function() {
+        openVotePage(postId, question, imgA, imgB, authorNickname);
     };
 
     let imagesHtml = '';
